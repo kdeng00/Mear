@@ -19,40 +19,27 @@ class MusicFiles (val demoPath:  File) {
             val listOfFiles = folder.listFiles()
 
             for (i in listOfFiles) {
-                for (j in i.listFiles()) {
-                    if (j.absolutePath.toString().contains("zip")) {
-                        println("zip file")
-                    }
-                    for (k in j.listFiles()) {
-                        println("What's good?")
-                        if (k.absolutePath.toString().contains("mp3")) {
-                            allSongs!!.add(k.absolutePath.toString())
-                            count++
+                if (allSongs!!.count() < musicSongLimit) {
+                    for (j in i.listFiles()) {
+                        if (j.absolutePath.toString().contains("zip")) {
+                            println("zip file")
                         }
-                        else {
-                            println("Stranger")
+                        for (k in j.listFiles()) {
+                            println("What's good?")
+                            if (k.absolutePath.toString().contains("mp3")) {
+                                allSongs!!.add(k.absolutePath.toString())
+                                count++
+                            } else {
+                                println("Stranger")
+                            }
                         }
                     }
                 }
+                else {
+                    break
+                }
             }
             songCount = count
-        }
-        catch (ex: Exception) {
-            var exMsg = ex.message
-        }
-    }
-    fun configureDemoSong() {
-        val sdC = "sdcard0/"
-        var musicPath = "music/"
-        var artistPath = "Flueric/"
-        var albumPath = "New Death of a Phoenix/"
-        var songPath = "Qualm.mp3"
-        val pa = demoPath.absoluteFile.toString() + "/" + musicPath + artistPath + albumPath +
-                songPath
-        try {
-            var fl = File(pa)
-            if (fl.exists()) {
-            }
         }
         catch (ex: Exception) {
             var exMsg = ex.message
@@ -62,4 +49,5 @@ class MusicFiles (val demoPath:  File) {
 
     var allSongs: MutableList<String>?= null
     var songCount: Int? = null
+    val musicSongLimit = 50
 }
