@@ -2,15 +2,14 @@ package com.example.mear.management
 
 import java.io.File
 import java.lang.Exception
-import kotlin.io.*
 
-class MusicFiles (val demoPath:  File) {
+class MusicFiles (private val demoPath:  File) {
 
 
     fun loadAllMusicPaths() {
         try {
             allSongs = mutableListOf()
-            val demoPath = this.demoPath.absoluteFile.toString() +"/music/"
+            val demoPath = this.demoPath.absoluteFile.toString() + "/music/"
             val f = File(demoPath)
             var count = 0
 
@@ -45,5 +44,5 @@ class MusicFiles (val demoPath:  File) {
 
     var allSongs: MutableList<String>?= null
     var songCount: Int? = null
-    val musicSongLimit = 120
+    val musicSongLimit = Int.MAX_VALUE
 }

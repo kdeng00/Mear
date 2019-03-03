@@ -28,10 +28,14 @@ class DatabaseManager(ctx: Context): ManagedSQLiteOpenHelper(ctx, "Mear",
             "Title" to TEXT, "Album" to TEXT, "Artist" to TEXT,
             "Cover" to BLOB, "Duration" to INTEGER,
             "FilePath" to TEXT)
+        db!!.createTable("TrackCount", true,
+            "Id" to INTEGER + PRIMARY_KEY + UNIQUE,
+            "TotalSongs" to INTEGER)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.dropTable("Track")
+        db!!.dropTable("TrackCount")
     }
 
 
