@@ -20,11 +20,10 @@ class TrackRepository(val context: Context) {
                     val artist = columns.getValue("Artist").toString()
                     val album = columns.getValue("Album").toString()
                     val duration = columns.getValue("Duration").toString().toInt()
-                    val cover = columns.getValue("Cover").toString().toByteArray()
                     val songPath = columns.getValue("FilePath").toString()
 
                     val track = Track(id.toString().toInt(), title.toString(),artist,album,
-                        duration,cover,songPath)
+                        duration, ByteArray(0),songPath)
                     tracks.add(track)
 
                     return track
@@ -41,11 +40,10 @@ class TrackRepository(val context: Context) {
                     val artist = columns.getValue("Artist").toString()
                     var album = columns.getValue("Album").toString()
                     val duration = columns.getValue("Duration").toString().toInt()
-                    var cover = columns.getValue("Cover").toString().toByteArray()
                     var filePath = columns.getValue("FilePath").toString()
 
                     val track = Track(id, title, artist, album, duration,
-                        cover, filePath)
+                        ByteArray(0), filePath)
 
                     return track
                 }
@@ -68,8 +66,7 @@ class TrackRepository(val context: Context) {
             "Album" to track.album,
             "Artist" to track.artist,
             "Duration" to track.length,
-            "FilePath" to track.songPath,
-            "Cover" to track.TrackCover)
+            "FilePath" to track.songPath)
     }
     fun createSongCount(songCount: Int) = context.database.use {
         insert("TrackCount",

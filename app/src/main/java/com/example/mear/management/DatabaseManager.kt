@@ -28,8 +28,7 @@ class DatabaseManager(ctx: Context): ManagedSQLiteOpenHelper(ctx, "Mear",
                 "Track", true,
                 "Id" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "Title" to TEXT, "Album" to TEXT, "Artist" to TEXT,
-                "Cover" to BLOB, "Duration" to INTEGER,
-                "FilePath" to TEXT
+                "Duration" to INTEGER, "FilePath" to TEXT
             )
             db!!.createTable(
                 "TrackCount", true,

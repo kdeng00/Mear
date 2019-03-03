@@ -16,7 +16,7 @@
             tools:layout_editor_absoluteX="0dp">
         <ImageView
                 tools:srcCompat="@tools:sample/backgrounds/scenic[2]"
-                android:id="@+id/TrackCover" android:layout_height="326dp"
+                android:id="@+id/TrackCover" android:layout_height="269dp"
                 android:layout_width="match_parent"/>
         <LinearLayout
                 android:orientation="vertical"
@@ -44,7 +44,7 @@
             <Button
                     android:text="Shuffle"
                     android:layout_height="wrap_content" android:id="@+id/ShuffleTracks" android:layout_weight="1"
-                    android:layout_width="1dp"/>
+                    android:layout_width="21dp"/>
             <Button
                     android:text="Repeat"
                     android:layout_height="wrap_content" android:id="@+id/RepeatList" android:layout_weight="1"

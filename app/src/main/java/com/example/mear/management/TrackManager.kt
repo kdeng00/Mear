@@ -26,20 +26,12 @@ class TrackManager(var allSongPath: MutableList<String>) {
                 val trackLenghStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                 trackLength = (trackLenghStr.toInt()/1000)
 
-                var art: ByteArray? = null
-                if (mmr.embeddedPicture==null) {
-                    art = ByteArray(0)
-                }
-                else {
-                    art = mmr.embeddedPicture
-                }
                 if (trackTitle == null || trackArtist == null || trackAlbum == null ||
                         trackLenghStr == null) {
-                    println("dd")
                 }
 
                 val track = Track(id, trackTitle, trackArtist, trackAlbum, trackLength,
-                    art!!, musicPath)
+                    ByteArray(0), musicPath)
                 dumpToDatabase(ctx, track)
                 id++
             }

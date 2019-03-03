@@ -1,6 +1,5 @@
 package com.example.mear
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.media.MediaMetadataRetriever
@@ -49,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         PreviousTrack.setOnClickListener {
             playPreviousSongTrack()
         }
+        ShuffleTracks.setOnClickListener {
+            toggleShuffle()
+        }
     }
     private fun initializeCompletionListener() {
         trackPlayer!!.setOnCompletionListener {
@@ -62,6 +64,26 @@ class MainActivity : AppCompatActivity() {
             val tr = TrackRepository(this).getTrack(currentSong!!)
             trackPlayer!!.setDataSource(tr.songPath)
             trackPlayer!!.prepare()
+        }
+    }
+
+    private fun toggleShuffle() {
+        val shuffleText = ShuffleTracks.text.toString()
+        val on = getString(R.string.shuffle_on)
+        val off = getString(R.string.shuffle_off)
+        when (shuffleText) {
+            on -> {
+                shuffleOn = false
+                ShuffleTracks.setText(R.string.shuffle_off)
+            }
+            off -> {
+                shuffleOn = true
+                ShuffleTracks.setText(R.string.shuffle_on)
+            }
+            else -> {
+                shuffleOn = false
+                ShuffleTracks.setText(R.string.shuffle_off)
+            }
         }
     }
 
@@ -156,7 +178,12 @@ class MainActivity : AppCompatActivity() {
                 PlayTypes.PlayPreviousSong -> {
                     songIndex = songCount
                     if (currentSong!! != 0) {
-                        songIndex = currentSong!!.dec()
+                        if (!shuffleOn!!) {
+                            songIndex = currentSong!!.dec()
+                        }
+                        else {
+                            songIndex = Random.nextInt(0, songCount!!)
+                        }
                     }
                 }
                 PlayTypes.PlaySong -> {
@@ -165,7 +192,12 @@ class MainActivity : AppCompatActivity() {
                 PlayTypes.PlayNextSong -> {
                     songIndex = 0
                     if (currentSong!! != songCount!!) {
-                        songIndex = currentSong!!.inc()
+                        if (!shuffleOn!!) {
+                            songIndex = currentSong!!.inc()
+                        }
+                        else {
+                            songIndex = Random.nextInt(0, songCount!!)
+                        }
                     }
                 }
             }
@@ -204,6 +236,7 @@ class MainActivity : AppCompatActivity() {
     private var trackPlayer: MediaPlayer? = null
     private var currentSong: Int? = null
     private var playerInitialized: Boolean? = null
+    private var shuffleOn: Boolean? = null
     private var songCount: Int? = null
 
     private enum class PlayTypes {
