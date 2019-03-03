@@ -1,4 +1,4 @@
-package com.example.mear.management
+package com.example.mear.repositories
 
 import android.content.Context
 
@@ -30,7 +30,6 @@ class TrackRepository(val context: Context) {
                     return track
                 }
             })
-        sonC = tracks.count()
         tracks
     }
     fun getTrack(id: Int): Track = context.database.use {
@@ -62,7 +61,7 @@ class TrackRepository(val context: Context) {
             })
     }
 
-    fun create(track: Track) = context.database.use {
+    fun insertTrack(track: Track) = context.database.use {
         insert("Track",
             "Id" to track.id,
             "Title" to track.title,
@@ -78,17 +77,10 @@ class TrackRepository(val context: Context) {
             "TotalSongs" to songCount)
     }
 
-    fun delete(track: Track) = context.database.use {
-        delete("Track", whereClause = "id = {$track.id}")
+    fun delete(table: Any?) = context.database.use {
+        delete("Track", whereClause = "id = {$table.id}")
     }
     fun delete() = context.database.use {
         delete("Track")
-    }
-
-
-    var songCount: Int? = null
-
-    companion object {
-        var sonC: Int = 0
     }
 }

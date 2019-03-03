@@ -1,28 +1,22 @@
 package com.example.mear
 
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteQuery
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity
 
 import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.selects.select
 import kotlin.io.*
 import kotlin.random.Random
 
-import org.jetbrains.anko.db.*
-
-import com.example.mear.management.TrackRepository
-import com.example.mear.management.DatabaseManager
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
-import com.example.mear.models.Track
+import com.example.mear.repositories.TrackRepository
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,10 +25,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        loadTracks(loadSongPaths())
+        //loadTracks(loadSongPaths())
 
+        initialize()
+    }
+
+
+    private fun initialize() {
+        songCount = TrackRepository(this).getSongCount()
+        currentSong = fetchSongIndex(PlayTypes.PlaySong)
         initializeMediaPlayer()
 
+        initializeClickListeners()
+        initializeCompletionListener()
+    }
+    private fun initializeClickListeners() {
         PlayTrack.setOnClickListener {
             playSongTrack()
         }
@@ -44,73 +49,78 @@ class MainActivity : AppCompatActivity() {
         PreviousTrack.setOnClickListener {
             playPreviousSongTrack()
         }
-        TrackPayer!!.setOnCompletionListener {
+    }
+    private fun initializeCompletionListener() {
+        trackPlayer!!.setOnCompletionListener {
             playNextSongTrack()
         }
     }
-
-
     private fun initializeMediaPlayer() {
-        if (TrackPayer == null) {
-            TrackPayer = MediaPlayer()
+        if (trackPlayer == null) {
+            trackPlayer = MediaPlayer()
             playerInitialized = true
             val tr = TrackRepository(this).getTrack(currentSong!!)
-            TrackPayer!!.setDataSource(tr.songPath)
-            TrackPayer!!.prepare()
+            trackPlayer!!.setDataSource(tr.songPath)
+            trackPlayer!!.prepare()
         }
     }
 
     private fun playSongTrack() {
-
+        PlayTrack.isEnabled = true
         try {
-            if (!TrackPayer!!.isPlaying) {
-                TrackPayer!!.start()
+            if (!trackPlayer!!.isPlaying) {
+                trackPlayer!!.start()
                 configureTrackDisplay()
             } else {
-                TrackPayer!!.pause()
+                trackPlayer!!.pause()
             }
         }
         catch (ex: Exception) {
             val exMsg = ex.message
         }
+        PlayTrack.isEnabled = true
     }
     private fun playNextSongTrack() {
+        NextTrack.isEnabled = false
         try {
             currentSong = fetchSongIndex(PlayTypes.PlayNextSong)
 
-            if (TrackPayer!!.isPlaying) {
-                TrackPayer!!.stop()
+            if (trackPlayer!!.isPlaying) {
+                trackPlayer!!.stop()
             }
 
-            TrackPayer!!.reset()
-            TrackPayer!!.setDataSource(TrackRepository(this).getTrack(currentSong!!).songPath)
-            TrackPayer!!.prepare()
-            TrackPayer!!.start()
+            trackPlayer!!.reset()
+            trackPlayer!!.setDataSource(TrackRepository(this).getTrack(currentSong!!).songPath)
+            trackPlayer!!.prepare()
+            trackPlayer!!.start()
             configureTrackDisplay()
         }
         catch (ex: Exception) {
             val exMsg = ex.message
             print(exMsg)
         }
+        NextTrack.isEnabled = true
     }
     private fun playPreviousSongTrack() {
+        PreviousTrack.isEnabled = false
         try {
             currentSong = fetchSongIndex(PlayTypes.PlayPreviousSong)
 
-            if (TrackPayer!!.isPlaying) {
-                TrackPayer!!.stop()
+            if (trackPlayer!!.isPlaying) {
+                trackPlayer!!.stop()
             }
 
-            TrackPayer!!.reset()
-            TrackPayer!!.setDataSource(TrackRepository(this).getTrack(currentSong!!).songPath)
-            TrackPayer!!.prepare()
-            TrackPayer!!.start()
+            trackPlayer!!.reset()
+            trackPlayer!!.setDataSource(TrackRepository(this).getTrack(currentSong!!).songPath)
+            trackPlayer!!.prepare()
+            trackPlayer!!.start()
             configureTrackDisplay()
         }
         catch (ex: Exception) {
             val exMsg = ex.message
             print(exMsg)
         }
+        PreviousTrack.isEnabled = true
     }
     private fun configureTrackDisplay() {
         val currTrack = TrackRepository(this).getTrack(currentSong!!)
@@ -118,8 +128,11 @@ class MainActivity : AppCompatActivity() {
         val albumTitle = currTrack.album
         var trackCover: ByteArray? = null
 
-        if (!(currTrack.TrackCover == null)) {
-            trackCover = currTrack.TrackCover
+        var mmr = MediaMetadataRetriever()
+        mmr.setDataSource(currTrack.songPath)
+
+        if (mmr.embeddedPicture != null) {
+            trackCover = mmr.embeddedPicture
         }
 
         TrackTitle.text.clear()
@@ -129,8 +142,8 @@ class MainActivity : AppCompatActivity() {
         TrackTitle.setText(trackTitle)
         AlbumTitle.setText(albumTitle)
         if (trackCover != null) {
-            var songImage = BitmapFactory
-                .decodeByteArray(trackCover, 0, trackCover!!.size)
+            val songImage = BitmapFactory
+                .decodeByteArray(trackCover, 0, trackCover.size)
             TrackCover.setImageBitmap(songImage)
         }
     }
@@ -141,9 +154,8 @@ class MainActivity : AppCompatActivity() {
         try {
             when (playType) {
                 PlayTypes.PlayPreviousSong -> {
-                    if (currentSong!! == 0) {
-                        songIndex = songCount
-                    } else {
+                    songIndex = songCount
+                    if (currentSong!! != 0) {
                         songIndex = currentSong!!.dec()
                     }
                 }
@@ -151,9 +163,8 @@ class MainActivity : AppCompatActivity() {
                     songIndex = Random.nextInt(0, songCount!!)
                 }
                 PlayTypes.PlayNextSong -> {
-                    if (currentSong!! == songCount!!) {
-                        songIndex = 0
-                    } else {
+                    songIndex = 0
+                    if (currentSong!! != songCount!!) {
                         songIndex = currentSong!!.inc()
                     }
                 }
@@ -177,23 +188,10 @@ class MainActivity : AppCompatActivity() {
     }
     private fun loadTracks(allSongs: MutableList<String>) {
         try {
+        val trackMgr = TrackManager(allSongs)
+        songCount = trackMgr.configureTracks(this)
 
-        //var trackMgr = TrackManager(allSongs!!)
-        //trackMgr.deleteTable(this)
-            //songCount = trackMgr.configureTracks(this)
-        //songCount = trackMgr.configureTracks(this)
-        //TrackRepository(this).createSongCount(songCount!!)
-        //var sC = TrackRepository(this).getSongCount()
-        //trackMgr.dumpToDatabase(this)
-        //trackMgr.dumpToDatabase()
-        //val allTracks = trackMgr.allTracks
-        //databaseInit(allTracks!!)
-        //databaseInit(trackMgr.allTracks!!)
-        //trackMgr = TrackManager( mutableListOf())
-
-        //val obk = TrackRepository(this).getAll()
-        //TrackRepository(this).songCount = TrackRepository(this).getAll().size
-            songCount = TrackRepository(this).getSongCount()
+        songCount = TrackRepository(this).getSongCount()
 
         currentSong = fetchSongIndex(PlayTypes.PlaySong)
         }
@@ -202,15 +200,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun databaseInit(allTracks: MutableList<Track>) {
 
-        TrackRepository(this).delete()
-        for (songData in allTracks) {
-            TrackRepository(this).create(songData)
-        }
-    }
-
-    private var TrackPayer: MediaPlayer? = null
+    private var trackPlayer: MediaPlayer? = null
     private var currentSong: Int? = null
     private var playerInitialized: Boolean? = null
     private var songCount: Int? = null

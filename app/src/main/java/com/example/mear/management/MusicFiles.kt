@@ -34,7 +34,6 @@ class MusicFiles (private val demoPath:  File) {
                     }
                 }
             }
-            songCount = count
         }
         catch (ex: Exception) {
             var exMsg = ex.message
@@ -43,6 +42,5 @@ class MusicFiles (private val demoPath:  File) {
 
 
     var allSongs: MutableList<String>?= null
-    var songCount: Int? = null
     val musicSongLimit = Int.MAX_VALUE
 }

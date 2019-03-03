@@ -1,12 +1,13 @@
 package com.example.mear.management
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 
 import java.lang.Exception
 
 import com.example.mear.models.Track
+import com.example.mear.repositories.PlayCountRepository
+import com.example.mear.repositories.TrackRepository
 
 class TrackManager(var allSongPath: MutableList<String>) {
 
@@ -37,7 +38,7 @@ class TrackManager(var allSongPath: MutableList<String>) {
                     println("dd")
                 }
 
-                var track = Track(id, trackTitle, trackArtist, trackAlbum, trackLength,
+                val track = Track(id, trackTitle, trackArtist, trackAlbum, trackLength,
                     art!!, musicPath)
                 dumpToDatabase(ctx, track)
                 id++
@@ -52,7 +53,7 @@ class TrackManager(var allSongPath: MutableList<String>) {
     fun dumpToDatabase(ctx: Context) {
         TrackRepository(ctx).delete()
         for (songData in allTracks!!) {
-            TrackRepository(ctx).create(songData)
+            TrackRepository(ctx).insertTrack(songData)
             allTracks!!.removeAt(songData.id  )
         }
     }
@@ -60,7 +61,8 @@ class TrackManager(var allSongPath: MutableList<String>) {
         TrackRepository(ctx).delete()
     }
     private fun dumpToDatabase(ctx: Context, track: Track) {
-        TrackRepository(ctx).create(track)
+        TrackRepository(ctx).insertTrack(track)
+        PlayCountRepository(ctx).insertPlayCount(track)
     }
 
     var allTracks: MutableList<Track>? = null
