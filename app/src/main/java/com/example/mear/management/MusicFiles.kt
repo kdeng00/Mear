@@ -1,6 +1,5 @@
 package com.example.mear.management
 
-import android.os.Environment
 import java.io.File
 import java.lang.Exception
 import kotlin.io.*
@@ -19,24 +18,21 @@ class MusicFiles (val demoPath:  File) {
             val listOfFiles = folder.listFiles()
 
             for (i in listOfFiles) {
-                if (allSongs!!.count() < musicSongLimit) {
-                    for (j in i.listFiles()) {
-                        if (j.absolutePath.toString().contains("zip")) {
-                            println("zip file")
-                        }
-                        for (k in j.listFiles()) {
-                            println("What's good?")
-                            if (k.absolutePath.toString().contains("mp3")) {
+                for (j in i.listFiles()) {
+                    if (j.absolutePath.toString().contains("zip")) {
+                    }
+                    for (k in j.listFiles()) {
+                        if (k.absolutePath.toString().contains("mp3")) {
+                            if (count < musicSongLimit) {
                                 allSongs!!.add(k.absolutePath.toString())
                                 count++
-                            } else {
-                                println("Stranger")
+                            }
+                            else
+                            {
+                                break
                             }
                         }
                     }
-                }
-                else {
-                    break
                 }
             }
             songCount = count
@@ -49,5 +45,5 @@ class MusicFiles (val demoPath:  File) {
 
     var allSongs: MutableList<String>?= null
     var songCount: Int? = null
-    val musicSongLimit = 50
+    val musicSongLimit = 120
 }

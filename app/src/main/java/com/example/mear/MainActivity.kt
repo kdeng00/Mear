@@ -1,21 +1,25 @@
 package com.example.mear
 
-import android.graphics.Bitmap
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteQuery
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Environment
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 
 import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.coroutines.selects.select
 import kotlin.io.*
 import kotlin.random.Random
 
-import org.jetbrains.anko.*
+import org.jetbrains.anko.db.*
 
+import com.example.mear.management.TrackRepository
+import com.example.mear.management.DatabaseManager
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
 import com.example.mear.models.Track
@@ -173,12 +177,64 @@ class MainActivity : AppCompatActivity() {
         return allSongs!!
     }
     private fun loadTracks(allSongs: MutableList<String>) {
-        val trackMgr = TrackManager(allSongs!!)
+        var trackMgr = TrackManager(allSongs!!)
         trackMgr.configureTracks()
-        allTracks = trackMgr.allTracks
+        val allTracks = trackMgr.allTracks
+        trackMgr = TrackManager( listOf())
+        this.allTracks = allTracks
+
+        databaseInit(allTracks!!)
+        val obk = TrackRepository(this).getAll()
 
         currentSong = fetchSongIndex(PlayTypes.PlaySong)
     }
+
+    private fun databaseInit(allTracks: MutableList<Track>) {
+        /**
+        database.use {
+            dropTable("Track")
+            createTable("Track", true,
+                "Id" to INTEGER + PRIMARY_KEY + UNIQUE,
+                "Title" to INTEGER, "Album" to TEXT, "Artist" to TEXT,
+                "Duration" to INTEGER, "Cover" to BLOB, "SongPath" to TEXT
+            )
+            for (songData in allTracks) {
+                insert("Track",
+                    "id" to songData.id,
+                    "Title" to songData.title,
+                    "Album" to songData.album,
+                    "Artist" to songData.artist,
+                    "Duration" to songData.length,
+                    "Cover" to songData.TrackCover,
+                    "FilePath" to songData.songPath)
+            }
+        }
+        */
+        /**
+        myDB.createTable("Track", true,
+            "Id" to INTEGER + UNIQUE,
+            "Title" to TEXT, "Artist" to TEXT, "Album" to TEXT,
+            "Duration" to INTEGER, "Cover" to BLOB, "SongPath" to TEXT)
+        */
+
+
+        TrackRepository(this).delete()
+        for (songData in allTracks) {
+            TrackRepository(this).create(songData)
+        }
+    }
+    /**
+    private fun databaseGetTracks(db: ManagedSQLiteOpenHelper): List<Track> = db.use {
+        val trackParser = classParser<Track>()
+        var dbObj = db.readableDatabase
+        dbObj.use {
+            select("Track").exec {
+                val ss = this
+                val tracks: List<Track> = parseList()
+            }
+        }
+    }
+    */
 
     private var TrackPayer: MediaPlayer? = null
     private var allTracks: MutableList<Track>? = null

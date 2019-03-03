@@ -1,16 +1,9 @@
 package com.example.mear.management
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 
-import java.io.File
 import java.lang.Exception
-
-import ealvatag.audio.AudioFile
-import ealvatag.audio.AudioFileIO
-import ealvatag.tag.FieldKey
-import ealvatag.tag.NullTag
 
 import com.example.mear.models.Track
 
