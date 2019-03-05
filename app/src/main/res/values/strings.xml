@@ -12,6 +12,10 @@
     <string name="shuffle_off">Shuffle Off</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="play_button">Play</string>
+    <string name="next_button">Next</string>
+    <string name="previous_button">Previous </string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

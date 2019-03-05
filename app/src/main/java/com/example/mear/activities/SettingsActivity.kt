@@ -1,4 +1,4 @@
-package com.example.mear
+package com.example.mear.activities
 
 import android.annotation.TargetApi
 import android.content.Context
@@ -17,6 +17,8 @@ import android.preference.RingtonePreference
 import android.text.TextUtils
 import android.view.MenuItem
 import android.support.v4.app.NavUtils
+import com.example.mear.AppCompatPreferenceActivity
+import com.example.mear.R
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -237,7 +239,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
          */
         private fun bindPreferenceSummaryToValue(preference: Preference) {
             // Set the listener to watch for value changes.
-            preference.onPreferenceChangeListener = sBindPreferenceSummaryToValueListener
+            preference.onPreferenceChangeListener =
+                sBindPreferenceSummaryToValueListener
 
             // Trigger the listener immediately with the preference's
             // current value.

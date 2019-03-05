@@ -1,4 +1,4 @@
-package com.example.mear
+package com.example.mear.activities
 
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
@@ -6,6 +6,8 @@ import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.app.AppCompatActivity
+import android.text.format.Time
+import com.example.mear.R
 
 import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_main.*
@@ -16,6 +18,12 @@ import kotlin.random.Random
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
 import com.example.mear.repositories.TrackRepository
+import kotlinx.android.synthetic.main.fragment_play_controls.*
+import kotlinx.android.synthetic.main.fragment_track_cover.*
+import kotlinx.android.synthetic.main.fragment_track_details.*
+import kotlinx.android.synthetic.main.fragment_track_elapsing.*
+import kotlinx.android.synthetic.main.fragment_track_flow.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -147,8 +155,13 @@ class MainActivity : AppCompatActivity() {
     private fun configureTrackDisplay() {
         val currTrack = TrackRepository(this).getTrack(currentSong!!)
         val trackTitle = currTrack.title
+        val artistTitle = currTrack.artist
         val albumTitle = currTrack.album
+        var trackDuration = currTrack.length
         var trackCover: ByteArray? = null
+        val dur = String.format("%02d:%02d", TimeUnit.SECONDS.toMinutes(trackDuration.toLong()),
+            (trackDuration % 60)
+            )
 
         var mmr = MediaMetadataRetriever()
         mmr.setDataSource(currTrack.songPath)
@@ -157,12 +170,16 @@ class MainActivity : AppCompatActivity() {
             trackCover = mmr.embeddedPicture
         }
 
-        TrackTitle.text.clear()
-        AlbumTitle.text.clear()
+        TrackTitle.setText(null)
+        ArtistTitle.setText(null)
+        AlbumTitle.setText(null)
+        CurrentPosition.setText(null)
         TrackCover.setImageBitmap(null)
 
         TrackTitle.setText(trackTitle)
+        ArtistTitle.setText(artistTitle)
         AlbumTitle.setText(albumTitle)
+        TrackDuration.setText(dur)
         if (trackCover != null) {
             val songImage = BitmapFactory
                 .decodeByteArray(trackCover, 0, trackCover.size)
