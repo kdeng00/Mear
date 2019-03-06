@@ -42,16 +42,6 @@ class TrackManager(var allSongPath: MutableList<String>) {
         }
         return id.dec()
     }
-    fun dumpToDatabase(ctx: Context) {
-        TrackRepository(ctx).delete()
-        for (songData in allTracks!!) {
-            TrackRepository(ctx).insertTrack(songData)
-            allTracks!!.removeAt(songData.id  )
-        }
-    }
-    fun deleteTable(ctx: Context) {
-        TrackRepository(ctx).delete()
-    }
     private fun dumpToDatabase(ctx: Context, track: Track) {
         TrackRepository(ctx).insertTrack(track)
         PlayCountRepository(ctx).insertPlayCount(track)

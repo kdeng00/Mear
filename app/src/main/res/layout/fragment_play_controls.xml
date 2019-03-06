@@ -5,36 +5,42 @@
     android:layout_width="match_parent"
                                              android:layout_height="match_parent">
 
-    <Button
+    <ImageButton
         android:id="@+id/PreviousTrack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/previous_button"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:tint="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_media_previous" />
 
-    <Button
+    <ImageButton
         android:id="@+id/PlayTrack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/play_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/PreviousTrack" />
-
-    <Button
-        android:id="@+id/NextTrack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="96dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/next_button"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:tint="@color/color_player_not_initialized"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/NextTrack"
+        app:layout_constraintHorizontal_bias="0.021"
+        app:layout_constraintStart_toEndOf="@+id/PreviousTrack"
+        app:srcCompat="@android:drawable/ic_media_play" />
+
+    <ImageButton
+        android:id="@+id/NextTrack"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:tint="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.864"
-        app:layout_constraintStart_toEndOf="@+id/PlayTrack" />
+        app:srcCompat="@android:drawable/ic_media_next" />
 </android.support.constraint.ConstraintLayout>

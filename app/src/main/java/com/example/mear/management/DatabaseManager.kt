@@ -42,7 +42,7 @@ class DatabaseManager(ctx: Context): ManagedSQLiteOpenHelper(ctx, "Mear",
                 "TrackId" to INTEGER
             )
             db!!.createTable(
-                "Settings", true,
+                "SettingsActivity", true,
                 "Id" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "DarkTheme" to org.jetbrains.anko.db.REAL
             )
@@ -56,7 +56,7 @@ class DatabaseManager(ctx: Context): ManagedSQLiteOpenHelper(ctx, "Mear",
         db!!.dropTable("Track")
         db!!.dropTable("TrackCount")
         db!!.dropTable("PlayCount")
-        db!!.dropTable("Settings")
+        db!!.dropTable("SettingsActivity")
 
         }
         catch (ex: Exception) {

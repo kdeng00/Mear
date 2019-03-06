@@ -21,4 +21,5 @@
     <include
         layout="@layout/fragment_play_controls"
         app:layout_constraintEnd_toEndOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

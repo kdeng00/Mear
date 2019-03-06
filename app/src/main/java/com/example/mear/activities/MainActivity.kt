@@ -1,29 +1,28 @@
 package com.example.mear.activities
 
+import android.graphics.Color
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
-import android.os.Environment
 import android.support.v7.app.AppCompatActivity
-import android.text.format.Time
-import com.example.mear.R
 
 import java.lang.Exception
+import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import kotlin.io.*
-import kotlin.random.Random
-
-import com.example.mear.management.MusicFiles
-import com.example.mear.management.TrackManager
-import com.example.mear.repositories.TrackRepository
 import kotlinx.android.synthetic.main.fragment_play_controls.*
 import kotlinx.android.synthetic.main.fragment_track_cover.*
 import kotlinx.android.synthetic.main.fragment_track_details.*
 import kotlinx.android.synthetic.main.fragment_track_elapsing.*
 import kotlinx.android.synthetic.main.fragment_track_flow.*
-import java.util.concurrent.TimeUnit
+import kotlin.io.*
+import kotlin.random.Random
+
+import com.example.mear.R
+import com.example.mear.repositories.TrackRepository
+import org.jetbrains.anko.image
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,8 +30,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        //loadTracks(loadSongPaths())
 
         initialize()
     }
@@ -58,6 +55,18 @@ class MainActivity : AppCompatActivity() {
         }
         ShuffleTracks.setOnClickListener {
             toggleShuffle()
+        }
+        SettingsLink.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            try {
+
+
+                startActivity(intent)
+            }
+            catch (ex: Exception) {
+                val exMsg = ex.message
+                println(exMsg)
+            }
         }
     }
     private fun initializeCompletionListener() {
@@ -100,10 +109,10 @@ class MainActivity : AppCompatActivity() {
         try {
             if (!trackPlayer!!.isPlaying) {
                 trackPlayer!!.start()
-                configureTrackDisplay()
             } else {
                 trackPlayer!!.pause()
             }
+            configureTrackDisplay()
         }
         catch (ex: Exception) {
             val exMsg = ex.message
@@ -153,37 +162,51 @@ class MainActivity : AppCompatActivity() {
         PreviousTrack.isEnabled = true
     }
     private fun configureTrackDisplay() {
+        configurePlayControlsDisplay()
         val currTrack = TrackRepository(this).getTrack(currentSong!!)
         val trackTitle = currTrack.title
         val artistTitle = currTrack.artist
         val albumTitle = currTrack.album
-        var trackDuration = currTrack.length
+        val trackDuration = currTrack.length
         var trackCover: ByteArray? = null
         val dur = String.format("%02d:%02d", TimeUnit.SECONDS.toMinutes(trackDuration.toLong()),
             (trackDuration % 60)
             )
 
-        var mmr = MediaMetadataRetriever()
+        val mmr = MediaMetadataRetriever()
         mmr.setDataSource(currTrack.songPath)
 
         if (mmr.embeddedPicture != null) {
             trackCover = mmr.embeddedPicture
         }
 
-        TrackTitle.setText(null)
-        ArtistTitle.setText(null)
-        AlbumTitle.setText(null)
-        CurrentPosition.setText(null)
+        TrackTitle.text = null
+        ArtistTitle.text = null
+        AlbumTitle.text = null
+        CurrentPosition.text = null
         TrackCover.setImageBitmap(null)
 
-        TrackTitle.setText(trackTitle)
-        ArtistTitle.setText(artistTitle)
-        AlbumTitle.setText(albumTitle)
-        TrackDuration.setText(dur)
+        TrackTitle.text = trackTitle
+        ArtistTitle.text = artistTitle
+        AlbumTitle.text = albumTitle
+        TrackDuration.text = dur
         if (trackCover != null) {
             val songImage = BitmapFactory
                 .decodeByteArray(trackCover, 0, trackCover.size)
             TrackCover.setImageBitmap(songImage)
+        }
+    }
+    private fun configurePlayControlsDisplay() {
+        PlayTrack.background = null
+        PlayTrack.colorFilter = null
+
+        if (!trackPlayer!!.isPlaying) {
+            PlayTrack.setImageResource(android.R.drawable.ic_media_pause)
+            PlayTrack.setColorFilter(Color.RED)
+        }
+        else {
+            PlayTrack.setImageResource(android.R.drawable.ic_media_play)
+            PlayTrack.setColorFilter(Color.GREEN)
         }
     }
 
@@ -227,33 +250,11 @@ class MainActivity : AppCompatActivity() {
         return songIndex!!
     }
 
-    private fun loadSongPaths(): MutableList<String> {
-        val demoPath = Environment.getExternalStorageDirectory()
-        val mfPaths =  MusicFiles(demoPath)
-        mfPaths.loadAllMusicPaths()
-        val allSongs = mfPaths.allSongs
-
-        return allSongs!!
-    }
-    private fun loadTracks(allSongs: MutableList<String>) {
-        try {
-        val trackMgr = TrackManager(allSongs)
-        songCount = trackMgr.configureTracks(this)
-
-        songCount = TrackRepository(this).getSongCount()
-
-        currentSong = fetchSongIndex(PlayTypes.PlaySong)
-        }
-        catch (ex: Exception) {
-            val exMsg = ex.message
-        }
-    }
-
 
     private var trackPlayer: MediaPlayer? = null
     private var currentSong: Int? = null
-    private var playerInitialized: Boolean? = null
-    private var shuffleOn: Boolean? = null
+    private var playerInitialized: Boolean? = false
+    private var shuffleOn: Boolean? = false
     private var songCount: Int? = null
 
     private enum class PlayTypes {

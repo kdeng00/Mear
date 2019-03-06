@@ -9,7 +9,7 @@ import com.example.mear.models.Settings
 
 class SettingRepository(val context: Context) {
     fun getSettings(id: Int): Settings = context.database.use {
-        select("Settings").where("Id = $id")
+        select("SettingsActivity").where("Id = $id")
             .parseSingle(object: MapRowParser<Settings>{
                 override fun parseRow(columns: Map<String, Any?>): Settings {
                     val id = columns.getValue("Id").toString().toInt()
@@ -22,20 +22,20 @@ class SettingRepository(val context: Context) {
             })
     }
     fun insertSettings(settings: Settings) = context.database.use {
-        insert("Settings",
+        insert("SettingsActivity",
             "Id" to settings.id,
             "DarkTheme" to false)
     }
     fun updateSettings(settings: Settings) = context.database.use {
-        update("Settings",
+        update("SettingsActivity",
             "DarkTheme" to settings.darkTheme)
             .where("Id = {settingId}", "settingId" to settings.id).exec()
     }
 
     fun delete(table: Settings?) = context.database.use {
-        delete("Settings", whereClause = "id = {$table.id}")
+        delete("SettingsActivity", whereClause = "id = {$table.id}")
     }
     fun delete() = context.database.use {
-        delete("Settings")
+        delete("SettingsActivity")
     }
 }
