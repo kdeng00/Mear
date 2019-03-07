@@ -6,9 +6,11 @@ import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 
 import java.lang.Exception
+import java.lang.Runnable
 import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_play_controls.*
@@ -21,7 +23,6 @@ import kotlin.random.Random
 
 import com.example.mear.R
 import com.example.mear.repositories.TrackRepository
-import org.jetbrains.anko.image
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +39,8 @@ class MainActivity : AppCompatActivity() {
     private fun initialize() {
         songCount = TrackRepository(this).getSongCount()
         currentSong = fetchSongIndex(PlayTypes.PlaySong)
+        TrackElapsing.progress = 0
+        TrackElapsing.max = 100
         initializeMediaPlayer()
 
         initializeClickListeners()
@@ -162,39 +165,49 @@ class MainActivity : AppCompatActivity() {
         PreviousTrack.isEnabled = true
     }
     private fun configureTrackDisplay() {
-        configurePlayControlsDisplay()
-        val currTrack = TrackRepository(this).getTrack(currentSong!!)
-        val trackTitle = currTrack.title
-        val artistTitle = currTrack.artist
-        val albumTitle = currTrack.album
-        val trackDuration = currTrack.length
-        var trackCover: ByteArray? = null
-        val dur = String.format("%02d:%02d", TimeUnit.SECONDS.toMinutes(trackDuration.toLong()),
-            (trackDuration % 60)
+        try {
+            configurePlayControlsDisplay()
+            val currTrack = TrackRepository(this).getTrack(currentSong!!)
+            val trackTitle = currTrack.title
+            val artistTitle = currTrack.artist
+            val albumTitle = currTrack.album
+            val trackDuration = currTrack.length
+            var trackCover: ByteArray? = null
+            val dur = String.format(
+                "%02d:%02d", TimeUnit.SECONDS.toMinutes(trackDuration.toLong()),
+                (trackDuration % 60)
             )
 
-        val mmr = MediaMetadataRetriever()
-        mmr.setDataSource(currTrack.songPath)
+            val mmr = MediaMetadataRetriever()
+            mmr.setDataSource(currTrack.songPath)
 
-        if (mmr.embeddedPicture != null) {
-            trackCover = mmr.embeddedPicture
+            if (mmr.embeddedPicture != null) {
+                trackCover = mmr.embeddedPicture
+            }
+            updateTrackProgress()
+
+            TrackTitle.text = null
+            ArtistTitle.text = null
+            AlbumTitle.text = null
+            CurrentPosition.text = null
+            TrackCover.setImageBitmap(null)
+
+            TrackTitle.text = trackTitle
+            ArtistTitle.text = artistTitle
+            AlbumTitle.text = albumTitle
+            TrackDuration.text = dur
+            if (trackCover != null) {
+                val songImage = BitmapFactory
+                    .decodeByteArray(trackCover, 0, trackCover.size)
+                TrackCover.setImageBitmap(songImage)
+            }
         }
-
-        TrackTitle.text = null
-        ArtistTitle.text = null
-        AlbumTitle.text = null
-        CurrentPosition.text = null
-        TrackCover.setImageBitmap(null)
-
-        TrackTitle.text = trackTitle
-        ArtistTitle.text = artistTitle
-        AlbumTitle.text = albumTitle
-        TrackDuration.text = dur
-        if (trackCover != null) {
-            val songImage = BitmapFactory
-                .decodeByteArray(trackCover, 0, trackCover.size)
-            TrackCover.setImageBitmap(songImage)
+        catch (ex: Exception) {
+            val msg = ex.message
         }
+    }
+    private fun updateTrackProgress() {
+        musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 100)
     }
     private fun configurePlayControlsDisplay() {
         PlayTrack.background = null
@@ -250,7 +263,25 @@ class MainActivity : AppCompatActivity() {
         return songIndex!!
     }
 
+    private var musicTrackTimeUpdateTask = object: Runnable {
+       override fun run() {
+           var newPosition = 0
+           val currentPosition = trackPlayer!!.currentPosition / 1000
+           val totalDuration = trackPlayer!!.duration / 1000
+           newPosition = (((currentPosition).toDouble() / totalDuration) * 100).toInt()
+           val dur = String.format(
+               "%02d:%02d", TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
+               (currentPosition % 60)
+           )
+           CurrentPosition.text = dur
 
+           TrackElapsing.progress = newPosition
+
+           musicHandler!!.postDelayed(this, 100)
+       }
+    }
+
+    private var musicHandler: Handler? = Handler()
     private var trackPlayer: MediaPlayer? = null
     private var currentSong: Int? = null
     private var playerInitialized: Boolean? = false

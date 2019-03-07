@@ -5,21 +5,23 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <SeekBar
-        android:id="@+id/seekBar2"
-        android:layout_width="284dp"
+        android:id="@+id/TrackElapsing"
+        android:layout_width="288dp"
         android:layout_height="26dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/TrackDuration"
+        app:layout_constraintStart_toEndOf="@+id/CurrentPosition"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.869" />
 
     <TextView
         android:id="@+id/CurrentPosition"
-        android:layout_width="50dp"
-        android:layout_height="22dp"
+        android:layout_width="48dp"
+        android:layout_height="21dp"
         android:layout_marginStart="4dp"
         android:layout_marginBottom="84dp"
         android:text="@string/track_start"
@@ -29,8 +31,8 @@
 
     <TextView
         android:id="@+id/TrackDuration"
-        android:layout_width="50dp"
-        android:layout_height="22dp"
+        android:layout_width="48dp"
+        android:layout_height="21dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="84dp"
         android:text="@string/track_end"
