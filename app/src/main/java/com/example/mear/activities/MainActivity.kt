@@ -297,7 +297,7 @@ class MainActivity : AppCompatActivity() {
 
                CurrentPosition.text = dur
 
-               if (TrackCover.image  == null && musicService!!.isPlaying()) {
+               if (!(TrackTitle.text.equals(musicService!!.getCurrentTrack().title))) {
                    configureTrackDisplay()
                }
 
