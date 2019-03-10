@@ -42,6 +42,7 @@ class SettingsActivity : AppCompatActivity() {
         try {
             TrackRepository(this).delete()
             val trackMgr = TrackManager(allSongs)
+            trackMgr.configureTracks(this)
         }
         catch (ex: Exception) {
             val exMsg = ex.message

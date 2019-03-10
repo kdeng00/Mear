@@ -7,9 +7,15 @@ import org.jetbrains.anko.db.*
 import com.example.mear.database
 import com.example.mear.models.Track
 
-class TrackRepository(val context: Context) {
+class TrackRepository {
+    private var context: Context? = null
 
-    fun getAll(): List<Track> = context.database.use {
+    constructor(context: Context)
+    {
+        this.context = context
+    }
+
+    fun getAll(): List<Track> = context!!.database.use {
         val tracks = mutableListOf<Track>()
 
         select("Track" )
@@ -31,7 +37,7 @@ class TrackRepository(val context: Context) {
             })
         tracks
     }
-    fun getTrack(id: Int): Track = context.database.use {
+    fun getTrack(id: Int): Track = context!!.database.use {
         select("Track").where("Id = $id")
             .parseSingle(object: MapRowParser<Track>{
                 override fun parseRow(columns: Map<String, Any?>): Track {
@@ -49,7 +55,7 @@ class TrackRepository(val context: Context) {
                 }
             })
     }
-    fun getSongCount(): Int = context.database.use {
+    fun getSongCount(): Int = context!!.database.use {
         select("TrackCount").limit(1)
             .parseSingle(object : MapRowParser<Int>{
                 override fun parseRow(columns: Map<String, Any?>): Int {
@@ -59,7 +65,7 @@ class TrackRepository(val context: Context) {
             })
     }
 
-    fun insertTrack(track: Track) = context.database.use {
+    fun insertTrack(track: Track) = context!!.database.use {
         insert("Track",
             "Id" to track.id,
             "Title" to track.title,
@@ -68,16 +74,25 @@ class TrackRepository(val context: Context) {
             "Duration" to track.length,
             "FilePath" to track.songPath)
     }
-    fun createSongCount(songCount: Int) = context.database.use {
+    fun createSongCount(songCount: Int) = context!!.database.use {
+        delete("TrackCount")
         insert("TrackCount",
             "Id" to 0,
             "TotalSongs" to songCount)
     }
-
-    fun delete(table: Any?) = context.database.use {
-        delete("Track", whereClause = "id = {$table.id}")
-    }
-    fun delete() = context.database.use {
+    fun delete() = context!!.database.use {
         delete("Track")
+    }
+
+    fun getLibraryCount(): Int? {
+        context!!.database.use {
+            select("TrackCount").limit(1)
+                .parseList (object : MapRowParser<Int> {
+                    override fun parseRow(columns: Map<String, Any?>): Int {
+                        return columns.getValue("TotalSongs").toString().toInt()
+                    }
+                })
+        }
+        return 0
     }
 }

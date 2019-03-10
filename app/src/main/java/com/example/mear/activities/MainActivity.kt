@@ -1,50 +1,91 @@
 package com.example.mear.activities
 
-import android.graphics.Color
+import android.app.ActivityManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.BitmapFactory
-import android.media.MediaPlayer
+import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 
 import java.lang.Exception
 import java.lang.Runnable
 import java.util.concurrent.TimeUnit
+import kotlin.io.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_play_controls.*
 import kotlinx.android.synthetic.main.fragment_track_cover.*
 import kotlinx.android.synthetic.main.fragment_track_details.*
 import kotlinx.android.synthetic.main.fragment_track_elapsing.*
 import kotlinx.android.synthetic.main.fragment_track_flow.*
-import kotlin.io.*
-import kotlin.random.Random
 
+import org.jetbrains.anko.image
+import org.jetbrains.anko.imageBitmap
+
+import com.example.mear.playback.service.MusicService
 import com.example.mear.R
-import com.example.mear.repositories.TrackRepository
+import com.example.mear.models.PlayControls
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class MainActivity : AppCompatActivity() {
+
+    private var musicService: MusicService? = null
+    private var serviceBinded: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+
         initialize()
+    }
+    override fun onStop() {
+        super.onStop()
+        try {
+            if (serviceBinded == null || serviceBinded!! == false) {
+                unbindService(mConnection)
+                serviceBinded = true
+            }
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            if (serviceBinded!!.equals(null) || serviceBinded!! == false  ) {
+                unbindService(mConnection)
+                serviceBinded = true
+            }
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
     }
 
 
     private fun initialize() {
-        songCount = TrackRepository(this).getSongCount()
-        currentSong = fetchSongIndex(PlayTypes.PlaySong)
         TrackElapsing.progress = 0
         TrackElapsing.max = 100
-        initializeMediaPlayer()
 
-        initializeClickListeners()
-        initializeCompletionListener()
+        try {
+            initializeServices()
+            initializeClickListeners()
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
     }
     private fun initializeClickListeners() {
         PlayTrack.setOnClickListener {
@@ -62,8 +103,6 @@ class MainActivity : AppCompatActivity() {
         SettingsLink.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             try {
-
-
                 startActivity(intent)
             }
             catch (ex: Exception) {
@@ -72,19 +111,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun initializeCompletionListener() {
-        trackPlayer!!.setOnCompletionListener {
-            playNextSongTrack()
-        }
-    }
-    private fun initializeMediaPlayer() {
-        if (trackPlayer == null) {
-            trackPlayer = MediaPlayer()
-            playerInitialized = true
-            val tr = TrackRepository(this).getTrack(currentSong!!)
-            trackPlayer!!.setDataSource(tr.songPath)
-            trackPlayer!!.prepare()
-        }
+    private fun initializeServices() {
+        doBindService()
     }
 
     private fun toggleShuffle() {
@@ -108,12 +136,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playSongTrack() {
-        PlayTrack.isEnabled = true
+        PlayTrack.isEnabled = false
         try {
-            if (!trackPlayer!!.isPlaying) {
-                trackPlayer!!.start()
+            if (!musicService!!.isPlaying()) {
+                musicService!!.playSongTrack()
             } else {
-                trackPlayer!!.pause()
+                musicService!!.pauseSongTrack()
             }
             configureTrackDisplay()
         }
@@ -125,16 +153,9 @@ class MainActivity : AppCompatActivity() {
     private fun playNextSongTrack() {
         NextTrack.isEnabled = false
         try {
-            currentSong = fetchSongIndex(PlayTypes.PlayNextSong)
+            val controls = PlayControls(shuffleOn!!)
+            musicService!!.playNextTrack(controls)
 
-            if (trackPlayer!!.isPlaying) {
-                trackPlayer!!.stop()
-            }
-
-            trackPlayer!!.reset()
-            trackPlayer!!.setDataSource(TrackRepository(this).getTrack(currentSong!!).songPath)
-            trackPlayer!!.prepare()
-            trackPlayer!!.start()
             configureTrackDisplay()
         }
         catch (ex: Exception) {
@@ -146,16 +167,9 @@ class MainActivity : AppCompatActivity() {
     private fun playPreviousSongTrack() {
         PreviousTrack.isEnabled = false
         try {
-            currentSong = fetchSongIndex(PlayTypes.PlayPreviousSong)
+            val controls = PlayControls(shuffleOn!!)
+            musicService!!.playPreviousTrack(controls)
 
-            if (trackPlayer!!.isPlaying) {
-                trackPlayer!!.stop()
-            }
-
-            trackPlayer!!.reset()
-            trackPlayer!!.setDataSource(TrackRepository(this).getTrack(currentSong!!).songPath)
-            trackPlayer!!.prepare()
-            trackPlayer!!.start()
             configureTrackDisplay()
         }
         catch (ex: Exception) {
@@ -166,54 +180,60 @@ class MainActivity : AppCompatActivity() {
     }
     private fun configureTrackDisplay() {
         try {
-            configurePlayControlsDisplay()
-            val currTrack = TrackRepository(this).getTrack(currentSong!!)
-            val trackTitle = currTrack.title
-            val artistTitle = currTrack.artist
-            val albumTitle = currTrack.album
-            val trackDuration = currTrack.length
-            var trackCover: ByteArray? = null
-            val dur = String.format(
-                "%02d:%02d", TimeUnit.SECONDS.toMinutes(trackDuration.toLong()),
-                (trackDuration % 60)
-            )
+            runOnUiThread {
+                configurePlayControlsDisplay()
+                val currTrack = musicService!!.getCurrentTrack()
+                val trackTitle = currTrack.title
+                val artistTitle = currTrack.artist
+                val albumTitle = currTrack.album
+                val trackDuration = currTrack.length
+                var trackCover: ByteArray? = null
+                val dur = String.format(
+                    "%02d:%02d", TimeUnit.SECONDS.toMinutes(trackDuration.toLong()),
+                    (trackDuration % 60)
+                )
 
-            val mmr = MediaMetadataRetriever()
-            mmr.setDataSource(currTrack.songPath)
+                val mmr = MediaMetadataRetriever()
+                mmr.setDataSource(currTrack.songPath)
 
-            if (mmr.embeddedPicture != null) {
-                trackCover = mmr.embeddedPicture
-            }
-            updateTrackProgress()
+                if (mmr.embeddedPicture != null) {
+                    trackCover = mmr.embeddedPicture
+                }
+                updateTrackProgress()
 
-            TrackTitle.text = null
-            ArtistTitle.text = null
-            AlbumTitle.text = null
-            CurrentPosition.text = null
-            TrackCover.setImageBitmap(null)
+                resetControls()
 
-            TrackTitle.text = trackTitle
-            ArtistTitle.text = artistTitle
-            AlbumTitle.text = albumTitle
-            TrackDuration.text = dur
-            if (trackCover != null) {
-                val songImage = BitmapFactory
-                    .decodeByteArray(trackCover, 0, trackCover.size)
-                TrackCover.setImageBitmap(songImage)
+
+                TrackTitle.text = trackTitle
+                ArtistTitle.text = artistTitle
+                AlbumTitle.text = albumTitle
+                TrackDuration.text = dur
+                if (trackCover != null) {
+                    val songImage = BitmapFactory
+                        .decodeByteArray(trackCover, 0, trackCover.size)
+                    TrackCover.imageBitmap = songImage
+                }
             }
         }
         catch (ex: Exception) {
             val msg = ex.message
         }
     }
+    private fun resetControls() {
+        TrackTitle!!.text = null
+        ArtistTitle!!.text = null
+        AlbumTitle!!.text = null
+        CurrentPosition!!.text = null
+        TrackCover!!.imageBitmap = null
+    }
     private fun updateTrackProgress() {
-        musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 100)
+        musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 250)
     }
     private fun configurePlayControlsDisplay() {
         PlayTrack.background = null
         PlayTrack.colorFilter = null
 
-        if (!trackPlayer!!.isPlaying) {
+        if (!musicService!!.isPlaying()) {
             PlayTrack.setImageResource(android.R.drawable.ic_media_pause)
             PlayTrack.setColorFilter(Color.RED)
         }
@@ -223,51 +243,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchSongIndex(playType: PlayTypes): Int {
-        var songIndex: Int? = null
 
-        try {
-            when (playType) {
-                PlayTypes.PlayPreviousSong -> {
-                    songIndex = songCount
-                    if (currentSong!! != 0) {
-                        if (!shuffleOn!!) {
-                            songIndex = currentSong!!.dec()
-                        }
-                        else {
-                            songIndex = Random.nextInt(0, songCount!!)
-                        }
-                    }
-                }
-                PlayTypes.PlaySong -> {
-                    songIndex = Random.nextInt(0, songCount!!)
-                }
-                PlayTypes.PlayNextSong -> {
-                    songIndex = 0
-                    if (currentSong!! != songCount!!) {
-                        if (!shuffleOn!!) {
-                            songIndex = currentSong!!.inc()
-                        }
-                        else {
-                            songIndex = Random.nextInt(0, songCount!!)
-                        }
-                    }
-                }
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
             }
         }
-        catch (ex: Exception) {
-            val exMsg = ex.message
-            println(exMsg)
-        }
-
-        return songIndex!!
+        return false
     }
 
     private var musicTrackTimeUpdateTask = object: Runnable {
        override fun run() {
+
+           try {
            var newPosition = 0
-           val currentPosition = trackPlayer!!.currentPosition / 1000
-           val totalDuration = trackPlayer!!.duration / 1000
+           val currentPosition = musicService!!.currentPositionOfTrack() / 1000
+           val totalDuration = musicService!!.durationOfTrack() / 1000
            newPosition = (((currentPosition).toDouble() / totalDuration) * 100).toInt()
            val dur = String.format(
                "%02d:%02d", TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
@@ -277,18 +271,69 @@ class MainActivity : AppCompatActivity() {
 
            TrackElapsing.progress = newPosition
 
-           musicHandler!!.postDelayed(this, 100)
+           if (TrackCover.image  == null && musicService!!.isPlaying()) {
+               configureTrackDisplay()
+           }
+
+           musicHandler!!.postDelayed(this, 250)
+       }
+           catch (ex: Exception) {
+                   val exMsg = ex.message
+           }
        }
     }
 
-    private var musicHandler: Handler? = Handler()
-    private var trackPlayer: MediaPlayer? = null
-    private var currentSong: Int? = null
-    private var playerInitialized: Boolean? = false
-    private var shuffleOn: Boolean? = false
-    private var songCount: Int? = null
+    private val mConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            resetControls()
 
-    private enum class PlayTypes {
-        PlayNextSong, PlaySong, PlayPreviousSong
+            runBlocking {
+                val demo = launch {
+                    musicService = (service as MusicService.LocalBinder).service
+                }
+                demo.start()
+            }
+            if (musicService != null) {
+                if (musicService!!.isPlaying()) {
+                    configureTrackDisplay()
+                }
+            }
+
+            Toast.makeText(
+                this@MainActivity, "Music Service Started",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            resetControls()
+            Toast.makeText(
+                this@MainActivity, "Music Service Stopped",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
+
+
+    fun doBindService() {
+        val intent = Intent(this, MusicService::class.java)
+        if (isServiceRunning(MusicService::class.java)) {
+            val suc = "Service is already running"
+        }
+        else {
+            startService(intent)
+        }
+
+        var result = bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+        if (result) {
+        }
+        else {
+        }
+    }
+
+
+
+    private var musicHandler: Handler? = Handler()
+    private var shuffleOn: Boolean? = false
+
 }

@@ -15,15 +15,12 @@
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.mear.activities.MainActivity" />
         </activity>
-        <activity
-            android:name=".activities.fdh"
-            android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"
@@ -35,6 +32,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".playback.service.MusicService" />
     </application>
 
 </manifest>
