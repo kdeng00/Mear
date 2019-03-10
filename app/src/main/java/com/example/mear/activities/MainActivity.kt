@@ -17,6 +17,8 @@ import android.widget.Toast
 import java.lang.Exception
 import java.lang.Runnable
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlin.io.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_play_controls.*
@@ -28,11 +30,10 @@ import kotlinx.android.synthetic.main.fragment_track_flow.*
 import org.jetbrains.anko.image
 import org.jetbrains.anko.imageBitmap
 
+import com.example.mear.listeners.TrackElaspingChange
 import com.example.mear.playback.service.MusicService
-import com.example.mear.R
 import com.example.mear.models.PlayControls
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import com.example.mear.R
 
 
 class MainActivity : AppCompatActivity() {
@@ -86,6 +87,14 @@ class MainActivity : AppCompatActivity() {
         }
         catch (ex: Exception) {
             val exMsg = ex.message
+        }
+    }
+    private fun initializeChangeListeners() {
+        val newListener = TrackElaspingChange(TrackElapsing)
+        if (musicService != null) {
+            newListener.musicService = musicService
+            newListener.initialize()
+            TrackElapsing.setOnSeekBarChangeListener(newListener)
         }
     }
     private fun initializeClickListeners() {
@@ -280,26 +289,20 @@ class MainActivity : AppCompatActivity() {
 
     private var musicTrackTimeUpdateTask = object: Runnable {
        override fun run() {
-
            try {
-           var newPosition = 0
-           val currentPosition = musicService!!.currentPositionOfTrack() / 1000
-           val totalDuration = musicService!!.durationOfTrack() / 1000
-           newPosition = (((currentPosition).toDouble() / totalDuration) * 100).toInt()
-           val dur = String.format(
-               "%02d:%02d", TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
-               (currentPosition % 60)
-           )
-           CurrentPosition.text = dur
+               val currentPosition = musicService!!.currentPositionOfTrack() / 1000
+               val dur = String.format( "%02d:%02d",
+                                                                TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
+                                                                (currentPosition % 60) )
 
-           TrackElapsing.progress = newPosition
+               CurrentPosition.text = dur
 
-           if (TrackCover.image  == null && musicService!!.isPlaying()) {
-               configureTrackDisplay()
+               if (TrackCover.image  == null && musicService!!.isPlaying()) {
+                   configureTrackDisplay()
+               }
+
+               musicHandler!!.postDelayed(this, 250)
            }
-
-           musicHandler!!.postDelayed(this, 250)
-       }
            catch (ex: Exception) {
                    val exMsg = ex.message
            }
@@ -313,6 +316,7 @@ class MainActivity : AppCompatActivity() {
             runBlocking {
                 val demo = launch {
                     musicService = (service as MusicService.LocalBinder).service
+                    initializeChangeListeners()
                 }
                 demo.start()
             }
@@ -321,11 +325,6 @@ class MainActivity : AppCompatActivity() {
                     configureTrackDisplay()
                 }
             }
-
-            Toast.makeText(
-                this@MainActivity, "Music Service Started",
-                Toast.LENGTH_SHORT
-            ).show()
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
