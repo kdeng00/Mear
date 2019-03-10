@@ -24,6 +24,7 @@ class MusicService: Service() {
     private var trackPlayer: MediaPlayer? = null
     private  var currentSongIndex: Int? = null
     private var shuffleOn: Boolean? = false
+    private var repeatOn: Boolean? = false
     private val mBinder = LocalBinder()
     private val seconds = 4
 
@@ -131,6 +132,7 @@ class MusicService: Service() {
     }
     fun configureControl(controls: PlayControls) {
         shuffleOn = controls.shuffleOn
+        repeatOn = controls.repeatOn
     }
     fun playNextTrack(controls: PlayControls) {
         try {
@@ -159,6 +161,9 @@ class MusicService: Service() {
 
     private fun fetchSongIndex(playType: PlayTypes): Int {
         var songIndex: Int? = currentSongIndex
+        if (repeatOn!!) {
+            return songIndex!!
+        }
         val songCount = retrieveSongCount()
 
         try {
@@ -259,9 +264,9 @@ class MusicService: Service() {
     private fun retrieveSongCount(): Int? {
 
         try {
-            var db  = DatabaseManager(this)
+            //var db  = DatabaseManager(this)
             var trackDb = TrackRepository(this)
-            val count = trackDb.getSongCount()
+            val count = TrackRepository(this).getSongCount()
 
             return count
         }

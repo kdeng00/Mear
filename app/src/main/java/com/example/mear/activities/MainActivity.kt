@@ -38,7 +38,8 @@ import kotlinx.coroutines.runBlocking
 class MainActivity : AppCompatActivity() {
 
     private var musicService: MusicService? = null
-    private var serviceBinded: Boolean? = null
+    private var serviceBinded: Boolean? = false
+    private var repeatOn: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,6 +101,9 @@ class MainActivity : AppCompatActivity() {
         ShuffleTracks.setOnClickListener {
             toggleShuffle()
         }
+        RepeatTrack.setOnClickListener {
+            toggleRepeat()
+        }
         SettingsLink.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             try {
@@ -134,6 +138,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun toggleRepeat() {
+        val repeatText = RepeatTrack.text.toString()
+        val on = resources.getString(R.string.repeat_on)
+        val off = resources.getString(R.string.repeat_off)
+        when (repeatText) {
+            on -> {
+                repeatOn = false
+                RepeatTrack.text = off
+            }
+            off -> {
+                repeatOn = true
+                RepeatTrack.text = on
+            }
+            else -> {
+                repeatOn = false
+                RepeatTrack.text = off
+            }
+        }
+    }
 
     private fun playSongTrack() {
         PlayTrack.isEnabled = false
@@ -153,7 +176,7 @@ class MainActivity : AppCompatActivity() {
     private fun playNextSongTrack() {
         NextTrack.isEnabled = false
         try {
-            val controls = PlayControls(shuffleOn!!)
+            val controls = PlayControls(shuffleOn!!, repeatOn!!)
             musicService!!.playNextTrack(controls)
 
             configureTrackDisplay()
@@ -167,7 +190,7 @@ class MainActivity : AppCompatActivity() {
     private fun playPreviousSongTrack() {
         PreviousTrack.isEnabled = false
         try {
-            val controls = PlayControls(shuffleOn!!)
+            val controls = PlayControls(shuffleOn!!, repeatOn!!)
             musicService!!.playPreviousTrack(controls)
 
             configureTrackDisplay()
@@ -335,5 +358,4 @@ class MainActivity : AppCompatActivity() {
 
     private var musicHandler: Handler? = Handler()
     private var shuffleOn: Boolean? = false
-
 }

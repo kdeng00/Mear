@@ -1,4 +1,4 @@
 package com.example.mear.models
 
-data class PlayControls(val shuffleOn: Boolean) {
+data class PlayControls(val shuffleOn: Boolean, val repeatOn: Boolean) {
 }
