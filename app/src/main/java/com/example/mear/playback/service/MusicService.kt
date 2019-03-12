@@ -10,10 +10,12 @@ import android.widget.Toast
 import java.lang.Exception
 import kotlin.random.Random
 
+import com.example.mear.constants.ControlTypes
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
 import com.example.mear.models.PlayControls
 import com.example.mear.models.Track
+import com.example.mear.repositories.ShuffleRepository
 import com.example.mear.repositories.TrackRepository
 
 
@@ -21,7 +23,7 @@ class MusicService: Service() {
 
     private var trackPlayer: MediaPlayer? = null
     private  var currentSongIndex: Int? = null
-    private var shuffleOn: Boolean? = false
+    private var shuffleOn: Boolean? = null
     private var repeatOn: Boolean? = false
     private val mBinder = LocalBinder()
     private val seconds = 4
@@ -84,7 +86,21 @@ class MusicService: Service() {
     }
     fun playPreviousTrack() {
         try {
-
+            val duration = trackPlayer!!.currentPosition / 1000
+            shuffleOn = retrieveShuffleMode()
+            trackPlayer!!.reset()
+            if (duration > seconds) {
+                trackPlayer!!.setDataSource(TrackRepository(this).getTrack(currentSongIndex!!).songPath)
+                trackPlayer!!.prepare()
+                trackPlayer!!.start()
+            }
+            else {
+                val previousTrackNumber = fetchSongIndex(PlayTypes.PlayPreviousSong)
+                val track = TrackRepository(this).getTrack(previousTrackNumber)
+                trackPlayer!!.setDataSource(track.songPath)
+                trackPlayer!!.prepare()
+                trackPlayer!!.start()
+            }
         }
         catch (ex: Exception) {
             val exMsg = ex.message
@@ -93,6 +109,7 @@ class MusicService: Service() {
     fun playNextTrack() {
         try {
             trackPlayer!!.reset()
+            shuffleOn = retrieveShuffleMode()
             var nextTrack = fetchSongIndex(PlayTypes.PlayNextSong)
             val track = TrackRepository(this).getTrack(nextTrack)
             trackPlayer!!.setDataSource(track.songPath)
@@ -243,8 +260,46 @@ class MusicService: Service() {
         val paths = mp3Paths.allSongs
         val trackMgr = TrackManager(paths!!)
         trackMgr.configureTracks(this)
+        initializeShuffleMode()
+    }
+    private fun initializeShuffleMode() {
+        try {
+            val shuffleMode = ShuffleRepository(this).getShuffleMode()
+            when (shuffleMode) {
+                ControlTypes.SHUFFLE_ON -> {
+                    shuffleOn = true
+                }
+                ControlTypes.SHUFFLE_OFF -> {
+                    shuffleOn = false
+                }
+                null -> {
+                    shuffleOn = false
+                }
+            }
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
     }
 
+
+    private fun retrieveShuffleMode(): Boolean? {
+        val shuffleMode = ShuffleRepository(this).getShuffleMode()
+        when (shuffleMode) {
+            ControlTypes.SHUFFLE_ON -> {
+                return  true
+            }
+            ControlTypes.SHUFFLE_OFF -> {
+                return false
+            }
+            null -> {
+                return null
+            }
+            else -> {
+                return false
+            }
+        }
+    }
 
     private fun trackRepositoryEmpty(): Boolean? {
         val trackCount = retrieveSongCount()

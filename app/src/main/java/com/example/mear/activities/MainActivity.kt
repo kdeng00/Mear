@@ -34,6 +34,8 @@ import com.example.mear.listeners.TrackElaspingChange
 import com.example.mear.playback.service.MusicService
 import com.example.mear.models.PlayControls
 import com.example.mear.R
+import com.example.mear.constants.ControlTypes
+import com.example.mear.repositories.ShuffleRepository
 
 
 class MainActivity : AppCompatActivity() {
@@ -82,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         TrackElapsing.max = 100
 
         try {
+            initializeShuffle()
             initializeServices()
             initializeClickListeners()
         }
@@ -115,17 +118,22 @@ class MainActivity : AppCompatActivity() {
         }
         SettingsLink.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
-            try {
-                startActivity(intent)
-            }
-            catch (ex: Exception) {
-                val exMsg = ex.message
-                println(exMsg)
-            }
+            startActivity(intent)
         }
     }
     private fun initializeServices() {
         doBindService()
+    }
+    private fun initializeShuffle() {
+        val shuffleMode = ShuffleRepository(this).getShuffleMode()
+        when (shuffleMode) {
+            ControlTypes.SHUFFLE_ON -> {
+                ShuffleTracks.setText(R.string.shuffle_on)
+            }
+            ControlTypes.SHUFFLE_OFF -> {
+                ShuffleTracks.setText(R.string.shuffle_off)
+            }
+        }
     }
 
     private fun toggleShuffle() {
@@ -146,6 +154,8 @@ class MainActivity : AppCompatActivity() {
                 ShuffleTracks.setText(R.string.shuffle_off)
             }
         }
+        val playC  =  PlayControls(shuffleOn!!, null)
+        ShuffleRepository(this).updateShuffleMode(playC)
     }
     private fun toggleRepeat() {
         val repeatText = RepeatTrack.text.toString()
@@ -185,8 +195,9 @@ class MainActivity : AppCompatActivity() {
     private fun playNextSongTrack() {
         NextTrack.isEnabled = false
         try {
-            val controls = PlayControls(shuffleOn!!, repeatOn!!)
-            musicService!!.playNextTrack(controls)
+            //val controls = PlayControls(shuffleOn!!, repeatOn!!)
+            //musicService!!.playNextTrack(controls)
+            musicService!!.playNextTrack()
 
             configureTrackDisplay()
         }
@@ -199,8 +210,9 @@ class MainActivity : AppCompatActivity() {
     private fun playPreviousSongTrack() {
         PreviousTrack.isEnabled = false
         try {
-            val controls = PlayControls(shuffleOn!!, repeatOn!!)
-            musicService!!.playPreviousTrack(controls)
+            //val controls = PlayControls(shuffleOn!!, repeatOn!!)
+            //musicService!!.playPreviousTrack(controls)
+            musicService!!.playPreviousTrack()
 
             configureTrackDisplay()
         }
@@ -231,7 +243,6 @@ class MainActivity : AppCompatActivity() {
                 if (mmr.embeddedPicture != null) {
                     trackCover = mmr.embeddedPicture
                 }
-                updateTrackProgress()
 
                 resetControls()
 
@@ -259,7 +270,7 @@ class MainActivity : AppCompatActivity() {
         TrackCover!!.imageBitmap = null
     }
     private fun updateTrackProgress() {
-        musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 250)
+        musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 100)
     }
     private fun configurePlayControlsDisplay() {
         PlayTrack.background = null
@@ -301,7 +312,7 @@ class MainActivity : AppCompatActivity() {
                    configureTrackDisplay()
                }
 
-               musicHandler!!.postDelayed(this, 250)
+               musicHandler!!.postDelayed(this, 100)
            }
            catch (ex: Exception) {
                    val exMsg = ex.message
@@ -317,6 +328,7 @@ class MainActivity : AppCompatActivity() {
                 val demo = launch {
                     musicService = (service as MusicService.LocalBinder).service
                     initializeChangeListeners()
+                    updateTrackProgress()
                 }
                 demo.start()
             }
