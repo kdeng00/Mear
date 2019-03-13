@@ -35,14 +35,17 @@ import com.example.mear.playback.service.MusicService
 import com.example.mear.models.PlayControls
 import com.example.mear.R
 import com.example.mear.constants.ControlTypes
+import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
 
 
 class MainActivity : AppCompatActivity() {
 
     private var musicService: MusicService? = null
+    private var musicHandler: Handler? = Handler()
     private var serviceBinded: Boolean? = false
     private var repeatOn: Boolean? = false
+    private var shuffleOn: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +89,7 @@ class MainActivity : AppCompatActivity() {
         try {
             window.statusBarColor = resources.getColor(R.color.track_seek)
             initializeShuffle()
+            initializeRepeat()
             initializeServices()
             initializeClickListeners()
         }
@@ -136,6 +140,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun initializeRepeat() {
+        val repeatMode = RepeatRepository(this).getRepeatMode()
+        when (repeatMode) {
+            ControlTypes.REPEAT_ON -> {
+                RepeatTrack.text = resources.getText(R.string.repeat_on)
+            }
+            ControlTypes.REPEAT_OFF -> {
+                RepeatTrack.text = resources.getText(R.string.repeat_off)
+            }
+        }
+    }
 
     private fun toggleShuffle() {
         val shuffleText = ShuffleTracks.text.toString()
@@ -176,6 +191,8 @@ class MainActivity : AppCompatActivity() {
                 RepeatTrack.text = off
             }
         }
+        val playC = PlayControls(null, repeatOn)
+        RepeatRepository(this).updateRepeatMode(playC)
     }
 
     private fun playSongTrack() {
@@ -196,8 +213,6 @@ class MainActivity : AppCompatActivity() {
     private fun playNextSongTrack() {
         NextTrack.isEnabled = false
         try {
-            //val controls = PlayControls(shuffleOn!!, repeatOn!!)
-            //musicService!!.playNextTrack(controls)
             musicService!!.playNextTrack()
 
             configureTrackDisplay()
@@ -211,8 +226,6 @@ class MainActivity : AppCompatActivity() {
     private fun playPreviousSongTrack() {
         PreviousTrack.isEnabled = false
         try {
-            //val controls = PlayControls(shuffleOn!!, repeatOn!!)
-            //musicService!!.playPreviousTrack(controls)
             musicService!!.playPreviousTrack()
 
             configureTrackDisplay()
@@ -246,7 +259,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 resetControls()
-
 
                 TrackTitle.text = trackTitle
                 ArtistTitle.text = artistTitle
@@ -365,9 +377,4 @@ class MainActivity : AppCompatActivity() {
         else {
         }
     }
-
-
-
-    private var musicHandler: Handler? = Handler()
-    private var shuffleOn: Boolean? = false
 }

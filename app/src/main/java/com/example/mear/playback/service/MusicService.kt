@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
+import android.support.v4.media.VolumeProviderCompat
 import android.widget.Toast
 
 import java.lang.Exception
@@ -15,8 +16,10 @@ import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
 import com.example.mear.models.PlayControls
 import com.example.mear.models.Track
+import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
 import com.example.mear.repositories.TrackRepository
+import java.util.*
 
 
 class MusicService: Service() {
@@ -178,6 +181,7 @@ class MusicService: Service() {
 
     private fun fetchSongIndex(playType: PlayTypes): Int {
         var songIndex: Int? = currentSongIndex
+        repeatOn = retrieveRepeatMode()
         if (repeatOn!!) {
             return songIndex!!
         }
@@ -261,6 +265,7 @@ class MusicService: Service() {
         val trackMgr = TrackManager(paths!!)
         trackMgr.configureTracks(this)
         initializeShuffleMode()
+        initializeRepeatMode()
     }
     private fun initializeShuffleMode() {
         try {
@@ -281,6 +286,25 @@ class MusicService: Service() {
             val exMsg = ex.message
         }
     }
+    private fun initializeRepeatMode() {
+        try {
+            val repeatMode = RepeatRepository(this).getRepeatMode()
+            when (repeatMode) {
+                ControlTypes.REPEAT_ON -> {
+                    repeatOn = true
+                }
+                ControlTypes.REPEAT_OFF -> {
+                    repeatOn = false
+                }
+                null -> {
+                    repeatOn = false
+                }
+            }
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+    }
 
 
     private fun retrieveShuffleMode(): Boolean? {
@@ -290,6 +314,23 @@ class MusicService: Service() {
                 return  true
             }
             ControlTypes.SHUFFLE_OFF -> {
+                return false
+            }
+            null -> {
+                return null
+            }
+            else -> {
+                return false
+            }
+        }
+    }
+    private fun retrieveRepeatMode(): Boolean? {
+        val repeatMode = RepeatRepository(this).getRepeatMode()
+        when (repeatMode) {
+            ControlTypes.REPEAT_ON -> {
+                return true
+            }
+            ControlTypes.REPEAT_OFF -> {
                 return false
             }
             null -> {

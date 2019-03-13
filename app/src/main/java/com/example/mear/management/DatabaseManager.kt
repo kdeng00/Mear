@@ -56,19 +56,25 @@ class DatabaseManager(ctx: Context): ManagedSQLiteOpenHelper(ctx, "Mear",
                 "Id" to INTEGER + PRIMARY_KEY + UNIQUE,
                 "Mode" to TEXT
             )
+            db!!.createTable(
+                "Repeat", true,
+                "Id" to INTEGER + PRIMARY_KEY + UNIQUE,
+                "Mode" to TEXT)
         }
         catch (ex: Exception) {
         }
         initializeShuffle(db)
+        initializeRepeat(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         try {
-        db!!.dropTable("Track")
-        db!!.dropTable("TrackCount")
-        db!!.dropTable("PlayCount")
-        db!!.dropTable("Settings")
-        db!!.dropTable("Shuffle")
+            db!!.dropTable("Track")
+            db!!.dropTable("TrackCount")
+            db!!.dropTable("PlayCount")
+            db!!.dropTable("Settings")
+            db!!.dropTable("Shuffle")
+            db!!.dropTable("Repeat")
         }
         catch (ex: Exception) {
         }
@@ -76,13 +82,12 @@ class DatabaseManager(ctx: Context): ManagedSQLiteOpenHelper(ctx, "Mear",
 
 
     private fun initializeShuffle(db: SQLiteDatabase?) {
-        try {
-            db!!.insert("Shuffle",
-                "Mode" to ControlTypes.SHUFFLE_OFF)
-        }
-        catch (ex: Exception) {
-            val exMsg = ex.message
-        }
+        db!!.insert("Shuffle",
+            "Mode" to ControlTypes.SHUFFLE_OFF)
+    }
+    private fun initializeRepeat(db: SQLiteDatabase?) {
+        db!!.insert("Repeat",
+            "Mode" to ControlTypes.REPEAT_OFF)
     }
 }
 
