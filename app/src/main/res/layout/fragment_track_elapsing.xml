@@ -12,6 +12,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/track_details"
+        android:thumbTint="@color/track_seek"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/TrackDuration"
         app:layout_constraintStart_toEndOf="@+id/CurrentPosition"
@@ -26,6 +28,7 @@
         android:layout_marginBottom="84dp"
         android:text="@string/track_start"
         android:textAlignment="viewStart"
+        android:textColor="@color/track_details"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -37,6 +40,7 @@
         android:layout_marginBottom="84dp"
         android:text="@string/track_end"
         android:textAlignment="textEnd"
+        android:textColor="@color/track_details"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

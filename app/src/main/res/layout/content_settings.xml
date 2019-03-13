@@ -25,6 +25,7 @@
                 android:layout_weight="1"
                 android:lineSpacingExtra="12sp"
                 android:text="@string/update_library"
+                android:textColor="@color/track_details"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

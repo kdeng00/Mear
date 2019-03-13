@@ -26,9 +26,14 @@ class SettingsActivity : AppCompatActivity() {
             updateLibrary()
         }
 
+        initialize()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+
+    private fun initialize() {
+        window.statusBarColor = resources.getColor(R.color.track_seek)
+    }
 
     private fun loadSongPaths(): MutableList<String> {
         val demoPath = Environment.getExternalStorageDirectory()

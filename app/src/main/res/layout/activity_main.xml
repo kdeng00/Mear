@@ -5,6 +5,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/color_background"
         tools:context=".activities.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -22,7 +23,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="324dp"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
+                android:background="@color/color_background"
                 android:baselineAligned="false"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
@@ -30,6 +31,7 @@
                 android:id="@+id/SettingsLink"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:background="@color/color_background"
                 android:layout_weight="1"
                 android:contentDescription="@string/settings_link"
                 app:srcCompat="@android:drawable/ic_menu_manage" />

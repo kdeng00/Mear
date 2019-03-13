@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         TrackElapsing.max = 100
 
         try {
+            window.statusBarColor = resources.getColor(R.color.track_seek)
             initializeShuffle()
             initializeServices()
             initializeClickListeners()
