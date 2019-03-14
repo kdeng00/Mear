@@ -21,11 +21,18 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:layout_width="324dp"
+                android:layout_width="170dp"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/color_background"
                 android:baselineAligned="false"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            <ImageButton
+                android:id="@+id/SongView"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                tools:srcCompat="@tools:sample/backgrounds/scenic[6]" />
 
             <ImageButton
                 android:id="@+id/SettingsLink"

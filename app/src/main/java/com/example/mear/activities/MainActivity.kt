@@ -1,24 +1,15 @@
 package com.example.mear.activities
 
-import android.app.ActivityManager
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Handler
-import android.os.IBinder
-import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 
 import java.lang.Exception
 import java.lang.Runnable
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.io.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_play_controls.*
@@ -27,21 +18,18 @@ import kotlinx.android.synthetic.main.fragment_track_details.*
 import kotlinx.android.synthetic.main.fragment_track_elapsing.*
 import kotlinx.android.synthetic.main.fragment_track_flow.*
 
-import org.jetbrains.anko.image
 import org.jetbrains.anko.imageBitmap
 
+import com.example.mear.constants.ControlTypes
 import com.example.mear.listeners.TrackElaspingChange
-import com.example.mear.playback.service.MusicService
 import com.example.mear.models.PlayControls
 import com.example.mear.R
-import com.example.mear.constants.ControlTypes
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseServiceActivity() {
 
-    private var musicService: MusicService? = null
     private var musicHandler: Handler? = Handler()
     private var serviceBinded: Boolean? = false
     private var repeatOn: Boolean? = false
@@ -97,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             val exMsg = ex.message
         }
     }
-    private fun initializeChangeListeners() {
+    override fun initializeChangeListeners() {
         val newListener = TrackElaspingChange(TrackElapsing)
         if (musicService != null) {
             newListener.musicService = musicService
@@ -120,6 +108,9 @@ class MainActivity : AppCompatActivity() {
         }
         RepeatTrack.setOnClickListener {
             toggleRepeat()
+        }
+        SongView.setOnClickListener {
+            startActivity(Intent(this, SongViewActivity::class.java))
         }
         SettingsLink.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
@@ -236,7 +227,7 @@ class MainActivity : AppCompatActivity() {
         }
         PreviousTrack.isEnabled = true
     }
-    private fun configureTrackDisplay() {
+    override fun configureTrackDisplay() {
         try {
             runOnUiThread {
                 configurePlayControlsDisplay()
@@ -275,14 +266,14 @@ class MainActivity : AppCompatActivity() {
             val msg = ex.message
         }
     }
-    private fun resetControls() {
+    override fun resetControls() {
         TrackTitle!!.text = null
         ArtistTitle!!.text = null
         AlbumTitle!!.text = null
         CurrentPosition!!.text = null
         TrackCover!!.imageBitmap = null
     }
-    private fun updateTrackProgress() {
+    override fun updateTrackProgress() {
         musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 100)
     }
     private fun configurePlayControlsDisplay() {
@@ -299,17 +290,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-
-        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
-    }
 
     private var musicTrackTimeUpdateTask = object: Runnable {
        override fun run() {
@@ -331,50 +311,5 @@ class MainActivity : AppCompatActivity() {
                    val exMsg = ex.message
            }
        }
-    }
-
-    private val mConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            resetControls()
-
-            runBlocking {
-                val demo = launch {
-                    musicService = (service as MusicService.LocalBinder).service
-                    initializeChangeListeners()
-                    updateTrackProgress()
-                }
-                demo.start()
-            }
-            if (musicService != null) {
-                if (musicService!!.isPlaying()) {
-                    configureTrackDisplay()
-                }
-            }
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            resetControls()
-            Toast.makeText(
-                this@MainActivity, "Music Service Stopped",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-
-    fun doBindService() {
-        val intent = Intent(this, MusicService::class.java)
-        if (isServiceRunning(MusicService::class.java)) {
-            val suc = "Service is already running"
-        }
-        else {
-            startService(intent)
-        }
-
-        var result = bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
-        if (result) {
-        }
-        else {
-        }
     }
 }
