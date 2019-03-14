@@ -1,10 +1,9 @@
 # Mear
 
-Music Player Android App
-
-## Getting Started
-
-### Dependencies
+Mear is a music player app for Android phone. 
+  
+## Dependencies
+* [anko](https://github.com/Kotlin/anko)
 
 ## Built with
 * [Kotlin](https://github.com/JetBrains/kotlin)
@@ -12,7 +11,7 @@ Music Player Android App
 
 ## Versioning
 
-currently in development and no version has been release
+Currently in development and no version has been released
 
 ## Authors
 * **Kun Deng** [amazing-username](https://github.com/amazing-username)
