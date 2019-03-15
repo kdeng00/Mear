@@ -9,11 +9,9 @@
     tools:showIn="@layout/activity_song_view">
 
 
-    <LinearLayout
-        android:id="@+id/SongViewList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trackList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-    </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
