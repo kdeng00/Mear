@@ -5,7 +5,6 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
-import android.support.v4.media.VolumeProviderCompat
 import android.widget.Toast
 
 import java.lang.Exception
@@ -19,7 +18,6 @@ import com.example.mear.models.Track
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
 import com.example.mear.repositories.TrackRepository
-import java.util.*
 
 
 class MusicService: Service() {
@@ -243,19 +241,24 @@ class MusicService: Service() {
 
 
     private fun initializeMediaPlayer() {
-        if (trackPlayer == null) {
-            trackPlayer = MediaPlayer()
-        }
-        if (trackRepositoryEmpty()!!) {
-            populateTrackRepository()
-        }
+        try {
+            if (trackPlayer == null) {
+                trackPlayer = MediaPlayer()
+            }
+            if (trackRepositoryEmpty()!!) {
+                populateTrackRepository()
+            }
 
-        currentSongIndex = Random.nextInt(0, TrackRepository(this).getSongCount())
-        val trackToPlay = TrackRepository(this).getTrack(currentSongIndex!!)
-        trackPlayer!!.setDataSource(trackToPlay.songPath)
-        trackPlayer!!.prepareAsync()
-        trackPlayer!!.setOnCompletionListener {
-            playNextTrack()
+            currentSongIndex = Random.nextInt(0, TrackRepository(this).getSongCount())
+            val trackToPlay = TrackRepository(this).getTrack(currentSongIndex!!)
+            trackPlayer!!.setDataSource(trackToPlay.songPath)
+            trackPlayer!!.prepareAsync()
+            trackPlayer!!.setOnCompletionListener {
+                playNextTrack()
+            }
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
         }
     }
     private  fun populateTrackRepository() {
@@ -345,6 +348,9 @@ class MusicService: Service() {
     private fun trackRepositoryEmpty(): Boolean? {
         val trackCount = retrieveSongCount()
 
+        if (trackCount!! < 1) {
+            return true
+        }
         when (trackCount) {
             null -> {
                 return true
@@ -361,7 +367,6 @@ class MusicService: Service() {
 
         try {
             //var db  = DatabaseManager(this)
-            var trackDb = TrackRepository(this)
             val count = TrackRepository(this).getSongCount()
 
             return count

@@ -1,9 +1,7 @@
 package com.example.mear.activities
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Handler
 
@@ -26,6 +24,8 @@ import com.example.mear.models.PlayControls
 import com.example.mear.R
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
+import com.example.mear.util.ConvertByteArray
+import com.example.mear.util.ExtractCover
 
 
 class MainActivity : BaseServiceActivity() {
@@ -242,12 +242,19 @@ class MainActivity : BaseServiceActivity() {
                     (trackDuration % 60)
                 )
 
+                var coverExt = ExtractCover(currTrack.songPath)
+
+                if (coverExt.hasCover()) {
+                    trackCover = coverExt.retrieveCover()
+                }
+               /**
                 val mmr = MediaMetadataRetriever()
                 mmr.setDataSource(currTrack.songPath)
 
                 if (mmr.embeddedPicture != null) {
                     trackCover = mmr.embeddedPicture
                 }
+                */
 
                 resetControls()
 
@@ -256,8 +263,8 @@ class MainActivity : BaseServiceActivity() {
                 AlbumTitle.text = albumTitle
                 TrackDuration.text = dur
                 if (trackCover != null) {
-                    val songImage = BitmapFactory
-                        .decodeByteArray(trackCover, 0, trackCover.size)
+                    val convertToBmp =  ConvertByteArray(trackCover!!)
+                    var songImage = convertToBmp.convertToBmp()
                     TrackCover.imageBitmap = songImage
                 }
             }

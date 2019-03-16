@@ -56,9 +56,11 @@ class MusicFiles (private val demoPath:  File) {
                 println(it.absolutePath)
                 if (!ignoreThisDirectory(it.absolutePath)) {
                     if (it.isFile) {
+                        /**
                         if (it.endsWith(FileTypes.Mp3)) {
                             pathList.add(it.absolutePath)
                         }
+                        */
                         if (it.extension.toString().equals(FileTypes.Mp3)) {
                             pathList.add(it.absolutePath)
                         }

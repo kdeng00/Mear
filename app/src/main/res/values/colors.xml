@@ -7,6 +7,6 @@
     <color name="color_player_not_initialized">#585858</color>
 
     <!-- Play Controls -->
-    <color name="track_details">#ffffff</color>
+    <color name="track_details">#FFFFFF</color>
     <color name="track_seek">#333399</color>
 </resources>

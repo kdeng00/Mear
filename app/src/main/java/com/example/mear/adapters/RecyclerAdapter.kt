@@ -1,63 +1,81 @@
-package com.example.mear.com.example.mear.adapters
+package com.example.mear.adapters
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.Adapter
-import android.view.LayoutInflater
-import android.widget.TextView
-import android.widget.ImageView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 
+import java.lang.Exception
+import kotlinx.android.synthetic.main.fragment_song_view.view.*
+
+import com.squareup.picasso.Picasso
+
+import com.example.mear.activities.SongViewActivity
+import com.example.mear.constants.Filenames
+import com.example.mear.inflate
 import com.example.mear.models.TrackItems
 import com.example.mear.R
 
-class RecyclerAdapter(private  val context: Context,
-                                                    private  val source: ArrayList<TrackItems>): BaseAdapter() {
+class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>) :
+                                                RecyclerView.Adapter<RecyclerAdapter.TrackItemsHolder>() {
 
-
-    private val inflater: LayoutInflater
-            = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
-
-    override fun getCount(): Int {
-        return source.size
+    override fun getItemCount(): Int {
+        return trackItemsSourceInit!!.size
     }
 
-    //2
-    override fun getItem(position: Int): Any {
-        return source[position]
+    override fun onBindViewHolder(holder: TrackItemsHolder, position: Int) {
+        val itemPhoto = trackItemsSourceInit!![position]
+        holder.bindTrackItems(itemPhoto)
     }
 
-    //3
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
+    override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackItemsHolder {
+        val inflatedView = parent.inflate(R.layout.fragment_song_view, false)
+        return TrackItemsHolder(inflatedView)
     }
 
-    //4
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        // Get view for row item
-        val rowView = inflater.inflate(R.layout.fragment_song_view, parent, false)
 
-        val trackTitleTextView = rowView.findViewById(R.id.trackTitle) as TextView
-
-// Get subtitle element
-        val trackArtistTextView= rowView.findViewById(R.id.trackArtist) as TextView
-
-// Get detail element
-        val trackCoverImageView = rowView.findViewById(R.id.trackCover) as ImageView
-
-        val track = getItem(position) as TrackItems
-
-// 2
-        trackTitleTextView.text = track.trackTitle
-        trackArtistTextView.text = track.artistTitle
-        trackCoverImageView.setImageBitmap(BitmapFactory.decodeByteArray(track.trackCover, 0, track.trackCover.size))
+    class TrackItemsHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+        private var view: View = v
+        private var trackItem: TrackItems? = null
+        private val imgWidth = 90
+        private val imgHeight = 90
 
 
-        return rowView
+        init {
+            v.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View) {
+            try {
+                val context = itemView.context
+                val showPhotoIntent = Intent(context, SongViewActivity::class.java)
+                //showPhotoIntent.putExtra(PHOTO_KEY, trackItem)
+                context.startActivity(showPhotoIntent)
+            }
+            catch (ex: Exception) {
+                val exMsg = ex.message
+            }
+        }
+
+        fun bindTrackItems(trackItems: TrackItems) {
+            try {
+                var context = view.context
+                this.trackItem = trackItems
+                view.trackTitle.text = trackItem!!.trackTitle
+                view.trackArtist.text = trackItem!!.artistTitle
+                val id = trackItems.id
+
+                var trackCoverPath = "${context.filesDir}/${Filenames.TRACK_COVERS}"
+                trackCoverPath = "${trackCoverPath}${id}.bmp"
+                Picasso.get().load(trackCoverPath).into(view.trackCover)
+            }
+            catch (ex:Exception) {
+                val exMsg = ex.message
+            }
+        }
+
+        companion object {
+            private val PHOTO_KEY = "PHOTO"
+        }
     }
 }
