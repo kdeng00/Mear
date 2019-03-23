@@ -9,6 +9,10 @@ Mear is a music player app for Android phone.
 * [Kotlin](https://github.com/JetBrains/kotlin)
 * Android Studio
 
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduct, and the process for submitting pull requests to to the project.
+
 ## Versioning
 
 Currently in development and no version has been released
