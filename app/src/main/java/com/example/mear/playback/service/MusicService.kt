@@ -65,6 +65,9 @@ class MusicService: Service() {
         return super.onUnbind(intent)
     }
 
+    fun playTrack(id: Int) {
+
+    }
 
     fun goToPosition(progress: Int) {
         trackPlayer!!.seekTo(progress)

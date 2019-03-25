@@ -10,13 +10,14 @@ import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_song_view.*
 import kotlinx.android.synthetic.main.content_song_view.*
 
+import com.example.mear.activities.BaseServiceActivity
 import com.example.mear.adapters.RecyclerAdapter
 import com.example.mear.models.TrackItems
 import com.example.mear.R
 import com.example.mear.repositories.TrackRepository
 import com.example.mear.util.ExtractCover
 
-class SongViewActivity : AppCompatActivity() {
+class SongViewActivity : BaseServiceActivity() {
     private var trackListItems = arrayListOf<TrackItems>()
     private lateinit var adapter: RecyclerAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -31,6 +32,7 @@ class SongViewActivity : AppCompatActivity() {
 
         try {
             window.statusBarColor = resources.getColor(R.color.track_seek)
+            doBindService()
             initializeAdapter()
         }
         catch (ex: Exception) {
@@ -57,9 +59,10 @@ class SongViewActivity : AppCompatActivity() {
             trackListItems = retrieveTrackItems()
 
             adapter = RecyclerAdapter(trackListItems)
+            adapter.musicService = musicService
             trackList.adapter = adapter
             trackList.setHasFixedSize(true)
-            //trackList.setItemViewCacheSize(20);
+            trackList.setItemViewCacheSize(20);
             //trackList.setDrawingCacheEnabled(true);
             //trackList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         }
@@ -102,8 +105,9 @@ class SongViewActivity : AppCompatActivity() {
             }
             */
             for (track in tracks) {
-                val cover = ExtractCover(track.songPath)
+                //val cover = ExtractCover(track.songPath)
                 var trackCover = ByteArray(0)
+                /**
                 if (cover.hasCover() && !done) {
                     if (index < max ) {
                         trackCover = cover.retrieveCover()
@@ -116,7 +120,7 @@ class SongViewActivity : AppCompatActivity() {
                 if (done) {
                     return trackItems
                 }
-
+                */
                 val trackItem = TrackItems(track.id, track.title, track.artist, trackCover!!)
                 trackItems.add(trackItem)
             }

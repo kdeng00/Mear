@@ -15,9 +15,12 @@ import com.example.mear.constants.Filenames
 import com.example.mear.inflate
 import com.example.mear.models.TrackItems
 import com.example.mear.R
+import com.example.mear.playback.service.MusicService
+import com.example.mear.repositories.TrackRepository
 
 class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>) :
                                                 RecyclerView.Adapter<RecyclerAdapter.TrackItemsHolder>() {
+    var musicService: MusicService? = null
 
     override fun getItemCount(): Int {
         return trackItemsSourceInit!!.size
@@ -30,12 +33,13 @@ class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>)
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackItemsHolder {
         val inflatedView = parent.inflate(R.layout.fragment_song_view, false)
-        return TrackItemsHolder(inflatedView)
+        return TrackItemsHolder(inflatedView, musicService!!)
     }
 
 
-    class TrackItemsHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    class TrackItemsHolder(v: View, musicService: MusicService) : RecyclerView.ViewHolder(v), View.OnClickListener {
         private var view: View = v
+        private var musicService: MusicService = musicService
         private var trackItem: TrackItems? = null
         private val imgWidth = 90
         private val imgHeight = 90
@@ -50,6 +54,8 @@ class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>)
                 val context = itemView.context
                 val showPhotoIntent = Intent(context, SongViewActivity::class.java)
                 //showPhotoIntent.putExtra(PHOTO_KEY, trackItem)
+                val id = trackItem!!.id
+                musicService.playTrack(id)
                 context.startActivity(showPhotoIntent)
             }
             catch (ex: Exception) {
