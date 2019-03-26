@@ -58,7 +58,11 @@ The project is always looking for people to help in anyway they can. The followi
 * Graphic Designers
 * Documenters
 
-### Attribution
+### Graphic Designers
+
+If you have anything that you produced and would to show case it, create a new issue giving a descriptive title and description regarding the resources you wish you present. Once someone responds and gives feedback fork the master branch of the project include the resources in the corresponding directories and make a pull request. The directories on where to places the resources will be included in the issue. After the pull request has been reviewed it will be included into the main branch and you will be credited
+
+## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
 available at [http://contributor-covenant.org/version/1/4][version]
