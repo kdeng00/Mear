@@ -58,8 +58,8 @@ class SongViewActivity : BaseServiceActivity() {
 
             trackListItems = retrieveTrackItems()
 
-            adapter = RecyclerAdapter(trackListItems)
-            adapter.musicService = musicService
+            adapter = RecyclerAdapter(trackListItems, this)
+            adapter.configureActivity(this)
             trackList.adapter = adapter
             trackList.setHasFixedSize(true)
             trackList.setItemViewCacheSize(20);
