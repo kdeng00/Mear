@@ -4,14 +4,14 @@
 <img src="logo/horizontal.png" width=40%>
 </h1>
 
-Mear is a music player app for Android phone. 
+Mear is a customizable music player app for Android
   
-## Dependencies
-* [anko](https://github.com/Kotlin/anko)
-
 ## Built with
 * [Kotlin](https://github.com/JetBrains/kotlin)
 * Android Studio
+* Gradle
+* [anko](https://github.com/Kotlin/anko)
+* Picasso
 
 ## Contributing
 
@@ -21,8 +21,9 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduc
 
 Currently in development and no version has been released
 
-## Authors
-* **Kun Deng** [amazing-username](https://github.com/amazing-username)
+## Contributors
+* **Kun Deng** [amazing-username](https://github.com/amazing-username) - *Project Manager* 
+* [zularizal](https://github.com/zularizal) - *Graphic Designer* 
 
 ## License
 
