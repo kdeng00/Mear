@@ -24,10 +24,21 @@ import com.example.mear.models.TrackItems
 import com.example.mear.R
 import com.example.mear.playback.service.MusicService
 import com.example.mear.repositories.TrackRepository
+//import android.R
 
-class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>, private var act: Activity) :
-                                                RecyclerView.Adapter<RecyclerAdapter.TrackItemsHolder>(),
-                                                Application.ActivityLifecycleCallbacks {
+
+
+//class RecyclerAdapter(private val mOnClickListenerI: trackItemClickListener,  private  val trackItemsSourceInit: ArrayList<TrackItems>) :
+//class RecyclerAdapter(private val mOnClickListenerI: trackItemClickListener,  private  val trackItemsSourceInit: ArrayList<TrackItems>) :
+class RecyclerAdapter(val mOnClickListenerI: (TrackItems) -> Unit ,  private  val trackItemsSourceInit: ArrayList<TrackItems>) :
+                                                RecyclerView.Adapter<RecyclerView.ViewHolder>()
+                                                //Application.ActivityLifecycleCallbacks {
+{
+
+    //private val mOnClickListenerI: trackItemClickListener? = null
+    private val mOnClick = mOnClickListenerI
+
+    /**
     override fun onActivityPaused(activity: Activity?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -56,32 +67,48 @@ class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>,
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    var activityInst: Activity? = act
-    var musicService: MusicService? = null
+    */
+
+    init {
+    }
+
+    //var activityInst: Activity? = act
+    //var musicService: MusicService? = null
+
+    open interface trackItemClickListener{
+        fun onClick(view: View)
+    }
 
     override fun getItemCount(): Int {
         return trackItemsSourceInit!!.size
     }
 
-    override fun onBindViewHolder(holder: TrackItemsHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val itemPhoto = trackItemsSourceInit!![position]
-        holder.bindTrackItems(itemPhoto)
+        //(holder as TrackItemsHolder).bindTrackItems(itemPhoto)
+        (holder as TrackItemsHolder).bindTrackItems(itemPhoto, mOnClickListenerI)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackItemsHolder {
+//    override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackItemsHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, position: Int): RecyclerView.ViewHolder {
         val inflatedView = parent.inflate(R.layout.fragment_song_view, false)
-        return TrackItemsHolder(inflatedView, activityInst)
+        //inflatedView.setOnClickListener(parent.parent)
+        return TrackItemsHolder(inflatedView)
+        //return TrackItemsHolder(inflatedView, mOnClick)
     }
 
     fun configureActivity(actvity: Activity) {
-        activityInst = actvity
-        activityInst!!.application.registerActivityLifecycleCallbacks(this)
+        //activityInst = actvity
+        //activityInst!!.application.registerActivityLifecycleCallbacks(this)
     }
 
-    class TrackItemsHolder(v: View, activity: Activity?) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    class TrackItemsHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+
+
         private var view: View = v
-        private var act = activity
-        private var musicService: MusicService? = null
+        //private var act = activity
+        //private var musicService: MusicService? = null
         private var trackItem: TrackItems? = null
         private val imgWidth = 90
         private val imgHeight = 90
@@ -89,10 +116,14 @@ class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>,
 
 
         init {
-            v.setOnClickListener(this)
+            //v.setOnClickListener(this)
         }
 
+        //constructor(vi: View) : super(this)
+        //constructor(vi: View) : super(this)
 
+
+        /**
         private val connection = object : ServiceConnection {
 
             override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -106,34 +137,23 @@ class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>,
                 mBound = false
             }
         }
+        */
 
 
+        /**
         override fun onClick(v: View) {
             try {
-                val context = itemView.context
-                val showPhotoIntent = Intent(context, SongViewActivity::class.java)
+                //val context = itemView.context
+                //val showPhotoIntent = Intent(context, SongViewActivity::class.java)
                 //showPhotoIntent.putExtra(PHOTO_KEY, trackItem)
-                val id = trackItem!!.id
-                //context.startActivity(showPhotoIntent)
-
-                if (!mBound) {
-                    val intent = Intent(act, MusicService::class.java)
-                    act!!.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-                    /**
-                    Intent(this, MusicService::class.java).also { intent ->
-                        act!!.applicationContext(intent, connection, Context.BIND_AUTO_CREATE)
-                        act.applicationContext
-                    }
-                    */
-
-                }
             }
             catch (ex: Exception) {
                 val exMsg = ex.message
             }
         }
+        */
 
-        fun bindTrackItems(trackItems: TrackItems) {
+        fun bindTrackItems(trackItems: TrackItems, clickList: (TrackItems) -> Unit) {
             try {
                 var context = view.context
                 this.trackItem = trackItems
@@ -144,6 +164,7 @@ class RecyclerAdapter( private  val trackItemsSourceInit: ArrayList<TrackItems>,
                 var trackCoverPath = "${context.filesDir}/${Filenames.TRACK_COVERS}"
                 trackCoverPath = "${trackCoverPath}${id}.bmp"
                 Picasso.get().load(trackCoverPath).into(view.trackCover)
+                view.setOnClickListener { clickList(trackItem!!) }
             }
             catch (ex:Exception) {
                 val exMsg = ex.message

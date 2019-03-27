@@ -56,6 +56,20 @@ class MainActivity : BaseServiceActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        try {
+            if (musicService!! != null) {
+                val tr = musicService!!.getCurrentTrack().title
+                val artist = musicService!!.getCurrentTrack().artist
+            }
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         try {
@@ -307,6 +321,8 @@ class MainActivity : BaseServiceActivity() {
                                                                 (currentPosition % 60) )
 
                CurrentPosition.text = dur
+
+               val tTitle = musicService!!.getCurrentTrack().title
 
                if (!(TrackTitle.text.equals(musicService!!.getCurrentTrack().title))) {
                    configureTrackDisplay()

@@ -66,7 +66,10 @@ class MusicService: Service() {
     }
 
     fun playTrack(id: Int) {
-
+        trackPlayer!!.reset()
+        trackPlayer!!.setDataSource(TrackRepository(this).getTrack(id).songPath)
+        trackPlayer!!.prepare()
+        trackPlayer!!.start()
     }
 
     fun goToPosition(progress: Int) {
@@ -175,6 +178,11 @@ class MusicService: Service() {
         var track: Track? = null
 
         track = TrackRepository(this).getTrack(currentSongIndex!!)
+        val info = trackPlayer!!.trackInfo
+
+        if (trackPlayer!!.isPlaying) {
+            val res = "songs are being played"
+        }
 
         return track!!
     }

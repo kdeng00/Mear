@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 
 import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_song_view.*
@@ -16,8 +17,17 @@ import com.example.mear.models.TrackItems
 import com.example.mear.R
 import com.example.mear.repositories.TrackRepository
 import com.example.mear.util.ExtractCover
+import org.jetbrains.anko.act
 
 class SongViewActivity : BaseServiceActivity() {
+
+    /**
+    override fun onItemClick(position: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val sds = "ddddd"
+    }
+    */
+
     private var trackListItems = arrayListOf<TrackItems>()
     private lateinit var adapter: RecyclerAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -58,9 +68,16 @@ class SongViewActivity : BaseServiceActivity() {
 
             trackListItems = retrieveTrackItems()
 
-            adapter = RecyclerAdapter(trackListItems, this)
+
+
+            //adapter = RecyclerAdapter(trackListItems)
+            //adapter = RecyclerAdapter(this,  trackListItems)
+            adapter = RecyclerAdapter({trackItem: TrackItems -> playTrack(trackItem)}, trackListItems)
             adapter.configureActivity(this)
             trackList.adapter = adapter
+            trackList.setOnClickListener {
+                val temp = "dddd"
+            }
             trackList.setHasFixedSize(true)
             trackList.setItemViewCacheSize(20);
             //trackList.setDrawingCacheEnabled(true);
@@ -131,5 +148,10 @@ class SongViewActivity : BaseServiceActivity() {
         }
 
         return trackItems!!
+    }
+
+    fun playTrack(trackItems: TrackItems) {
+        val id = trackItems.id
+        musicService!!.playTrack(id)
     }
 }
