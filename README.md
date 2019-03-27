@@ -1,5 +1,9 @@
 # Mear
 
+<h1 align=center>
+<img src="logo/horizontal.png" width=40%>
+</h1>
+
 Mear is a music player app for Android phone. 
   
 ## Dependencies
