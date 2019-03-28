@@ -35,14 +35,16 @@ class TrackManager(var allSongPath: MutableList<String>) {
                 val track = Track(id, trackTitle, trackArtist, trackAlbum, trackLength,
                     ByteArray(0), musicPath)
                 dumpToDatabase(ctx, track)
-                saveTrackCoverToDisk(ctx, id, mmr.embeddedPicture)
+                if (mmr.embeddedPicture!=null) {
+                    saveTrackCoverToDisk(ctx, id, mmr.embeddedPicture)
+                }
                 id++
             }
         }
         catch (ex: Exception) {
             val exMsg = ex.message
         }
-        TrackRepository(ctx).createSongCount((id -1))
+        TrackRepository(ctx).createSongCount((id ))
         return id.dec()
     }
     private fun dumpToDatabase(ctx: Context, track: Track) {
@@ -57,8 +59,6 @@ class TrackManager(var allSongPath: MutableList<String>) {
         context.openFileOutput(filename, Context.MODE_PRIVATE).use {
             it.write(fileContents)
         }
-
-
     }
 
     var allTracks: MutableList<Track>? = null

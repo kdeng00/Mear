@@ -1,9 +1,13 @@
 package com.example.mear.activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 
 import java.lang.Exception
 import java.lang.Runnable
@@ -40,6 +44,7 @@ class MainActivity : BaseServiceActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        permissionPrompt()
 
         initialize()
     }
@@ -127,8 +132,7 @@ class MainActivity : BaseServiceActivity() {
             startActivity(Intent(this, SongViewActivity::class.java))
         }
         SettingsLink.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
     private fun initializeServices() {
@@ -261,15 +265,6 @@ class MainActivity : BaseServiceActivity() {
                 if (coverExt.hasCover()) {
                     trackCover = coverExt.retrieveCover()
                 }
-               /**
-                val mmr = MediaMetadataRetriever()
-                mmr.setDataSource(currTrack.songPath)
-
-                if (mmr.embeddedPicture != null) {
-                    trackCover = mmr.embeddedPicture
-                }
-                */
-
                 resetControls()
 
                 TrackTitle.text = trackTitle
@@ -310,7 +305,23 @@ class MainActivity : BaseServiceActivity() {
             PlayTrack.setColorFilter(Color.GREEN)
         }
     }
+    private fun permissionPrompt() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
 
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            }
+            else {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+            }
+        }
+        else {
+        }
+
+    }
 
     private var musicTrackTimeUpdateTask = object: Runnable {
        override fun run() {
