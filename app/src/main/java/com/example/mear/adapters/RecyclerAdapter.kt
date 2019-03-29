@@ -16,7 +16,6 @@ import com.example.mear.models.TrackItems
 import com.example.mear.R
 
 
-
 class RecyclerAdapter(val mOnClickListenerI: (TrackItems) -> Unit ,  private  val trackItemsSourceInit: ArrayList<TrackItems>) :
                                                 RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

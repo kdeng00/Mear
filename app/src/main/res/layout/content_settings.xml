@@ -8,6 +8,27 @@
     tools:context=".activities.SettingsActivity"
     tools:showIn="@layout/activity_settings">
 
+
+    <Space
+        android:id="@+id/space3"
+        android:layout_width="12dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/settingList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/space3"
+        />
+    <!--
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -32,4 +53,5 @@
         </LinearLayout>
 
     </FrameLayout>
+        -->
 </android.support.constraint.ConstraintLayout>

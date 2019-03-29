@@ -14,7 +14,6 @@ import com.example.mear.management.TrackManager
 import com.example.mear.repositories.TrackRepository
 
 
-
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
