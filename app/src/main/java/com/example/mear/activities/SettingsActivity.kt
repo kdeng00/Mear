@@ -21,9 +21,11 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         setSupportActionBar(toolbar)
 
+        /**
         RefreshLibrary.setOnClickListener {
             updateLibrary()
         }
+        */
 
         initialize()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

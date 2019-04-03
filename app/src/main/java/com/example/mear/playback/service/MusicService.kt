@@ -22,10 +22,14 @@ import com.example.mear.repositories.TrackRepository
 
 class MusicService: Service() {
 
+    companion object {
+        //fun curSongIndex(): Int = currentSongIndex
+    }
+
     private var trackPlayer: MediaPlayer? = null
     private  var currentSongIndex: Int? = null
     private var shuffleOn: Boolean? = null
-    private var repeatOn: Boolean? = false
+    private var repeatOn: Boolean? = null
     private val mBinder = LocalBinder()
     private val seconds = 4
 
@@ -66,6 +70,7 @@ class MusicService: Service() {
     }
 
     fun playTrack(id: Int) {
+        currentSongIndex = id
         trackPlayer!!.reset()
         trackPlayer!!.setDataSource(TrackRepository(this).getTrack(id).songPath)
         trackPlayer!!.prepare()
