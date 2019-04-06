@@ -6,8 +6,12 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.R as RDroid
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 
 import java.lang.Exception
 import java.lang.Runnable
@@ -64,15 +68,6 @@ class MainActivity : BaseServiceActivity() {
     override fun onResume() {
         super.onResume()
 
-        try {
-            if (musicService!! != null) {
-                val tr = musicService!!.getCurrentTrack().title
-                val artist = musicService!!.getCurrentTrack().artist
-            }
-        }
-        catch (ex: Exception) {
-            val exMsg = ex.message
-        }
     }
 
     override fun onDestroy() {
@@ -128,12 +123,14 @@ class MainActivity : BaseServiceActivity() {
         RepeatTrack.setOnClickListener {
             toggleRepeat()
         }
-        SongView.setOnClickListener {
-            startActivity(Intent(this, SongViewActivity::class.java))
+        val clickListener = View.OnClickListener { view ->
+            when (view.id) {
+                R.id.SettingsLink-> {
+                    showPopup(view)
+                }
+            }
         }
-        SettingsLink.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-        }
+        SettingsLink.setOnClickListener (clickListener  )
     }
     private fun initializeServices() {
         doBindService()
@@ -305,6 +302,7 @@ class MainActivity : BaseServiceActivity() {
             PlayTrack.setColorFilter(Color.GREEN)
         }
     }
+
     private fun permissionPrompt() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -318,24 +316,44 @@ class MainActivity : BaseServiceActivity() {
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             }
         }
-        else {
-        }
+    }
 
+    private fun showPopup(view: View) {
+        try {
+            var popup = PopupMenu(this, view)
+            popup.inflate(R.menu.popup_menu)
+
+            popup.setOnMenuItemClickListener{ item: MenuItem? ->
+                when (item!!.itemId) {
+                    R.id.action_settings-> {
+                        startActivity(Intent(this, SettingsActivity::class.java))
+                    }
+                    R.id.action_song_view -> {
+                        startActivity(Intent(this, SongViewActivity::class.java))
+                    }
+                }
+                true
+            }
+
+            popup.show()
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
     }
 
     private var musicTrackTimeUpdateTask = object: Runnable {
        override fun run() {
            try {
                val currentPosition = musicService!!.currentPositionOfTrack() / 1000
-               val dur = String.format( "%02d:%02d",
-                                                                TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
-                                                                (currentPosition % 60) )
+               val dur = String.format( "%02d:%02d", TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
+                                     (currentPosition % 60) )
 
                CurrentPosition.text = dur
 
-               val tTitle = musicService!!.getCurrentTrack().title
+               val trackTitle = musicService!!.getCurrentTrack().title
 
-               if (!(TrackTitle.text.equals(musicService!!.getCurrentTrack().title))) {
+               if (!(TrackTitle.text == trackTitle)) {
                    configureTrackDisplay()
                }
 

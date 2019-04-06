@@ -29,6 +29,10 @@
         dhdfhfdhdfh
     </string>
 
+    <!-- Music Player popup strings -->
+    <string name="settings">Settings</string>
+    <string name="song_view">Songs</string>
+
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 

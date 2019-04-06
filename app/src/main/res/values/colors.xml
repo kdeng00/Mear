@@ -9,4 +9,7 @@
     <!-- Play Controls -->
     <color name="track_details">#FFFFFF</color>
     <color name="track_seek">#333399</color>
+
+    <!-- Popup colors -->
+    <color name="popup_text">#FFFFFF</color>
 </resources>
