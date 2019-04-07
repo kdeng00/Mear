@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.SearchView
 
 import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_song_view.*
@@ -14,6 +15,9 @@ import com.example.mear.adapters.RecyclerAdapter
 import com.example.mear.models.TrackItems
 import com.example.mear.R
 import com.example.mear.repositories.TrackRepository
+import android.R as RDroid
+
+
 
 class SongViewActivity : BaseServiceActivity() {
 
@@ -33,6 +37,7 @@ class SongViewActivity : BaseServiceActivity() {
             window.statusBarColor = resources.getColor(R.color.track_seek)
             doBindService()
             initializeAdapter()
+            initializeSongSearchListener()
         }
         catch (ex: Exception) {
             var exMsg = ex.message
@@ -47,6 +52,10 @@ class SongViewActivity : BaseServiceActivity() {
     }
 
 
+    fun playTrack(trackItems: TrackItems) {
+        val id = trackItems.id
+        musicService!!.playTrack(id)
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeAdapter() {
@@ -58,10 +67,9 @@ class SongViewActivity : BaseServiceActivity() {
 
             adapter = RecyclerAdapter({trackItem: TrackItems -> playTrack(trackItem)}, trackListItems)
             adapter.configureActivity(this)
+
             trackList.adapter = adapter
-            trackList.setOnClickListener {
-                val temp = "dddd"
-            }
+
             trackList.setHasFixedSize(true)
             trackList.setItemViewCacheSize(20);
             trackList.setDrawingCacheEnabled(true);
@@ -94,8 +102,23 @@ class SongViewActivity : BaseServiceActivity() {
         return trackItems!!
     }
 
-    fun playTrack(trackItems: TrackItems) {
-        val id = trackItems.id
-        musicService!!.playTrack(id)
+    private fun initializeSongSearchListener() {
+        songSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                try {
+                    adapter.filter.filter(query)
+                }
+                catch (ex: Exception) {
+                    val exMsg = ex.message
+                }
+
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                // TODO: Implement text change
+                return false
+            }
+        })
     }
 }
