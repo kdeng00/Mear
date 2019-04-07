@@ -27,7 +27,9 @@ class MusicService: Service() {
     }
 
     private var trackPlayer: MediaPlayer? = null
-    private  var currentSongIndex: Int? = null
+    private var trackMgr: TrackManager? = null
+    private var currentTrack = Track()
+    private var currentSongIndex: Int? = null
     private var shuffleOn: Boolean? = null
     private var repeatOn: Boolean? = null
     private val mBinder = LocalBinder()
@@ -70,11 +72,17 @@ class MusicService: Service() {
     }
 
     fun playTrack(id: Int) {
-        currentSongIndex = id
-        trackPlayer!!.reset()
-        trackPlayer!!.setDataSource(TrackRepository(this).getTrack(id).songPath)
-        trackPlayer!!.prepare()
-        trackPlayer!!.start()
+        try {
+            currentSongIndex = id
+            trackPlayer!!.reset()
+            currentTrack = TrackRepository(this).getTrack(id)
+            trackPlayer!!.setDataSource(currentTrack.songPath)
+            trackPlayer!!.prepare()
+            trackPlayer!!.start()
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
     }
 
     fun goToPosition(progress: Int) {
@@ -102,14 +110,15 @@ class MusicService: Service() {
             shuffleOn = retrieveShuffleMode()
             trackPlayer!!.reset()
             if (duration > seconds) {
-                trackPlayer!!.setDataSource(TrackRepository(this).getTrack(currentSongIndex!!).songPath)
+                currentTrack = TrackRepository(this).getTrack(currentSongIndex!!)
+                trackPlayer!!.setDataSource(currentTrack.songPath)
                 trackPlayer!!.prepare()
                 trackPlayer!!.start()
             }
             else {
                 val previousTrackNumber = fetchSongIndex(PlayTypes.PlayPreviousSong)
-                val track = TrackRepository(this).getTrack(previousTrackNumber)
-                trackPlayer!!.setDataSource(track.songPath)
+                currentTrack = TrackRepository(this).getTrack(previousTrackNumber)
+                trackPlayer!!.setDataSource(currentTrack.songPath)
                 trackPlayer!!.prepare()
                 trackPlayer!!.start()
             }
@@ -123,8 +132,9 @@ class MusicService: Service() {
             trackPlayer!!.reset()
             shuffleOn = retrieveShuffleMode()
             var nextTrack = fetchSongIndex(PlayTypes.PlayNextSong)
-            val track = TrackRepository(this).getTrack(nextTrack)
-            trackPlayer!!.setDataSource(track.songPath)
+            val allTracks = TrackRepository(this).getAll()
+            currentTrack = TrackRepository(this).getTrack(nextTrack)
+            trackPlayer!!.setDataSource(currentTrack.songPath)
             trackPlayer!!.prepare()
             trackPlayer!!.start()
         }
@@ -180,16 +190,8 @@ class MusicService: Service() {
     }
 
     fun getCurrentTrack(): Track {
-        var track: Track? = null
 
-        track = TrackRepository(this).getTrack(currentSongIndex!!)
-        val info = trackPlayer!!.trackInfo
-
-        if (trackPlayer!!.isPlaying) {
-            val res = "songs are being played"
-        }
-
-        return track!!
+        return currentTrack
     }
 
 
@@ -266,8 +268,8 @@ class MusicService: Service() {
             }
 
             currentSongIndex = Random.nextInt(0, TrackRepository(this).getSongCount())
-            val trackToPlay = TrackRepository(this).getTrack(currentSongIndex!!)
-            trackPlayer!!.setDataSource(trackToPlay.songPath)
+            currentTrack = TrackRepository(this).getTrack(currentSongIndex!!)
+            trackPlayer!!.setDataSource(currentTrack.songPath)
             trackPlayer!!.prepareAsync()
             trackPlayer!!.setOnCompletionListener {
                 playNextTrack()
@@ -281,8 +283,9 @@ class MusicService: Service() {
         var mp3Paths = MusicFiles(android.os.Environment.getExternalStorageDirectory())
         mp3Paths.searchForMp3Songs()
         val paths = mp3Paths.allSongs
-        val trackMgr = TrackManager(paths!!)
-        trackMgr.addTracks(this)
+        trackMgr = TrackManager(paths!!)
+        trackMgr!!.initializeContext(this)
+        trackMgr!!.addTracks()
         initializeShuffleMode()
         initializeRepeatMode()
     }
@@ -375,11 +378,8 @@ class MusicService: Service() {
 
         try {
             val count = TrackRepository(this).getSongCount()
-            TrackRepository(this).delete()
 
-            // TODO: Replace this with the local count varialbe when issue #43 is resolved
-            // as well as remove the call to delete the Track table
-            return 0
+            return count
         }
         catch (ex: Exception) {
             val exMsg = ex.message

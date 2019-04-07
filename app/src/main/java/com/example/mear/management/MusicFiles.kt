@@ -48,7 +48,7 @@ class MusicFiles (private val demoPath:  File) {
 
     fun searchForMp3Songs() {
         try {
-            var pathList: MutableList<String>? = null
+            var pathList: MutableList<String>?
             pathList = mutableListOf()
 
             var fileSearch = File(demoPath.absolutePath)
@@ -56,12 +56,13 @@ class MusicFiles (private val demoPath:  File) {
                 println(it.absolutePath)
                 if (!ignoreThisDirectory(it.absolutePath)) {
                     if (it.isFile) {
-                        if (it.extension.toString().equals(FileTypes.Mp3)) {
+                        if (it.extension == (FileTypes.Mp3)) {
                             pathList.add(it.absolutePath)
                         }
                     }
                 }
             }
+
             allSongs = pathList
         }
         catch (ex: Exception) {
