@@ -8,8 +8,9 @@ import com.example.mear.constants.FileTypes
 
 class MusicFiles (private val demoPath:  File) {
 
-    fun demoSearch() {
-    }
+    var allSongs: MutableList<String>?= null
+
+    private val musicSongLimit = Int.MAX_VALUE
 
     fun loadAllMusicPaths() {
         try {
@@ -45,7 +46,6 @@ class MusicFiles (private val demoPath:  File) {
         }
     }
 
-
     fun searchForMp3Songs() {
         try {
             var pathList: MutableList<String>? = null
@@ -56,11 +56,6 @@ class MusicFiles (private val demoPath:  File) {
                 println(it.absolutePath)
                 if (!ignoreThisDirectory(it.absolutePath)) {
                     if (it.isFile) {
-                        /**
-                        if (it.endsWith(FileTypes.Mp3)) {
-                            pathList.add(it.absolutePath)
-                        }
-                        */
                         if (it.extension.toString().equals(FileTypes.Mp3)) {
                             pathList.add(it.absolutePath)
                         }
@@ -93,8 +88,4 @@ class MusicFiles (private val demoPath:  File) {
         }
         return ignoreDirectory
     }
-
-    var allSongs: MutableList<String>?= null
-
-    private val musicSongLimit = Int.MAX_VALUE
 }

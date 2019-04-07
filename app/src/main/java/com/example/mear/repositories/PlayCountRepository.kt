@@ -41,6 +41,17 @@ class PlayCountRepository(val context: Context) {
                 }
             })
     }
+
+    fun insertPlayCounts(tracks: List<Track>) = context.database.use {
+        transaction {
+            var i = 0
+            for (track in tracks) {
+                insert("PlayCount", "Id" to i++,
+                     "PlayCount" to 0, "TrackId" to track.id)
+            }
+        }
+    }
+
     fun insertPlayCount(track: Track) = context.database.use {
         insert("PlayCount",
             "Id" to track.id,

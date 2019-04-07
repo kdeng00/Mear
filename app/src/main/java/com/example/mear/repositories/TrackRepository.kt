@@ -65,6 +65,17 @@ class TrackRepository {
             })
     }
 
+    fun insertTracks(tracks: List<Track>) = context!!.database.use {
+        transaction {
+            for (track in tracks) {
+                insert("Track",
+                     "Id" to track.id, "Title" to track.title, "Album" to track.album,
+                    "Artist" to track.artist, "Duration" to track.length,
+                    "FilePath" to track.songPath)
+            }
+        }
+    }
+
     fun insertTrack(track: Track) = context!!.database.use {
         insert("Track",
             "Id" to track.id,

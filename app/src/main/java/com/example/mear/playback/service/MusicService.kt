@@ -282,7 +282,7 @@ class MusicService: Service() {
         mp3Paths.searchForMp3Songs()
         val paths = mp3Paths.allSongs
         val trackMgr = TrackManager(paths!!)
-        trackMgr.configureTracks(this)
+        trackMgr.addTracks(this)
         initializeShuffleMode()
         initializeRepeatMode()
     }
@@ -367,14 +367,6 @@ class MusicService: Service() {
         if (trackCount!! < 1) {
             return true
         }
-        when (trackCount) {
-            null -> {
-                return true
-            }
-            0 -> {
-                return true
-            }
-        }
 
         return false
     }
@@ -382,10 +374,12 @@ class MusicService: Service() {
     private fun retrieveSongCount(): Int? {
 
         try {
-            //var db  = DatabaseManager(this)
             val count = TrackRepository(this).getSongCount()
+            TrackRepository(this).delete()
 
-            return count
+            // TODO: Replace this with the local count varialbe when issue #43 is resolved
+            // as well as remove the call to delete the Track table
+            return 0
         }
         catch (ex: Exception) {
             val exMsg = ex.message
