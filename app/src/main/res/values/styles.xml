@@ -27,6 +27,16 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <!--<style name="SongSearchViewStyle" parent="Widget.AppCompat.SearchView"> -->
+    <style name="SongSearchViewStyle">
+        <!-- Gets rid of the "underline" in the text -->
+        <item name="queryBackground">@color/song_searchView</item>
+        <!-- The hint text that appears when the user has not typed anything -->
+        <item name="queryHint">@string/song_search_hint</item>
+        <item name="android:editTextColor">@color/song_searchView_text</item>
+        <item name="android:textColorHint">@color/song_searchView_hint_text</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

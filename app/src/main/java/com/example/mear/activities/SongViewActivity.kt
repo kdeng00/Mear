@@ -5,7 +5,8 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.SearchView
+//import android.widget.SearchView
+import android.support.v7.widget.SearchView
 
 import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_song_view.*
@@ -15,6 +16,10 @@ import com.example.mear.adapters.RecyclerAdapter
 import com.example.mear.models.TrackItems
 import com.example.mear.R
 import com.example.mear.repositories.TrackRepository
+import org.jetbrains.anko.appcompat.v7.tintedEditText
+import org.jetbrains.anko.backgroundColorResource
+import org.jetbrains.anko.editText
+import org.jetbrains.anko.textView
 import android.R as RDroid
 
 
@@ -116,7 +121,13 @@ class SongViewActivity : BaseServiceActivity() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                // TODO: Implement text change
+                try {
+                    adapter.filter.filter(newText)
+                }
+                catch (ex: Exception) {
+                    val exMsg = ex.message
+                }
+
                 return false
             }
         })

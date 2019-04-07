@@ -3,7 +3,7 @@
     <color name="color_background">#262626</color>
     <color name="colorPrimary">#6A6A6A</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#8c8cd9</color>
+    <color name="colorAccent">#AE18B1</color>
     <color name="color_player_not_initialized">#585858</color>
 
     <!-- Play Controls -->
@@ -12,4 +12,9 @@
 
     <!-- Popup colors -->
     <color name="popup_text">#FFFFFF</color>
+
+    <!-- Song Searchview -->
+    <color name="song_searchView">@color/color_background</color>
+    <color name="song_searchView_hint_text">#FFFFFF</color>
+    <color name="song_searchView_text">#FFFFFF</color>
 </resources>
