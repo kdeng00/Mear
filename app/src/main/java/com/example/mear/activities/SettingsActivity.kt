@@ -8,6 +8,7 @@ import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.content_settings.*
 
+import com.example.mear.adapters.SettingsAdapter
 import com.example.mear.R
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
@@ -20,12 +21,6 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         setSupportActionBar(toolbar)
-
-        /**
-        RefreshLibrary.setOnClickListener {
-            updateLibrary()
-        }
-        */
 
         initialize()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
