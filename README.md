@@ -5,13 +5,19 @@
 </h1>
 
 Mear is a customizable music player app for Android
+
+
+## Getting Started
+``
+Has not been updated yet
+``
   
 ## Built with
 * [Kotlin](https://github.com/JetBrains/kotlin)
 * Android Studio
 * Gradle
 * [anko](https://github.com/Kotlin/anko)
-* Picasso
+* [Picasso](https://github.com/square/picasso)
 
 ## Contributing
 
