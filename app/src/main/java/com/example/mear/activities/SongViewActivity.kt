@@ -95,7 +95,7 @@ class SongViewActivity : BaseServiceActivity() {
 
             for (track in tracks) {
                 var trackCover = ByteArray(0)
-                val trackItem = TrackItems(track.id, track.title, track.artist, trackCover!!)
+                val trackItem = TrackItems(track.id, track.title, track.artist, track.songPath, trackCover!!)
                 trackItems.add(trackItem)
             }
             return trackItems

@@ -9,6 +9,7 @@ import android.widget.Filterable
 
 import java.lang.Exception
 import kotlinx.android.synthetic.main.fragment_song_view.view.*
+import kotlinx.coroutines.GlobalScope
 
 import com.squareup.picasso.Picasso
 
@@ -16,6 +17,9 @@ import com.example.mear.constants.Filenames
 import com.example.mear.inflate
 import com.example.mear.models.TrackItems
 import com.example.mear.R
+import com.example.mear.util.ConvertByteArray
+import com.example.mear.util.ExtractCover
+import org.jetbrains.anko.imageBitmap
 
 
 class RecyclerAdapter(val mOnClickListenerI: (TrackItems) -> Unit,
@@ -82,8 +86,8 @@ class RecyclerAdapter(val mOnClickListenerI: (TrackItems) -> Unit,
 
         private var view: View = v
         private var trackItem: TrackItems? = null
-        private val imgWidth = 90
-        private val imgHeight = 90
+        private val imgWidth = 40
+        private val imgHeight = 40
         private var mBound = false
 
         fun bindTrackItems(trackItems: TrackItems, clickList: (TrackItems) -> Unit) {
@@ -100,7 +104,16 @@ class RecyclerAdapter(val mOnClickListenerI: (TrackItems) -> Unit,
                 var trackCoverPath = "${context.filesDir}/${Filenames.TRACK_COVERS}"
                 trackCoverPath = "${trackCoverPath}${id}.bmp"
 
-                Picasso.get().load(trackCoverPath).into(view.trackCover)
+
+                //val extractArt = ExtractCover(null)
+                //val coverArt = extractArt.retrieveCover(trackItem!!.trackPath)
+
+                //val convertByte = ConvertByteArray(coverArt)
+                //var coverArtBmp = convertByte.convertToBmptScales(imgWidth, imgHeight)
+
+                //view.trackCover.imageBitmap = coverArtBmp
+                // TODO: Implement usage of Picasso
+                //Picasso.get().load(trackCoverPath).into(view.trackCover)
 
                 view.setOnClickListener { clickList(trackItem!!) }
             }
