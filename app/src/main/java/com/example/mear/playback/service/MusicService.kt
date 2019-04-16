@@ -132,7 +132,6 @@ class MusicService: Service() {
             trackPlayer!!.reset()
             shuffleOn = retrieveShuffleMode()
             var nextTrack = fetchSongIndex(PlayTypes.PlayNextSong)
-            val allTracks = TrackRepository(this).getAll()
             currentTrack = TrackRepository(this).getTrack(nextTrack)
             trackPlayer!!.setDataSource(currentTrack.songPath)
             trackPlayer!!.prepare()

@@ -66,6 +66,7 @@ class TrackManager(var allSongPath: MutableList<String>) {
 
         if (moreSongs) {
             GlobalScope.launch {
+                // TODO: Implement multiple coroutines to add tracks to the data structure
                 val remainingTracks = remainingTracks()
                 addToDatabase(remainingTracks)
                 allTracksAdded = true
