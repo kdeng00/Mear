@@ -66,14 +66,42 @@ class TrackManager(var allSongPath: MutableList<String>) {
 
         if (moreSongs) {
             GlobalScope.launch {
-                // TODO: Implement multiple coroutines to add tracks to the data structure
                 val remainingTracks = remainingTracks()
                 addToDatabase(remainingTracks)
                 allTracksAdded = true
             }
         }
     }
+    fun addTracksKx() {
+        var initTracks = initialTracks()
+        addToDatabase(initTracks)
 
+        if (moreSongs) {
+            addRemainingTracks()
+        }
+    }
+    private fun addRemainingTracks() {
+        val remainder = allSongPath.size - songCount!!
+
+        if (remainder > 10) {
+            // TODO: implement coroutine to add music using the addRanges function
+            // to get ranges of music to add for each coroutine
+
+        }
+    }
+
+    private fun addRanges(): MutableList<AddMusicRange> {
+        // TODO: implement setting up ranges to split up searching music to add
+        var ranges = mutableListOf<AddMusicRange>()
+        try {
+
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+
+        return ranges
+    }
     private fun initialTracks(): MutableList<Track> {
         var tracks = mutableListOf<Track>()
 
@@ -164,5 +192,10 @@ class TrackManager(var allSongPath: MutableList<String>) {
         context.openFileOutput(filename, Context.MODE_PRIVATE).use {
             it.write(fileContents)
         }
+    }
+
+    class AddMusicRange {
+        val startIndex: Int? = null
+        val endIndex: Int? = null
     }
 }
