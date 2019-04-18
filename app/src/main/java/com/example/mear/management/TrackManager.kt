@@ -86,15 +86,17 @@ class TrackManager(var allSongPath: MutableList<String>) {
         if (remainder > 10) {
             // TODO: implement coroutine to add music using the addRanges function
             // to get ranges of music to add for each coroutine
+            val rangeAmount = remainder / 10
 
         }
     }
 
-    private fun addRanges(): MutableList<AddMusicRange> {
+    private fun addRanges(rangeAmount: Int): MutableList<AddMusicRange> {
         // TODO: implement setting up ranges to split up searching music to add
         var ranges = mutableListOf<AddMusicRange>()
         try {
-
+            var rangeCounter = 0
+            //whie (songIndex!! <)
         }
         catch (ex: Exception) {
             val exMsg = ex.message
