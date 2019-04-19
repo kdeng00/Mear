@@ -69,6 +69,7 @@ class SongViewActivity : BaseServiceActivity() {
             trackList.layoutManager = linearLayoutManager
 
             trackListItems = retrieveTrackItems()
+             trackListItems.sortedWith(compareBy { it.trackTitle })
 
             adapter = RecyclerAdapter({trackItem: TrackItems -> playTrack(trackItem)}, trackListItems)
             adapter.configureActivity(this)

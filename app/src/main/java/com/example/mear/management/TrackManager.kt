@@ -2,9 +2,9 @@ package com.example.mear.management
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
+import android.widget.Toast
 
 import java.io.FileInputStream
-import java.lang.Exception
 import kotlinx.coroutines.*
 
 import com.example.mear.constants.Filenames
@@ -13,6 +13,7 @@ import com.example.mear.models.Track
 import com.example.mear.repositories.PlayCountRepository
 import com.example.mear.repositories.TrackRepository
 import com.example.mear.util.ConvertByteArray
+import kotlin.Exception
 
 class TrackManager(var allSongPath: MutableList<String>) {
 
@@ -77,26 +78,40 @@ class TrackManager(var allSongPath: MutableList<String>) {
         addToDatabase(initTracks)
 
         if (moreSongs) {
-            addRemainingTracks()
+            GlobalScope.launch {
+                addRemainingTracks()
+            }
         }
     }
-    private fun addRemainingTracks() {
+    fun addRemainingTracks() = runBlocking {
         val remainder = allSongPath.size - songCount!!
 
         if (remainder > 10) {
-            // TODO: implement coroutine to add music using the addRanges function
-            // to get ranges of music to add for each coroutine
             val rangeAmount = remainder / 10
+            val rg = addRanges(rangeAmount)
 
+            val remainingT = remainingTracks(rg)
+            addToDatabase(remainingT)
         }
     }
 
     private fun addRanges(rangeAmount: Int): MutableList<AddMusicRange> {
-        // TODO: implement setting up ranges to split up searching music to add
         var ranges = mutableListOf<AddMusicRange>()
         try {
             var rangeCounter = 0
-            //whie (songIndex!! <)
+            val songAmount = allSongPath.size
+            while (songIndex!! < songAmount) {
+                val startIndex = songIndex
+                var endIndex  = songIndex!! + rangeAmount
+                if ((songIndex!! + rangeAmount) > songAmount ) {
+                    endIndex = (songAmount - songIndex!!) + songIndex!!
+                }
+
+                val range = AddMusicRange(startIndex!!, endIndex)
+                ranges.add(range)
+
+                songIndex = endIndex + 1
+            }
         }
         catch (ex: Exception) {
             val exMsg = ex.message
@@ -149,6 +164,57 @@ class TrackManager(var allSongPath: MutableList<String>) {
 
         return tracks
     }
+    private fun remainingTracks(rangeobjects: AddMusicRange): MutableList<Track> {
+        val tracks  = mutableListOf<Track>()
+        try {
+            val startIndex = rangeobjects.startIndex
+            var endIndex = rangeobjects.endIndex
+            if (endIndex == allSongPath.size) {
+                endIndex--
+            }
+
+            for (songPathIndex in startIndex.. endIndex) {
+                val songPath = allSongPath[songPathIndex]
+                val track = configureTrack(songPath, songPathIndex)
+                if (track.id != Int.MAX_VALUE) {
+                    tracks.add(track)
+                }
+            }
+
+            songCount = songCount!!.plus(tracks.size)
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+
+        return tracks
+    }
+    suspend private fun remainingTracks(obj: MutableList<AddMusicRange>): MutableList<Track> {
+        val tracks = mutableListOf<Track>()
+        var rangeRecords = mutableListOf<Boolean>()
+        try {
+            for (rgObj in obj) {
+                coroutineScope {
+                    launch {
+                        val remainingTracks = remainingTracks(rgObj)
+                        tracks.addAll(remainingTracks)
+                        rangeRecords.add(true)
+                    }
+                }
+            }
+            runBlocking {
+                while (rangeRecords.size != obj.size) {
+                    delay(10)
+                }
+            }
+
+        }
+        catch (ex: java.lang.Exception) {
+            val exMsg = ex.message
+        }
+
+        return tracks
+    }
 
     private fun configureTrack(songPath: String, id: Int): Track {
         try {
@@ -196,8 +262,6 @@ class TrackManager(var allSongPath: MutableList<String>) {
         }
     }
 
-    class AddMusicRange {
-        val startIndex: Int? = null
-        val endIndex: Int? = null
+    data class AddMusicRange(val startIndex: Int, val endIndex: Int) {
     }
 }

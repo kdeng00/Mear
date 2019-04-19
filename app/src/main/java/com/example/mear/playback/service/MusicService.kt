@@ -284,7 +284,8 @@ class MusicService: Service() {
         val paths = mp3Paths.allSongs
         trackMgr = TrackManager(paths!!)
         trackMgr!!.initializeContext(this)
-        trackMgr!!.addTracks()
+        //trackMgr!!.addTracks()
+        trackMgr!!.addTracksKx()
         initializeShuffleMode()
         initializeRepeatMode()
     }
@@ -376,7 +377,7 @@ class MusicService: Service() {
     private fun retrieveSongCount(): Int? {
 
         try {
-            val count = TrackRepository(this).getSongCount()
+            var count = TrackRepository(this).getSongCount()
 
             return count
         }
