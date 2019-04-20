@@ -17,4 +17,11 @@
     <color name="song_searchView">@color/color_background</color>
     <color name="song_searchView_hint_text">#FFFFFF</color>
     <color name="song_searchView_text">#FFFFFF</color>
+
+    <!-- Settings -->
+    <color name="setting_text">#FFFFFF</color>
+
+    <!-- Popups -->
+    <color name="popup_about_background">#323232</color>
+    <color name="popup_about">#FFFFFF</color>
 </resources>

@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Mear</string>
+    <string name="app_version">Pre-development release</string>
+    <string name="app_author">amazing-username - Kun Deng</string>
+    <string name="app_logo_designer">Zularizal</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -24,14 +28,17 @@
 
     <!-- Strings related to SettingsActivity -->
     <string name="update_library">Update Music Library</string>
-    <string name="update_library_description">Clear your music databas
-        e and search for musiczf
-        dhdfhfdhdfh
-    </string>
+    <string name="update_library_description">Clear your music databas e and search for music </string>
+    <string name="about_header">About</string>
+    <string name="about_description">Information about the software</string>
 
     <!-- Music Player popup strings -->
     <string name="settings">Settings</string>
     <string name="song_view">Songs</string>
+
+    <!-- Popups -->
+    <string name="popup_about_header">About</string>
+    <string name="popup_about_contributors">Contributors</string>
 
     <!-- Song Search -->
     <string name="song_search_hint">Search for songs or artists</string>
