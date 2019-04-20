@@ -1,5 +1,5 @@
 package com.example.mear.constants
 
 object SongSearch {
-    val INITIAL_SEARCH_AMOUNT = 40
+    const val INITIAL_SEARCH_AMOUNT = 1
 }

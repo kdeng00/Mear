@@ -94,6 +94,20 @@ class TrackRepository {
     fun delete() = context!!.database.use {
         delete("Track")
     }
+    fun deleteTracks(tracks: List<Track>) = context!!.database.use {
+        tracks.iterator().forEach {
+            transaction {
+                delete("Track", "id = {track_id}", "track_id" to it.id)
+            }
+        }
+    }
+    fun deleteTracksByPaths(trackPaths: List<String>) = context!!.database.use {
+        trackPaths.iterator().forEach {
+            transaction {
+                delete("Track", "FilePath = {file_path}", "file_path" to it)
+            }
+        }
+    }
 
     fun getLibraryCount(): Int? {
         context!!.database.use {

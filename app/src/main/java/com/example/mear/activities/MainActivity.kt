@@ -38,7 +38,9 @@ import com.example.mear.util.ExtractCover
 
 class MainActivity : BaseServiceActivity() {
 
+    private var coverArtHandler: Handler? = Handler()
     private var musicHandler: Handler? = Handler()
+    private var updateLibraryHandler: Handler? = Handler()
     private var serviceBinded: Boolean? = false
     private var repeatOn: Boolean? = false
     private var shuffleOn: Boolean? = false
@@ -288,6 +290,8 @@ class MainActivity : BaseServiceActivity() {
     }
     override fun updateTrackProgress() {
         musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 100)
+        coverArtHandler!!.postDelayed(updateCoverArt, 100)
+        updateLibraryHandler!!.postDelayed(updateLibrary, 1000)
     }
     private fun configurePlayControlsDisplay() {
         PlayTrack.background = null
@@ -351,17 +355,39 @@ class MainActivity : BaseServiceActivity() {
 
                CurrentPosition.text = dur
 
-               val trackTitle = musicService!!.getCurrentTrack().title
-
-               if (!(TrackTitle.text == trackTitle)) {
-                   configureTrackDisplay()
-               }
-
                musicHandler!!.postDelayed(this, 100)
            }
            catch (ex: Exception) {
                    val exMsg = ex.message
            }
        }
+    }
+    private var updateCoverArt = object: Runnable {
+        override fun run() {
+            try {
+                val trackTitle = musicService!!.getCurrentTrack().title
+
+                if (!(TrackTitle.text == trackTitle)) {
+                    configureTrackDisplay()
+                }
+
+                coverArtHandler!!.postDelayed(this, 100)
+            }
+            catch (ex: Exception) {
+                val exMsg = ex.message
+            }
+        }
+    }
+    private var updateLibrary = object: Runnable {
+        override fun run() {
+            try {
+                musicService!!.updateLibrary()
+
+                updateLibraryHandler!!.postDelayed(this, 1000)
+            }
+            catch (ex: Exception) {
+                val exMsg = ex.message
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Environment
 import android.os.IBinder
 import android.widget.Toast
 
@@ -18,6 +19,8 @@ import com.example.mear.models.Track
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
 import com.example.mear.repositories.TrackRepository
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MusicService: Service() {
@@ -30,6 +33,7 @@ class MusicService: Service() {
     private var trackMgr: TrackManager? = null
     private var currentTrack = Track()
     private var currentSongIndex: Int? = null
+    private var addingMusic: Boolean? = false
     private var shuffleOn: Boolean? = null
     private var repeatOn: Boolean? = null
     private val mBinder = LocalBinder()
@@ -257,6 +261,10 @@ class MusicService: Service() {
     }
 
 
+    fun updateLibrary() {
+        checkForMusicChange()
+    }
+
     private fun initializeMediaPlayer() {
         try {
             if (trackPlayer == null) {
@@ -266,7 +274,7 @@ class MusicService: Service() {
                 populateTrackRepository()
             }
 
-            currentSongIndex = Random.nextInt(0, TrackRepository(this).getSongCount())
+            currentSongIndex = Random.nextInt(0, TrackRepository(this).getAll().count())
             currentTrack = TrackRepository(this).getTrack(currentSongIndex!!)
             trackPlayer!!.setDataSource(currentTrack.songPath)
             trackPlayer!!.prepareAsync()
@@ -279,15 +287,44 @@ class MusicService: Service() {
         }
     }
     private  fun populateTrackRepository() {
-        var mp3Paths = MusicFiles(android.os.Environment.getExternalStorageDirectory())
-        mp3Paths.searchForMp3Songs()
+        var mp3Paths = MusicFiles(Environment.getExternalStorageDirectory())
+        mp3Paths.initialMp3Search()
         val paths = mp3Paths.allSongs
+
         trackMgr = TrackManager(paths!!)
         trackMgr!!.initializeContext(this)
-        //trackMgr!!.addTracks()
-        trackMgr!!.addTracksKx()
+        trackMgr!!.initializeLibrary()
+
         initializeShuffleMode()
         initializeRepeatMode()
+    }
+    private fun checkForMusicChange() {
+
+        if (addingMusic!!) {
+            return
+        }
+        addingMusic = true
+        val ctx = this
+        val mp3Paths = MusicFiles(Environment.getExternalStorageDirectory())
+        GlobalScope.launch {
+            mp3Paths.searchForMp3Songs()
+            val paths = mp3Paths.allSongs
+            val allTracks = TrackRepository(ctx).getAll()
+            val trackCount = allTracks.count()
+            val tracksToDelete = musicToDelete(allTracks!!, paths!!)
+            val trackPathsToAdd = musicToAdd(allTracks!!, paths!!)
+
+            if (tracksToDelete!!.any()) {
+                TrackRepository(ctx).deleteTracks(tracksToDelete!!)
+            }
+            if (trackPathsToAdd!!.any()) {
+                val trkMgr = TrackManager(null)
+                trkMgr.initializeContext(ctx)
+                trkMgr.addnewSongs(trackPathsToAdd!!, trackCount)
+                addingMusic = false
+            }
+        }
+
     }
     private fun initializeShuffleMode() {
         try {
@@ -297,9 +334,6 @@ class MusicService: Service() {
                     shuffleOn = true
                 }
                 ControlTypes.SHUFFLE_OFF -> {
-                    shuffleOn = false
-                }
-                null -> {
                     shuffleOn = false
                 }
             }
@@ -318,9 +352,6 @@ class MusicService: Service() {
                 ControlTypes.REPEAT_OFF -> {
                     repeatOn = false
                 }
-                null -> {
-                    repeatOn = false
-                }
             }
         }
         catch (ex: Exception) {
@@ -328,6 +359,58 @@ class MusicService: Service() {
         }
     }
 
+    private fun musicToDelete(allTracks: List<Track>?, paths: MutableList<String>): List<Track>? {
+        try {
+            var missingTracks = mutableListOf<Track>()
+            allTracks!!.iterator().forEach {
+                val songExists = paths.contains(it.songPath)
+                if (!songExists) {
+                    missingTracks.add(it)
+                }
+            }
+
+            return missingTracks
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+
+        return null
+    }
+    private fun musicToAdd(allTracks: List<Track>?, paths: MutableList<String>): List<String>? {
+        try {
+            var newTracks = mutableListOf<String>()
+
+            val trackPaths = retrieveTrackPaths(allTracks)
+            paths.iterator().forEach {
+                val songExists = trackPaths!!.contains(it)
+                if (!songExists) {
+                    newTracks.add(it)
+                }
+            }
+
+            return newTracks
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+
+        return null
+    }
+    private fun retrieveTrackPaths(allTracks: List<Track>?): List<String>? {
+        try {
+            val trackPaths = mutableListOf<String>()
+            for (i in allTracks!!) {
+                trackPaths.add(i.songPath)
+            }
+            return trackPaths
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+
+        return null
+    }
 
     private fun retrieveShuffleMode(): Boolean? {
         val shuffleMode = ShuffleRepository(this).getShuffleMode()
@@ -337,9 +420,6 @@ class MusicService: Service() {
             }
             ControlTypes.SHUFFLE_OFF -> {
                 return false
-            }
-            null -> {
-                return null
             }
             else -> {
                 return false
@@ -354,9 +434,6 @@ class MusicService: Service() {
             }
             ControlTypes.REPEAT_OFF -> {
                 return false
-            }
-            null -> {
-                return null
             }
             else -> {
                 return false
@@ -377,9 +454,7 @@ class MusicService: Service() {
     private fun retrieveSongCount(): Int? {
 
         try {
-            var count = TrackRepository(this).getSongCount()
-
-            return count
+            return TrackRepository(this).getAll().count()
         }
         catch (ex: Exception) {
             val exMsg = ex.message

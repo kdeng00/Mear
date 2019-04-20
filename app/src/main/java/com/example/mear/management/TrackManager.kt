@@ -13,9 +13,10 @@ import com.example.mear.models.Track
 import com.example.mear.repositories.PlayCountRepository
 import com.example.mear.repositories.TrackRepository
 import com.example.mear.util.ConvertByteArray
+import org.jetbrains.anko.custom.async
 import kotlin.Exception
 
-class TrackManager(var allSongPath: MutableList<String>) {
+class TrackManager(var allSongPath: MutableList<String>?) {
 
     private var allTracks: MutableList<Track>? = null
     private var ctx: Context? = null
@@ -32,7 +33,7 @@ class TrackManager(var allSongPath: MutableList<String>) {
         var id = 0
         try {
             allTracks = mutableListOf()
-            for (musicPath in allSongPath) {
+            for (musicPath in allSongPath!!) {
                 var mmr = MediaMetadataRetriever()
                 mmr.setDataSource(musicPath)
                 val trackTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
@@ -61,6 +62,42 @@ class TrackManager(var allSongPath: MutableList<String>) {
         TrackRepository(ctx).createSongCount(id)
         return id.dec()
     }
+    fun initializeLibrary() {
+        var initTrack = initialTracks()
+        addToDatabase(initTrack)
+    }
+    fun addSongs() {
+        var initTracks = initialTracks()
+        addToDatabase(initTracks)
+
+        if (moreSongs) {
+            GlobalScope.launch {
+                val allSongCount = allSongPath!!.size -1
+                for (i in songIndex!! .. (allSongCount)) {
+                    val songPath = allSongPath!![i]
+                    val track = configureTrack(songPath, i)
+                    songCount = songCount!!.inc()
+                    addToDatabase(track)
+                }
+            }
+        }
+    }
+    fun addnewSongs(trackPaths: List<String>, resumeIndex: Int) {
+        var resumeIndex = resumeIndex
+
+        try {
+            //launchB
+                for (tPath in trackPaths) {
+                    val track = configureTrack(tPath, resumeIndex)
+                    addToDatabase(track)
+                    resumeIndex = resumeIndex.inc()
+                }
+            //}
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+    }
     fun addTracks() {
         var initTracks = initialTracks()
         addToDatabase(initTracks)
@@ -84,7 +121,7 @@ class TrackManager(var allSongPath: MutableList<String>) {
         }
     }
     fun addRemainingTracks() = runBlocking {
-        val remainder = allSongPath.size - songCount!!
+        val remainder = allSongPath!!.size - songCount!!
 
         if (remainder > 10) {
             val rangeAmount = remainder / 10
@@ -99,7 +136,7 @@ class TrackManager(var allSongPath: MutableList<String>) {
         var ranges = mutableListOf<AddMusicRange>()
         try {
             var rangeCounter = 0
-            val songAmount = allSongPath.size
+            val songAmount = allSongPath!!.size
             while (songIndex!! < songAmount) {
                 val startIndex = songIndex
                 var endIndex  = songIndex!! + rangeAmount
@@ -125,13 +162,13 @@ class TrackManager(var allSongPath: MutableList<String>) {
         try {
             var initSongSearch = SongSearch.INITIAL_SEARCH_AMOUNT -1
 
-            if (allSongPath!!.size < SongSearch.INITIAL_SEARCH_AMOUNT) {
-                initSongSearch = allSongPath.size
+            if (allSongPath!!!!.size < SongSearch.INITIAL_SEARCH_AMOUNT) {
+                initSongSearch = allSongPath!!.size
                 moreSongs = false
             }
 
             for (i in 0.. initSongSearch) {
-                var songPath = allSongPath[i]
+                var songPath = allSongPath!![i]
                 val track = configureTrack(songPath, i)
                 tracks.add(track)
             }
@@ -148,8 +185,8 @@ class TrackManager(var allSongPath: MutableList<String>) {
     private fun remainingTracks(): MutableList<Track> {
         val tracks = mutableListOf<Track>()
         try {
-            for (i in songIndex!! .. (allSongPath.size - 1)) {
-                val songPath = allSongPath[i]
+            for (i in songIndex!! .. (allSongPath!!.size - 1)) {
+                val songPath = allSongPath!![i]
                 val track = configureTrack(songPath, i)
                 if (track.id != Int.MAX_VALUE) {
                     tracks.add(track)
@@ -169,12 +206,12 @@ class TrackManager(var allSongPath: MutableList<String>) {
         try {
             val startIndex = rangeobjects.startIndex
             var endIndex = rangeobjects.endIndex
-            if (endIndex == allSongPath.size) {
+            if (endIndex == allSongPath!!.size) {
                 endIndex--
             }
 
             for (songPathIndex in startIndex.. endIndex) {
-                val songPath = allSongPath[songPathIndex]
+                val songPath = allSongPath!![songPathIndex]
                 val track = configureTrack(songPath, songPathIndex)
                 if (track.id != Int.MAX_VALUE) {
                     tracks.add(track)
@@ -243,6 +280,16 @@ class TrackManager(var allSongPath: MutableList<String>) {
         TrackRepository(ctx!!).insertTracks(tracks)
         PlayCountRepository(ctx!!).insertPlayCounts(tracks)
         TrackRepository(ctx!!).createSongCount(songCount!!)
+    }
+    private fun addToDatabase(track: Track) {
+        try {
+            TrackRepository(ctx!!).insertTrack(track)
+            PlayCountRepository(ctx!!).insertPlayCount(track)
+            //TrackRepository(ctx!!).createSongCount(songCount!!)
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
     }
     private fun addToDatabase(ctx: Context, tracks: List<Track>) {
         TrackRepository(ctx).insertTracks(tracks)

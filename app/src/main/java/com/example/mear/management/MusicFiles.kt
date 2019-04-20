@@ -5,6 +5,7 @@ import java.lang.Exception
 
 import com.example.mear.constants.DirectoryIgnore
 import com.example.mear.constants.FileTypes
+import com.example.mear.constants.SongSearch
 
 class MusicFiles (private val demoPath:  File) {
 
@@ -46,6 +47,33 @@ class MusicFiles (private val demoPath:  File) {
         }
     }
 
+    fun initialMp3Search() {
+        try {
+            var pathList: MutableList<String>?
+            pathList = mutableListOf()
+            var songsAdded = 0
+
+            var fileSearch = File(demoPath.absolutePath)
+            fileSearch.walkTopDown().forEach {
+                println(it.absolutePath)
+                if (!ignoreThisDirectory(it.absolutePath)) {
+                    if (it.isFile) {
+                        if (it.extension == (FileTypes.Mp3)) {
+                            if (songsAdded >= SongSearch.INITIAL_SEARCH_AMOUNT) {
+                                return
+                            }
+                            pathList.add(it.absolutePath)
+                            allSongs = pathList
+                            songsAdded = songsAdded.inc()
+                        }
+                    }
+                }
+            }
+        }
+        catch (ex: Exception) {
+            val exMsg = ex.message
+        }
+    }
     fun searchForMp3Songs() {
         try {
             var pathList: MutableList<String>?
