@@ -1,6 +1,7 @@
 package com.example.mear.activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -12,6 +13,7 @@ import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
 
 import java.lang.Exception
 import java.lang.Runnable
@@ -30,17 +32,23 @@ import com.example.mear.constants.ControlTypes
 import com.example.mear.listeners.TrackElaspingChange
 import com.example.mear.models.PlayControls
 import com.example.mear.R
+import com.example.mear.models.PlayCount
+import com.example.mear.repositories.PlayCountRepository
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
+import com.example.mear.repositories.TrackRepository
 import com.example.mear.util.ConvertByteArray
 import com.example.mear.util.ExtractCover
+import kotlinx.coroutines.delay
 
 
 class MainActivity : BaseServiceActivity() {
 
+    private val ctx: Context? = this
     private var coverArtHandler: Handler? = Handler()
     private var musicHandler: Handler? = Handler()
     private var updateLibraryHandler: Handler? = Handler()
+    private var playCountUpdated: Boolean? = false
     private var serviceBinded: Boolean? = false
     private var repeatOn: Boolean? = false
     private var shuffleOn: Boolean? = false
@@ -230,6 +238,7 @@ class MainActivity : BaseServiceActivity() {
             print(exMsg)
         }
         NextTrack.isEnabled = true
+        playCountUpdated = false
     }
     private fun playPreviousSongTrack() {
         PreviousTrack.isEnabled = false
@@ -243,10 +252,12 @@ class MainActivity : BaseServiceActivity() {
             print(exMsg)
         }
         PreviousTrack.isEnabled = true
+        playCountUpdated = false
     }
     override fun configureTrackDisplay() {
         try {
             runOnUiThread {
+                playCountUpdated = false
                 configurePlayControlsDisplay()
                 val currTrack = musicService!!.getCurrentTrack()
                 val trackTitle = currTrack.title
@@ -334,6 +345,12 @@ class MainActivity : BaseServiceActivity() {
                     }
                     R.id.action_song_view -> {
                         startActivity(Intent(this, SongViewActivity::class.java))
+                    }
+                    R.id.action_song_play_count-> {
+                        val trk = musicService!!.getCurrentTrack()
+                        val pc = PlayCountRepository(this).getPlayCount(trk.id)
+                        val playCount = pc.playCount
+                        Toast.makeText(this, "Song played $playCount times", Toast.LENGTH_LONG).show()
                     }
                 }
                 true

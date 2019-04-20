@@ -12,6 +12,7 @@ import java.lang.Exception
 import kotlin.random.Random
 
 import com.example.mear.constants.ControlTypes
+import com.example.mear.constants.Interval
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
 import com.example.mear.models.PlayControls
@@ -37,7 +38,7 @@ class MusicService: Service() {
     private var shuffleOn: Boolean? = null
     private var repeatOn: Boolean? = null
     private val mBinder = LocalBinder()
-    private val seconds = 4
+    private val seconds = Interval.SONG_REWIND
 
 
     inner class LocalBinder : Binder() {
