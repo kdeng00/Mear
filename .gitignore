@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+/Mear/Mear/bin/Debug/netstandard2.0
+/Mear/Mear/obj
+/Mear/Mear.Android/bin/Debug
+/Mear/Mear.Android/obj
+/Mear/Mear.iOS/obj
