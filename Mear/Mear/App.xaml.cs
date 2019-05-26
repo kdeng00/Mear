@@ -2,6 +2,8 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+using Mear.Views;
+
 namespace Mear
 {
     public partial class App : Application
@@ -10,7 +12,7 @@ namespace Mear
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+			MainPage = new MusicLibrary();
         }
 
         protected override void OnStart()
