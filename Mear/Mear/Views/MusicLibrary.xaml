@@ -7,12 +7,6 @@
 			 xmlns:views="clr-namespace:Mear.Views"
              x:Class="Mear.Views.MusicLibrary">
 		
-  <!--Pages can be added as references or inline-->
-  <ContentPage Title="Songs" />
-  <ContentPage Title="Albums" />
-  <ContentPage Title="Artists" />
-
-	<!--
 	<TabbedPage.Children>
 		<NavigationPage Title="Songs">
 			<NavigationPage.Icon>
@@ -31,6 +25,9 @@
 					<On Platform="iOS" Value="tab_feed.png" />
 				</OnPlatform>
 			</NavigationPage.Icon>
+			<x:Arguments>
+				<views:AlbumView />
+			</x:Arguments>
 		</NavigationPage>
 
 		<NavigationPage Title="Artists">
@@ -44,6 +41,5 @@
 			</x:Arguments>
 		</NavigationPage>
 	</TabbedPage.Children>
-	-->
 
 </TabbedPage>

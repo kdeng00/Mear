@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 
 using Mear.Managers;
 using Mear.Models.Authentication;
+using Mear.Repositories.Database;
 using Mear.Repositories.Mock;
 
 namespace Mear.Views
@@ -67,6 +68,12 @@ namespace Mear.Views
 
 				if (loginRes.Expiration > 0 && loginRes != null)
 				{
+					DBTokenRepository tokRepo = new DBTokenRepository();
+					tokRepo.SaveToken(new Token
+					{
+						AccessToken = loginRes.Token,
+						UserId = loginRes.UserId
+					});
 					await DisplayAlert("Icarus Login", "Successfully logged in", "Ok");
 					App.Current.MainPage = new MusicLibrary();
 				}

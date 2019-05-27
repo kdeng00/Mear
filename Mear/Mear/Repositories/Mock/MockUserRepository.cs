@@ -34,12 +34,12 @@ namespace Mear.Repositories.Mock
 		{
 			_users = new List<User>();
 
-			var firstname = "";
-			var lastname = "";
-			var email = "";
-			var phone = "";
-			var username = "";
-			var password = "";
+			var firstname = "kuoth";
+			var lastname = "Universe";
+			var email = "life@hell.org";
+			var phone = "4330944491";
+			var username = "kverse";
+			var password = "demolaugh";
 
 			_users.Add(new User
 			{

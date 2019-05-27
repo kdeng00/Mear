@@ -13,6 +13,7 @@ namespace Mear
             InitializeComponent();
 
 			MainPage = new Landing();
+			//MainPage = new MusicLibrary();
         }
 
         protected override void OnStart()

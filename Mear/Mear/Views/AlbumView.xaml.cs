@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace Mear.Views
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class AlbumView : ContentView
+	public partial class AlbumView : ContentPage
 	{
 		public AlbumView()
 		{
