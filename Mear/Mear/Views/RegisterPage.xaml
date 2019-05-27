@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Mear.Views.RegisterPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Create Icarus account"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" />
+
+			<Label Text="Firstname" />
+			<Entry x:Name="Firstname"
+				   Placeholder="Firstname" />
+			<Label Text="Lastname" />
+			<Entry x:Name="Lastname"
+				   Placeholder="Lastname" />
+			<Label Text="Email" />
+			<Entry x:Name="Email"
+				   Keyboard="Email"
+				   Placeholder="Email Address" />
+			<Label Text="Phone Number" />
+			<Entry x:Name="Phone"
+				   Keyboard="Telephone"
+				   Placeholder="Phone Number" />
+			<Label Text="Username" />
+			<Entry x:Name="Username"
+				   Placeholder="Username" />
+			<Label Text="Password" />
+			<Entry x:Name="Password"
+				   IsPassword="True"
+				   Placeholder="Password" />
+			<Label Text="Password (Confirm)" />
+			<Entry x:Name="PasswordConfirm"
+				   IsPassword="True"
+				   Placeholder="Password (Confirm)" />
+
+			<Button x:Name="RegisterUser"
+					Text="Create Icarus account"
+					Clicked="RegisterUser_Clicked" />
+		</StackLayout>
+    </ContentPage.Content>
+</ContentPage>

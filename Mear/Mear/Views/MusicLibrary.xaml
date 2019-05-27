@@ -8,14 +8,12 @@
              x:Class="Mear.Views.MusicLibrary">
 		
   <!--Pages can be added as references or inline-->
-  <!--
   <ContentPage Title="Songs" />
   <ContentPage Title="Albums" />
   <ContentPage Title="Artists" />
-  -->
 
+	<!--
 	<TabbedPage.Children>
-		<!--
 		<NavigationPage Title="Songs">
 			<NavigationPage.Icon>
 				<OnPlatform x:TypeArguments="FileImageSource">
@@ -26,7 +24,6 @@
 				<views:SongView />
 			</x:Arguments>
 		</NavigationPage>
-		-->
 
 		<NavigationPage Title="Albums">
 			<NavigationPage.Icon>
@@ -36,7 +33,6 @@
 			</NavigationPage.Icon>
 		</NavigationPage>
 
-		<!--
 		<NavigationPage Title="Artists">
 			<NavigationPage.Icon>
 				<OnPlatform x:TypeArguments="FileImageSource">
@@ -47,7 +43,7 @@
 				<views:ArtistView />
 			</x:Arguments>
 		</NavigationPage>
-		-->
 	</TabbedPage.Children>
+	-->
 
 </TabbedPage>
