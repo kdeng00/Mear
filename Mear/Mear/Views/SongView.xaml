@@ -8,11 +8,52 @@
 			 xmlns:vm="clr-namespace:Mear.ViewModels"
 			 Title="{Binding Title}">
 
-	<ContentPage.BindingContext>
+	  <ContentPage.BindingContext>
 		<vm:SongViewModel />
-	</ContentPage.BindingContext>
+	  </ContentPage.BindingContext>
 
       <StackLayout>
-          <Label Text="Song view!" />
+		<ListView x:Name="SongListView"
+				ItemsSource="{Binding SongItems}"
+				VerticalOptions="FillAndExpand"
+				HasUnevenRows="False"
+				ItemSelected="SongListView_ItemSelected" >
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell Height="100">
+						<Grid Padding="5">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+
+							<StackLayout Grid.Row="0" Grid.Column="0">
+								<Label Text="{Binding Title}"
+									d:Text="{Binding .}"
+									LineBreakMode="NoWrap"
+									FontSize="15" />
+								<Label Text="{Binding Artist}"
+									d:Text="{Binding .}"
+									LineBreakMode="NoWrap"
+									FontSize="15" />
+							</StackLayout>
+							<ImageButton x:Name="SongOptions"
+								Grid.Row="0" 
+								Grid.Column="1"
+								HorizontalOptions="End"
+								VerticalOptions="Center"
+								HeightRequest="10"
+								WidthRequest="80"
+								Source="Search.png"
+								CommandParameter="{Binding Id}"
+								Clicked="SongOptions_Clicked" />
+						</Grid>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
       </StackLayout>
 </ContentPage>

@@ -124,9 +124,6 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Plugin.MediaManager.Forms">
-      <Version>0.6.1</Version>
-    </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.6.9</Version>
     </PackageReference>
