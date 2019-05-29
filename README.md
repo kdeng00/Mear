@@ -4,7 +4,7 @@
 <img src="logo/horizontal.png" width=40%>
 </h1>
 
-Mear is a customizable music player app for Android
+Mear is a customizable music player app
 
 
 ## Getting Started
@@ -13,11 +13,12 @@ Has not been updated yet
 ``
   
 ## Built with
-* [Kotlin](https://github.com/JetBrains/kotlin)
-* Android Studio
-* Gradle
-* [anko](https://github.com/Kotlin/anko)
-* [Picasso](https://github.com/square/picasso)
+* C#
+* [Xamarin Forms](https://github.com/xamarin/Xamarin.Forms)
+* [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
+* [SQLite](https://github.com/praeclarum/sqlite-net)
+* [RestSharp](https://github.com/restsharp/RestSharp)
+* [XamarinMediaManager](https://github.com/martijn00/XamarinMediaManager)
 
 ## Contributing
 
