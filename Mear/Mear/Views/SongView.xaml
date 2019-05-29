@@ -17,11 +17,13 @@
 				ItemsSource="{Binding SongItems}"
 				VerticalOptions="FillAndExpand"
 				HasUnevenRows="False"
+				IsPullToRefreshEnabled="True"
+				RefreshCommand="{Binding RefreshSongs}"
 				ItemSelected="SongListView_ItemSelected" >
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<ViewCell Height="100">
-						<Grid Padding="5">
+					<ViewCell Height="150">
+						<Grid MinimumHeightRequest="100" Padding="5">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>

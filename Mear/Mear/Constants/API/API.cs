@@ -8,7 +8,7 @@ namespace Mear.Constants.API
 	{
 		#region Fields
 		private static string _apiUrl = @"https://www..com/";
-		private string _apiVersion;
+		private static string _apiVersion = "";
 		#endregion
 
 
@@ -16,6 +16,10 @@ namespace Mear.Constants.API
 		public static string ApiUrl
 		{
 			get => _apiUrl;
+		}
+		public static string APIVersion
+		{
+			get => _apiVersion;
 		}
 		#endregion
 

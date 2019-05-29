@@ -11,6 +11,7 @@ using RestSharp;
 using Mear.Constants.API;
 using Mear.Models;
 using Mear.Models.Authentication;
+using Mear.Repositories.Database;
 
 namespace Mear.Playback
 {
@@ -43,13 +44,18 @@ namespace Mear.Playback
 				using (var writer = File.OpenWrite(tmpFile))
 				{
 					var client = new RestClient(API.ApiUrl);
-					var request = new RestRequest($@"api/song/stream/{song.Id}", Method.GET);
+					var apiEndpoint = $@"api/{API.APIVersion}/song/stream/{song.Id}"; ;
+					var request = new RestRequest(apiEndpoint, Method.GET);
+					var tokRepo = new DBTokenRepository();
+					var token = tokRepo.RetrieveToken();
+					request.AddHeader("Authorization", $"Bearer {token.AccessToken}");
 					request.ResponseWriter = (responseStream) =>
 						responseStream.CopyTo(writer);
 
 					var response = client.DownloadData(request);
 
 					await CrossMediaManager.Current.Play(tmpFile);
+					var title = CrossMediaManager.Current.MediaQueue.Title;
 				}
 			}
 			catch (Exception ex)

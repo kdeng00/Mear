@@ -36,7 +36,8 @@ namespace Mear.Managers
 			try
 			{
 				var client = new RestClient(API.ApiUrl);
-				var request = new RestRequest(@"api/register", Method.POST);
+				var apiEndpoint = $@"api/{API.APIVersion}/register";
+				var request = new RestRequest(apiEndpoint, Method.POST);
 				var userJson = JsonConvert.SerializeObject(_user);
 				request.AddParameter("application/json; charset=utf-8", userJson, ParameterType.RequestBody);
 				request.RequestFormat = DataFormat.Json;

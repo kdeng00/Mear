@@ -31,7 +31,8 @@ namespace Mear.Repositories.Remote
 			try
 			{
 				var client = new RestClient(API.ApiUrl);
-				var request = new RestRequest(@"api/song", Method.GET);
+				var apiEndpoint = $@"api/{API.APIVersion}/song";
+				var request = new RestRequest(apiEndpoint, Method.GET);
 
 				DBTokenRepository tkRepo = new DBTokenRepository();
 				var token = tkRepo.RetrieveToken();
