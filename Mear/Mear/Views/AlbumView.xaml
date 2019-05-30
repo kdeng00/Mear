@@ -4,10 +4,48 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="Mear.Views.AlbumView">
-  <ContentPage.Content>
-      <StackLayout>
-          <Label Text="Album view!" />
-      </StackLayout>
-  </ContentPage.Content>
+             x:Class="Mear.Views.AlbumView"
+			 xmlns:vm="clr-namespace:Mear.ViewModels"
+			 Title="{Binding Title}">
+
+	<ContentPage.BindingContext>
+		<vm:AlbumViewModel />
+	</ContentPage.BindingContext>
+	<StackLayout>
+		<ListView x:Name="AlbumListView"
+			  ItemsSource="{Binding AlbumItems}"
+			  VerticalOptions="FillAndExpand"
+			  HasUnevenRows="False"
+			  IsPullToRefreshEnabled="True"
+			  RowHeight="80"
+			  RefreshCommand="{Binding RefreshAlbums}"
+			  ItemSelected="AlbumListView_ItemSelected" >
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<Grid Padding="5">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+
+							<StackLayout Grid.Row="0" Grid.Column="0">
+								<Label Text="{Binding Title}" 
+									   d:Text="{Binding .}" 
+									   LineBreakMode="NoWrap"
+									   FontSize="16" />
+								<Label Text="{Binding AlbumArtist}" 
+									   d:Text="{Binding .}"
+									   LineBreakMode="NoWrap" 
+									   FontSize="14" />
+							</StackLayout>
+						</Grid>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</StackLayout>
 </ContentPage>

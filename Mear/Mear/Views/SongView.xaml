@@ -18,11 +18,12 @@
 				VerticalOptions="FillAndExpand"
 				HasUnevenRows="False"
 				IsPullToRefreshEnabled="True"
+				RowHeight="75"
 				RefreshCommand="{Binding RefreshSongs}"
 				ItemSelected="SongListView_ItemSelected" >
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<ViewCell Height="150">
+					<ViewCell>
 						<Grid MinimumHeightRequest="100" Padding="5">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
@@ -36,20 +37,21 @@
 								<Label Text="{Binding Title}"
 									d:Text="{Binding .}"
 									LineBreakMode="NoWrap"
-									FontSize="15" />
+									FontSize="16" />
 								<Label Text="{Binding Artist}"
 									d:Text="{Binding .}"
 									LineBreakMode="NoWrap"
-									FontSize="15" />
+									FontSize="14" />
 							</StackLayout>
 							<ImageButton x:Name="SongOptions"
 								Grid.Row="0" 
 								Grid.Column="1"
 								HorizontalOptions="End"
 								VerticalOptions="Center"
-								HeightRequest="10"
+								HeightRequest="50"
 								WidthRequest="80"
-								Source="Search.png"
+								BackgroundColor="Transparent"
+								Source="XamarinLogo.png"
 								CommandParameter="{Binding Id}"
 								Clicked="SongOptions_Clicked" />
 						</Grid>

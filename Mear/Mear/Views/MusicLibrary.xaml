@@ -6,6 +6,11 @@
              mc:Ignorable="d"
 			 xmlns:views="clr-namespace:Mear.Views"
              x:Class="Mear.Views.MusicLibrary">
+
+	<TabbedPage.ToolbarItems>
+		<ToolbarItem Name="Options"  Order="Secondary" Priority="1" Clicked="Options_Clicked" />
+		<ToolbarItem Name="Settings" Order="Secondary" Priority="2" Clicked="Settings_Clicked" />
+	</TabbedPage.ToolbarItems>
 		
 	<TabbedPage.Children>
 		<NavigationPage Title="Songs">

@@ -32,6 +32,16 @@ namespace Mear.Views
 
 
 		#region Methods
+		#region Events
+		private void Options_Clicked(object sender, EventArgs e)
+		{
+			var i = 0;
+		}
+		private void Settings_Clicked(object sender, EventArgs e)
+		{
+		}
+		#endregion
+
 		#region Test
 		public void TokenTest()
 		{
