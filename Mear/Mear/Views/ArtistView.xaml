@@ -4,10 +4,49 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="Mear.Views.ArtistView">
-  <ContentPage.Content>
-      <StackLayout>
-			<Label Text="Artist view!" />
-		</StackLayout>
-  </ContentPage.Content>
+             x:Class="Mear.Views.ArtistView"
+			 xmlns:vm="clr-namespace:Mear.ViewModels"
+			 Title="{Binding Title}">
+
+	<ContentPage.BindingContext>
+		<vm:ArtistViewModel />
+	</ContentPage.BindingContext>
+
+	<StackLayout>
+		<ListView x:Name="ArtistListView"
+				  ItemsSource="{Binding ArtistItems}"
+				  VerticalOptions="FillAndExpand"
+				  HasUnevenRows="False"
+				  IsPullToRefreshEnabled="True"
+				  RowHeight="80"
+				  RefreshCommand="{Binding RefreshArtists}"
+				  ItemSelected="ArtistListView_ItemSelected" >
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<Grid Padding="5">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+
+							<StackLayout Grid.Row="0" Grid.Column="0">
+								<Label Text="{Binding Name}"
+									   d:Text="{Binding .}"
+									   LineBreakMode="NoWrap"
+									   FontSize="16" />
+								<Label Text="{Binding SongCount}"
+									   d:Text="{Binding .}"
+									   LineBreakMode="NoWrap"
+									   FontSize="16" />
+							</StackLayout>
+						</Grid>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</StackLayout>
 </ContentPage>
