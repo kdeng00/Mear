@@ -30,7 +30,7 @@ namespace Mear.Playback
 
 
 		#region Methods
-		public static async Task StreamSongDemoAsync(Song song)
+		public static async Task<Song> StreamSongDemoAsync(Song song)
 		{
 			string tmpFile = Path.GetTempPath() + "track.mp3";
 
@@ -55,14 +55,17 @@ namespace Mear.Playback
 					var response = client.DownloadData(request);
 
 					await CrossMediaManager.Current.Play(tmpFile);
-					var title = CrossMediaManager.Current.MediaQueue.Current.Title;
-					var ttl = CrossMediaManager.Current.MediaQueue.Title;
+					song.SongPath = tmpFile;
+
+					return song;
 				}
 			}
 			catch (Exception ex)
 			{
 				var msg = ex.Message;
 			}
+
+			return null;
 		}
 		#endregion
 	}

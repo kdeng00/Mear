@@ -4,67 +4,92 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="Mear.Views.MearPlayerView" >
+             x:Class="Mear.Views.MearPlayerView"
+			 xmlns:vm="clr-namespace:Mear.ViewModels"
+			 Title="{Binding Title}">
+
+
+	<!--
 	<ContentPage.Content>
-        <StackLayout>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="*" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-
+	-->
+		<StackLayout>
+			<StackLayout Padding="10" VerticalOptions="EndAndExpand">
+			<StackLayout VerticalOptions="End">
 				<Image x:Name="SongCover" 
-					   Grid.Row="1"
-					   Source="" />
+								   Source="" />
+			</StackLayout>
+			<StackLayout BindableLayout.ItemsSource="{Binding SongItem}"
+						 VerticalOptions="End">
+				<BindableLayout.ItemTemplate>
+					<DataTemplate>
+								<StackLayout HorizontalOptions="Center">
+									<Label x:Name="SongTitle"
+									   Text="{Binding Title}"
+						               d:Text="{Binding .}" />
+									<Label x:Name="ArtistName"
+						               Text="{Binding Artist}" />
+									<Label x:Name="AlbumName"
+									   Text="{Binding Album}"/>
+								</StackLayout>
+								<!--
+						<StackLayout>
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="*" />
+									<RowDefinition Height="*" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
 
-				<StackLayout Grid.Row="2">
-					<Label x:Name="SongTitle"
-						   Text="Title" />
-					<Label x:Name="ArtistName"
-						   Text="Artist" />
-					<Label x:Name="AlbumName"
-						   Text="Album"/>
-				</StackLayout>
-				<StackLayout Orientation="Horizontal"
-							 Grid.Row="3">
-					<Button x:Name="Repeat"
-							Text="Rep"
-							Clicked="Repeat_Clicked" />
-					<Button x:Name="Shuffle"
-							Text="Shf"
-							Clicked="Shuffle_Clicked" />
-				</StackLayout>
-				<StackLayout Orientation="Horizontal"
-							 Grid.Row="4">
+
+							</Grid>
+						</StackLayout>
+						-->
+					</DataTemplate>
+				</BindableLayout.ItemTemplate>
+			</StackLayout>
+			<StackLayout Orientation="Horizontal"
+										 Grid.Row="3">
+				<Button x:Name="Repeat"
+										Text="Rep"
+										Clicked="Repeat_Clicked" />
+				<Button x:Name="Shuffle"
+									    Text="Shf"
+										Clicked="Shuffle_Clicked" />
+			</StackLayout>
+				<StackLayout Orientation="Horizontal">
 					<Label x:Name="StartTime"
-						   Text="0:00" />
-					<ProgressBar x:Name="SongProgress"
-								 HorizontalOptions="CenterAndExpand"
-								 Progress="0.7" />
-					<Label x:Name="EndTime"
-						   Text="0:00" />
-				</StackLayout>
-				<StackLayout Orientation="Horizontal"
-							HorizontalOptions="CenterAndExpand"
-							 Grid.Row="5"
-							 Spacing="5">
-					<Button x:Name="Previous"
-							Text="Prev"
-							Clicked="Previous_Clicked" />
-					<Button x:Name="Play"
-							Text="Ply"
-							Clicked="Play_Clicked" />
-					<Button x:Name="Next"
-							Text="Nxt"
-							Clicked="Next_Clicked" />
-				</StackLayout>
-			</Grid>
-        </StackLayout>
+								   Text="0:00" />
+				<Slider x:Name="SongProgress"
+									HorizontalOptions="CenterAndExpand"
+									Minimum="0"
+									Maximum="100"
+									WidthRequest="275"
+									DragCompleted="SongProgress_DragCompleted"
+									Scale="1" />
+				<Label x:Name="EndTime"
+									Text="0:00" />
+			</StackLayout>
+			<StackLayout Orientation="Horizontal"
+									 HorizontalOptions="CenterAndExpand"
+									 Spacing="5">
+				<Button x:Name="Previous"
+								    Text="Prev"
+								    Clicked="Previous_Clicked" />
+				<Button x:Name="Play"
+								    Text="Ply"
+							        Clicked="Play_Clicked" />
+				<Button x:Name="Next"
+								    Text="Nxt"
+								    Clicked="Next_Clicked" />
+			</StackLayout>
+		</StackLayout>
+		</StackLayout>
+	<!--
     </ContentPage.Content>
+	-->
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Name="Download" Order="Secondary" Priority="1" Clicked="Download_Clicked" />
+	</ContentPage.ToolbarItems>
 </ContentPage>

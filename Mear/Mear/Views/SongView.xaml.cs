@@ -49,8 +49,8 @@ namespace Mear.Views
 			try
 			{
 				var song = (Song)SongListView.SelectedItem;
-				await MearPlayer.StreamSongDemoAsync(song);
-				await Navigation.PushModalAsync(new MearPlayerView(song));
+				song = await MearPlayer.StreamSongDemoAsync(song);
+				await Navigation.PushModalAsync(new NavigationPage(new MearPlayerView(song)));
 			}
 			catch (Exception ex)
 			{
