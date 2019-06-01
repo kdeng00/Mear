@@ -8,10 +8,6 @@
 			 xmlns:vm="clr-namespace:Mear.ViewModels"
 			 Title="{Binding Title}">
 
-
-	<!--
-	<ContentPage.Content>
-	-->
 		<StackLayout>
 			<StackLayout Padding="10" VerticalOptions="EndAndExpand">
 			<StackLayout VerticalOptions="End">
@@ -31,21 +27,6 @@
 									<Label x:Name="AlbumName"
 									   Text="{Binding Album}"/>
 								</StackLayout>
-								<!--
-						<StackLayout>
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="*" />
-									<RowDefinition Height="*" />
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-								</Grid.ColumnDefinitions>
-
-
-							</Grid>
-						</StackLayout>
-						-->
 					</DataTemplate>
 				</BindableLayout.ItemTemplate>
 			</StackLayout>
@@ -86,9 +67,6 @@
 			</StackLayout>
 		</StackLayout>
 		</StackLayout>
-	<!--
-    </ContentPage.Content>
-	-->
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Name="Download" Order="Secondary" Priority="1" Clicked="Download_Clicked" />
 	</ContentPage.ToolbarItems>

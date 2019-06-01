@@ -74,6 +74,11 @@ namespace Mear.Repositories.Remote
 
 					var response = client.DownloadData(request);
 				}
+				song.Downloaded = true;
+				song.SongPath = path;
+
+				var dbSongRepo = new DBSongRepository();
+				dbSongRepo.SaveSong(song);
 			}
 			catch (Exception ex)
 			{

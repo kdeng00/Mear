@@ -29,6 +29,21 @@ namespace Mear.Repositories.Database
 
 
 		#region Methods
+		public List<Song> RetrieveSongs()
+		{
+			try
+			{
+				var songs = _Db.Table<Song>().ToList();
+
+				return songs;
+			}
+			catch (Exception ex)
+			{
+				var msg = ex.Message;
+			}
+
+			return null;
+		}
 		public Song RetrieveSong(int id)
 		{
 			try
@@ -68,7 +83,14 @@ namespace Mear.Repositories.Database
 				_Db.CreateTable<Song>();
 			}
 
-			_Db.Insert(song);
+			try
+			{
+				_Db.Insert(song);
+			}
+			catch (Exception ex)
+			{
+				var msg = ex.Message;
+			}
 		}
 		public void UpdateSong(Song song)
 		{

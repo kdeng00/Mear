@@ -31,5 +31,7 @@ namespace Mear.Models
         public string Filename { get; set; }
         [JsonIgnore]
         public string SongPath { set; get; }
+		[JsonIgnore]
+		public bool Downloaded { get; set; } = false;
     }
 }

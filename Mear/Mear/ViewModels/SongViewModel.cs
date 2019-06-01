@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 
 using Mear.Models;
+using Mear.Repositories.Local;
 using Mear.Repositories.Remote;
 
 namespace Mear.ViewModels
@@ -50,7 +51,19 @@ namespace Mear.ViewModels
 		public void PopulateSongs()
 		{
 			var songRepo = new RemoteSongRepository();
-			var songs = songRepo.RetrieveSongs().OrderBy(s => s.Title).ToList();
+			var localSongRepo = new LocalSongRepository();
+			var lclSongs = localSongRepo.RetrieveSongs();
+			var rmtSongs = songRepo.RetrieveSongs().OrderBy(s => s.Title).ToList();
+			var songs = new List<Song>();
+			if (lclSongs != null)
+			{
+				lclSongs = lclSongs.OrderBy(s => s.Title).ToList();
+				songs = MergeSongs(lclSongs, rmtSongs);
+			}
+			else
+			{
+				songs = rmtSongs;
+			}
 
 			foreach (var song in songs)
 			{
@@ -58,12 +71,44 @@ namespace Mear.ViewModels
 			}
 		}
 
+		private List<Song> MergeSongs(List<Song> local, List<Song> remote)
+		{
+			try
+			{
+				foreach (Song lclSong in local)
+				{
+					Song song = remote.Find(s => (s.Title.Equals(lclSong.Title)));
+					remote.Remove(song);
+					remote.Add(lclSong);
+				}
+
+				return remote;
+			}
+			catch (Exception ex)
+			{
+				var msg = ex.Message;
+			}
+
+			return null;
+		}
 		private async Task PopulateSongsAsync()
 		{
 			try
 			{
 				var songRepo = new RemoteSongRepository();
-				var songs = songRepo.RetrieveSongs().OrderBy(s => s.Title).ToList();
+				var localSongRepo = new LocalSongRepository();
+				var lclSongs = localSongRepo.RetrieveSongs();
+				var rmtSongs = songRepo.RetrieveSongs().OrderBy(s => s.Title).ToList();
+				var songs = new List<Song>();
+				if (lclSongs != null)
+				{
+					lclSongs = lclSongs.OrderBy(s => s.Title).ToList();
+					songs = MergeSongs(lclSongs, rmtSongs);
+				}
+				else
+				{
+					songs = rmtSongs;
+				}
 
 				_songItems.Clear();
 

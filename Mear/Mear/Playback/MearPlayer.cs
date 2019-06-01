@@ -56,9 +56,9 @@ namespace Mear.Playback
 
 					await CrossMediaManager.Current.Play(tmpFile);
 					song.SongPath = tmpFile;
-
-					return song;
 				}
+
+				return song;
 			}
 			catch (Exception ex)
 			{
@@ -66,6 +66,19 @@ namespace Mear.Playback
 			}
 
 			return null;
+		}
+		public static async Task PlaySong(Song song)
+		{
+			try
+			{
+				var songPath = song.SongPath;
+
+				await CrossMediaManager.Current.Play(songPath);
+			}
+			catch (Exception ex)
+			{
+				var msg = ex.Message;
+			}
 		}
 		#endregion
 	}
