@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Mear.Views.MearPlayerView" >
+	<ContentPage.Content>
+        <StackLayout>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+
+				<Image x:Name="SongCover" 
+					   Grid.Row="0"
+					   Source="" />
+
+				<StackLayout Orientation="Horizontal"
+							 Grid.Row="2">
+					<Label x:Name="StartTime"
+						   Text="0:00" />
+					<ProgressBar x:Name="SongProgress"
+								 HorizontalOptions="CenterAndExpand"
+								 Progress="0.7" />
+					<Label x:Name="EndTime"
+						   Text="0:00" />
+				</StackLayout>
+				<StackLayout Orientation="Horizontal"
+							HorizontalOptions="CenterAndExpand"
+							 Grid.Row="3"
+							 Spacing="5">
+					<Button x:Name="Previous"
+							Text="Prev"
+							Clicked="Previous_Clicked" />
+					<Button x:Name="Play"
+							Text="Ply"
+							Clicked="Play_Clicked" />
+					<Button x:Name="Next"
+							Text="Nxt"
+							Clicked="Next_Clicked" />
+				</StackLayout>
+			</Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

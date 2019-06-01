@@ -55,7 +55,8 @@ namespace Mear.Playback
 					var response = client.DownloadData(request);
 
 					await CrossMediaManager.Current.Play(tmpFile);
-					var title = CrossMediaManager.Current.MediaQueue.Title;
+					var title = CrossMediaManager.Current.MediaQueue.Current.Title;
+					var ttl = CrossMediaManager.Current.MediaQueue.Title;
 				}
 			}
 			catch (Exception ex)

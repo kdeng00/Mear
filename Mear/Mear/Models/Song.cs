@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 using Newtonsoft.Json;
+using SQLite;
 
 namespace Mear.Models
 {
+	[DataContract]
+	[Table("Song")]
     public class Song
     {
+		[PrimaryKey, Column("Id"), AutoIncrement]
         [JsonProperty("id")]
         public int Id { get; set; }
         [JsonProperty("title")]
@@ -24,7 +29,7 @@ namespace Mear.Models
         public int? Duration { get; set; }
         [JsonProperty("filename")]
         public string Filename { get; set; }
-        [JsonProperty("song_path")]
+        [JsonIgnore]
         public string SongPath { set; get; }
     }
 }
