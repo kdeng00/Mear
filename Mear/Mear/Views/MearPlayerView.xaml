@@ -69,5 +69,6 @@
 		</StackLayout>
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Name="Download" Order="Secondary" Priority="1" Clicked="Download_Clicked" />
-	</ContentPage.ToolbarItems>
+        <ToolbarItem Name="PlayCount" Order="Secondary" Priority="2" Clicked="PlayCount_Clicked" />
+    </ContentPage.ToolbarItems>
 </ContentPage>

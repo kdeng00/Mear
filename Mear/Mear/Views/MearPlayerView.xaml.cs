@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using Mear.Models;
+using Mear.Repositories.Database;
 using Mear.Repositories.Remote;
 using Mear.Utilities;
 using Mear.ViewModels;
@@ -163,9 +164,19 @@ namespace Mear.Views
 			var songRepo = new RemoteSongRepository();
 			songRepo.DownloadSong(_song);
 		}
-		#endregion
+        private async void PlayCount_Clicked(object sender, EventArgs e)
+        {
+            var playCountRepo = new DBPlayCountRepository();
+            var plyCount = playCountRepo.RetrievePlayCount(_song.Id);
 
-		#endregion
-
-	}
+            if (plyCount == null)
+            {
+                await DisplayAlert("Play Count", $"Song has not been played", "Ok");
+                return;
+            }
+            await DisplayAlert("PlayCount", $"Song has been played {plyCount.PlayCounter} times", "Ok");
+        }
+        #endregion
+        #endregion
+    }
 }

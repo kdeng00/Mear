@@ -35,6 +35,7 @@ namespace Mear.Views
 		}
 		#endregion
 
+
 		#region Methods
 		#region Events
 		private async void SongListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
@@ -87,7 +88,6 @@ namespace Mear.Views
 			var songs = songRepo.RetrieveSongs();
 		}
 		#endregion
-
 		#endregion
 	}
 }
