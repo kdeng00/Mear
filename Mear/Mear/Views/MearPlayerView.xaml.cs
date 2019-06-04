@@ -47,14 +47,34 @@ namespace Mear.Views
 			BackgroundSongElasping();
 			BackgroundSongCoverUpdate();
 
+            InitializeOptions();
+
 			BindingContext = _viewModel = new MearPlayerViewModel(song);
 		}
 		#endregion
 
 
 		#region Methods
-		private void Initialize()
+		private void InitializeOptions()
 		{
+            if (!_song.Downloaded)
+            {
+                var dnloadOpt = new ToolbarItem();
+                dnloadOpt.Text = "Download";
+                dnloadOpt.Order = ToolbarItemOrder.Secondary;
+                dnloadOpt.Priority = 1;
+                dnloadOpt.Clicked += Download_Clicked;
+                ToolbarItems.Add(dnloadOpt);
+            }
+            else
+            {
+                var rmvOpt = new ToolbarItem();
+                rmvOpt.Text = "Remove";
+                rmvOpt.Order = ToolbarItemOrder.Secondary;
+                rmvOpt.Priority = 1;
+                rmvOpt.Clicked += Remove_Clicked;
+                ToolbarItems.Add(rmvOpt);
+            }
 		}
 		private void InitializeControls()
 		{
@@ -164,6 +184,16 @@ namespace Mear.Views
 			var songRepo = new RemoteSongRepository();
 			songRepo.DownloadSong(_song);
 		}
+        private async void Remove_Clicked(object sender, EventArgs e)
+        {
+            var dbSongRepo = new DBSongRepository();
+            var plyCount = new DBPlayCountRepository();
+            dbSongRepo.DeleteSong(_song);
+            plyCount.DeletePlayCount(_song);
+            _song.Downloaded = false;
+
+            File.Delete(_song.SongPath);
+        }
         private async void PlayCount_Clicked(object sender, EventArgs e)
         {
             var playCountRepo = new DBPlayCountRepository();

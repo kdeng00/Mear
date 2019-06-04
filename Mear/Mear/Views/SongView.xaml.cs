@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MediaManager;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using Mear.Models;
 using Mear.Playback;
+using Mear.Repositories.Database;
 using Mear.Repositories.Remote;
 using Mear.ViewModels;
 
@@ -57,8 +59,20 @@ namespace Mear.Views
 				else
 				{
 					song = await MearPlayer.StreamSongDemoAsync(song);
+                    var plyCountRepo = new DBPlayCountRepository();
+                    plyCountRepo.AffectPlayCount(song);
 				}
-				await Navigation.PushModalAsync(new NavigationPage(new MearPlayerView(song)));
+
+                while (true)
+                {
+                    var buffering = CrossMediaManager.Current.IsBuffering();
+                    if (!buffering)
+                    {
+                        var yup = 0;
+                        break;
+                    }
+                }
+			    await Navigation.PushModalAsync(new NavigationPage(new MearPlayerView(song)));
 			}
 			catch (Exception ex)
 			{

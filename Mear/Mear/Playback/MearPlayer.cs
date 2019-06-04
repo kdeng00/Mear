@@ -57,29 +57,6 @@ namespace Mear.Playback
 					await CrossMediaManager.Current.Play(tmpFile);
 					song.SongPath = tmpFile;
 
-                    for (var atmpt = 0;  !CrossMediaManager.Current.IsPlaying(); atmpt++)
-                    {
-                        if (atmpt == 5)
-                        {
-                            break;
-                        }
-                        await Task.Delay(500);
-                    }
-
-                    if (CrossMediaManager.Current.IsPlaying())
-                    {
-                        var plyCountRepo = new DBPlayCountRepository();
-                        var plyCount = plyCountRepo.RetrievePlayCount(song.Id);
-
-                        if (plyCount == null)
-                        {
-                            plyCountRepo.SavePlayCount(song);
-                        }
-                        else
-                        {
-                            plyCountRepo.UpdatePlayCount(song);
-                        }
-                    }
 				}
 
 				return song;
@@ -98,21 +75,6 @@ namespace Mear.Playback
 				var songPath = song.SongPath;
 
 				await CrossMediaManager.Current.Play(songPath);
-
-                if (CrossMediaManager.Current.IsPlaying())
-                {
-                    var plyCountRepo = new DBPlayCountRepository();
-                    var plyCount = plyCountRepo.RetrievePlayCount(song.Id);
-
-                    if (plyCount == null)
-                    {
-                        plyCountRepo.SavePlayCount(song);
-                    }
-                    else
-                    {
-                        plyCountRepo.UpdatePlayCount(song);
-                    }
-                }
 			}
 			catch (Exception ex)
 			{

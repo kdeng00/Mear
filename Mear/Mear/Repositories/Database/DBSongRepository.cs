@@ -76,6 +76,17 @@ namespace Mear.Repositories.Database
 			return null;
 		}
 
+        public void DeleteSong(Song song)
+        {
+            try
+            {
+                _Db.Delete(song);
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+        }
 		public void SaveSong(Song song)
 		{
 			if (!DoesTableExist("Song"))
