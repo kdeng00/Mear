@@ -8,6 +8,7 @@ using MediaManager;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+using Mear.Constants;
 using Mear.Models;
 using Mear.Playback;
 using Mear.Repositories.Database;
@@ -54,11 +55,11 @@ namespace Mear.Views
 				var song = (Song)SongListView.SelectedItem;
 				if (song.Downloaded)
 				{
-					await MearPlayer.PlaySong(song);
+                    await MearPlayer.ControlMusic(song, PlayControls.PLAYOFFLINE);
 				}
 				else
 				{
-					song = await MearPlayer.StreamSongDemoAsync(song);
+                    song = await MearPlayer.ControlMusic(song, PlayControls.STREAM);
                     var plyCountRepo = new DBPlayCountRepository();
                     plyCountRepo.AffectPlayCount(song);
 				}

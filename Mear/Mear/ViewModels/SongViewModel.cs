@@ -110,7 +110,7 @@ namespace Mear.ViewModels
 					songs = rmtSongs;
 				}
 
-				_songItems.Clear();
+                _songItems.Clear();
 
 				foreach (var song in songs)
 				{
@@ -121,6 +121,8 @@ namespace Mear.ViewModels
 			{
 				var msg = ex.Message;
 			}
+
+            IsRefreshing = false;
 		}
 		#endregion
 	}

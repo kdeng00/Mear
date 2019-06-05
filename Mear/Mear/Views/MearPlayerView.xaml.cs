@@ -10,7 +10,9 @@ using MediaManager;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+using Mear.Constants;
 using Mear.Models;
+using Mear.Playback;
 using Mear.Repositories.Database;
 using Mear.Repositories.Remote;
 using Mear.Utilities;
@@ -55,24 +57,36 @@ namespace Mear.Views
 
 
 		#region Methods
+        private ToolbarItem DownloadOption()
+        {
+            var dnloadOpt = new ToolbarItem();
+            dnloadOpt.Text = "Download";
+            dnloadOpt.Order = ToolbarItemOrder.Secondary;
+            dnloadOpt.Priority = 1;
+            dnloadOpt.Clicked += Download_Clicked;
+
+            return dnloadOpt;
+        }
+        private ToolbarItem RemoveOption()
+        {
+            var rmvOpt = new ToolbarItem();
+            rmvOpt.Text = "Remove";
+            rmvOpt.Order = ToolbarItemOrder.Secondary;
+            rmvOpt.Priority = 1;
+            rmvOpt.Clicked += Remove_Clicked;
+
+            return rmvOpt;
+        }
 		private void InitializeOptions()
 		{
             if (!_song.Downloaded)
             {
-                var dnloadOpt = new ToolbarItem();
-                dnloadOpt.Text = "Download";
-                dnloadOpt.Order = ToolbarItemOrder.Secondary;
-                dnloadOpt.Priority = 1;
-                dnloadOpt.Clicked += Download_Clicked;
+                var dnloadOpt = DownloadOption();
                 ToolbarItems.Add(dnloadOpt);
             }
             else
             {
-                var rmvOpt = new ToolbarItem();
-                rmvOpt.Text = "Remove";
-                rmvOpt.Order = ToolbarItemOrder.Secondary;
-                rmvOpt.Priority = 1;
-                rmvOpt.Clicked += Remove_Clicked;
+                var rmvOpt = RemoveOption();
                 ToolbarItems.Add(rmvOpt);
             }
 		}
@@ -151,11 +165,11 @@ namespace Mear.Views
 		{
 			if (CrossMediaManager.Current.IsPlaying())
 			{
-				await CrossMediaManager.Current.Pause();
+                await MearPlayer.ControlMusic(_song, PlayControls.PAUSE);
 			}
 			else
 			{
-				await CrossMediaManager.Current.Play();
+                await MearPlayer.ControlMusic(_song, PlayControls.RESUME);
 			}
 		}
 		private void Next_Clicked(object sender, EventArgs e)
@@ -181,11 +195,17 @@ namespace Mear.Views
 
 		private void Download_Clicked(object sender, EventArgs e)
 		{
+            var act = ToolbarItems.Where(tl => tl.Priority == 1).First();
+            ToolbarItems.Remove(act);
 			var songRepo = new RemoteSongRepository();
 			songRepo.DownloadSong(_song);
+            ToolbarItems.Add(RemoveOption());
 		}
         private async void Remove_Clicked(object sender, EventArgs e)
         {
+            var act = ToolbarItems.Where(tl => tl.Priority == 1).First();
+
+            ToolbarItems.Remove(act);
             var dbSongRepo = new DBSongRepository();
             var plyCount = new DBPlayCountRepository();
             dbSongRepo.DeleteSong(_song);
@@ -193,6 +213,8 @@ namespace Mear.Views
             _song.Downloaded = false;
 
             File.Delete(_song.SongPath);
+
+            ToolbarItems.Add(DownloadOption());
         }
         private async void PlayCount_Clicked(object sender, EventArgs e)
         {
