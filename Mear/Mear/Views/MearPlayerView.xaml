@@ -33,10 +33,10 @@
 			<StackLayout Orientation="Horizontal"
 										 Grid.Row="3">
 				<Button x:Name="Repeat"
-										Text="Rep"
+										Text="RepOff"
 										Clicked="Repeat_Clicked" />
 				<Button x:Name="Shuffle"
-									    Text="Shf"
+									    Text="ShfOff"
 										Clicked="Shuffle_Clicked" />
 			</StackLayout>
 				<StackLayout Orientation="Horizontal">

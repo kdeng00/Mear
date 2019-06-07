@@ -18,7 +18,8 @@ namespace Mear.Playback
 {
 	public class MearPlayer
 	{
-		#region Fields
+        #region Fields
+        private static Song _song;
 		#endregion
 
 
@@ -100,7 +101,9 @@ namespace Mear.Playback
                     return StreamSong(song);
                     break;
                 case PlayControls.REPEAT:
-                    // TODO: Implement repeat
+                    // TODO: Not fully implemented
+                    CrossMediaManager.Current.ToggleRepeat();
+                    var i = CrossMediaManager.Current.RepeatMode;
                     break;
                 case PlayControls.SHUFFLE:
                     // TODO: Implement shuffling

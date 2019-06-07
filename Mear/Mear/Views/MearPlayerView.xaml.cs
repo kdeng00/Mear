@@ -96,6 +96,13 @@ namespace Mear.Views
 			var dur = _song.Duration;
 			var endTime = songCnvrt.ConvertToSongTime(dur.Value);
 
+            var controlRepo = new DBMusicControlsRepository();
+            var shuffleOn = controlRepo.IsShuffleOn();
+            var repeatOn = controlRepo.IsRepeatOn();
+
+            Shuffle.Text = (shuffleOn) ? "ShfOn" : "ShfOff";
+            Repeat.Text = (repeatOn) ? "RepOn" : "RepOff";
+
 			EndTime.Text = endTime;
 		}
 
@@ -178,11 +185,21 @@ namespace Mear.Views
 		}
 		private void Repeat_Clicked(object sender, EventArgs e)
 		{
+            var musicCtrl = new DBMusicControlsRepository();
+            var control = musicCtrl.IsRepeatOn();
+            Repeat.Text = (!control) ? "RepOn" : "RepOff";
 
+            musicCtrl.UpdateRepeat();
+
+            MearPlayer.ControlMusic(_song, PlayControls.REPEAT);
 		}
 		private void Shuffle_Clicked(object sender, EventArgs e)
 		{
+            var musicCtrl = new DBMusicControlsRepository();
+            var control = musicCtrl.IsShuffleOn();
+            Shuffle.Text = (!control) ? "ShfOn" : "ShfOff";
 
+            musicCtrl.UpdateShuffle();
 		}
 
 
