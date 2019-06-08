@@ -51,6 +51,7 @@ namespace Mear.Views
 
 			BackgroundSongElasping();
 			BackgroundSongCoverUpdate();
+            //BackgroundControlInit();
 
             InitializeOptions();
 
@@ -101,7 +102,6 @@ namespace Mear.Views
 
             var controlRepo = new DBMusicControlsRepository();
             var shuffleOn = controlRepo.IsShuffleOn();
-            var repeatMode = (RepeatMode)controlRepo.IsRepeatOn();
 
             Shuffle.Text = (shuffleOn) ? "ShfOn" : "ShfOff";
             Repeat.Text = MearPlayer.RetrieveRepeatString();
@@ -118,15 +118,12 @@ namespace Mear.Views
 				{
 					while (true)
 					{
-						Device.BeginInvokeOnMainThread(() =>
+						Device.BeginInvokeOnMainThread(async () =>
 						{
-							var ttlSec = (int)CrossMediaManager.Current.Position.TotalSeconds;
-							var cnvrt = new TimeFormat();
-							var curPos = cnvrt.ConvertToSongTime(ttlSec);
+                            var curPos = await MearPlayer.ConvertToTime();
 							StartTime.Text = $"{curPos}";
-							double progVal = ((double)ttlSec) / ((double)_song.Duration);
-							progVal *= 100;
-							SongProgress.Value = progVal;
+                            double? progVal = await MearPlayer.ProgressValue();
+							SongProgress.Value = progVal.Value;
 						});
 
 						await Task.Delay(500);
@@ -144,7 +141,8 @@ namespace Mear.Views
 			{
 				new Thread(async () =>
 				{
-					while (true)
+                    // Will work on this later so I am setting it to false
+					while (false)
 					{
 						Device.BeginInvokeOnMainThread(() =>
 						{
@@ -164,6 +162,26 @@ namespace Mear.Views
 				var msg = ex.Message;
 			}
 		}
+        // Addresses issue where the Player's controls have not been properly initialized
+        private async Task BackgroundControlInit()
+        {
+            try
+            {
+                new Thread(async () =>
+                {
+                    while (!MearPlayer.RepeatMatchedDatabase())
+                    {
+                        MearPlayer.UpdateRepeatControls();
+                        Repeat.Text = MearPlayer.RetrieveRepeatString();
+                        await Task.Delay(750);
+                    }
+                }).Start();
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+        }
 		#endregion
 
 		#region Events
@@ -188,11 +206,7 @@ namespace Mear.Views
 		}
 		private void Repeat_Clicked(object sender, EventArgs e)
 		{
-            Task.Run(async () =>
-            {
-                await MearPlayer.ControlMusic(_song, PlayControls.REPEAT);
-            }).Wait();
-
+            MearPlayer.ControlMusic(_song, PlayControls.REPEAT);
             Repeat.Text = MearPlayer.RetrieveRepeatString();
 		}
 		private void Shuffle_Clicked(object sender, EventArgs e)
@@ -208,8 +222,7 @@ namespace Mear.Views
 		private async void SongProgress_DragCompleted(object sender, EventArgs e)
 		{
 			var progVal = SongProgress.Value;
-			double newPos = (progVal / 100) * ((double)_song.Duration);
-			await CrossMediaManager.Current.SeekTo(TimeSpan.FromSeconds(newPos));
+            await MearPlayer.SeekTo(progVal);
 		}
 
 		private void Download_Clicked(object sender, EventArgs e)

@@ -39,6 +39,7 @@ namespace Mear.Views
 		}
 		private void Settings_Clicked(object sender, EventArgs e)
 		{
+            Navigation.PushModalAsync(new NavigationPage(new SettingsPage()));
 		}
 		#endregion
 

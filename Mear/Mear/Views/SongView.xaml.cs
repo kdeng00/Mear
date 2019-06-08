@@ -60,20 +60,9 @@ namespace Mear.Views
 				else
 				{
                     song = await MearPlayer.ControlMusic(song, PlayControls.STREAM);
-                    var plyCountRepo = new DBPlayCountRepository();
-                    plyCountRepo.AffectPlayCount(song);
 				}
 
-                while (true)
-                {
-                    var buffering = CrossMediaManager.Current.IsBuffering();
-                    if (!buffering)
-                    {
-                        var yup = 0;
-                        break;
-                    }
-                }
-			    await Navigation.PushModalAsync(new NavigationPage(new MearPlayerView(song)));
+			    Navigation.PushModalAsync(new NavigationPage(new MearPlayerView(song)));
 			}
 			catch (Exception ex)
 			{

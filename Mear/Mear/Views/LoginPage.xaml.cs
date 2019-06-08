@@ -74,7 +74,6 @@ namespace Mear.Views
 						AccessToken = loginRes.Token,
 						UserId = loginRes.UserId
 					});
-					await DisplayAlert("Icarus Login", "Successfully logged in", "Ok");
 					App.Current.MainPage = new MusicLibrary();
 				}
 				else

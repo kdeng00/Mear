@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Mear.Views.SettingsPage"
+             xmlns:vm="clr-namespace:Mear.ViewModels"
+             Title="Settings" >
+
+    <ContentPage.Content>
+        <StackLayout>
+            <ListView x:Name="Sliders"
+                      ItemsSource="{Binding SwitchItems}"
+                      HasUnevenRows="False"
+                      RowHeight="75" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid MinimumHeightRequest="80" Padding="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackLayout Grid.Row="0" Grid.Column="0"
+                                             Orientation="Horizontal">
+                                    <Label Text="{Binding Title}"
+                                           d:Text="{Binding .}"
+                                           LineBreakMode="NoWrap"
+                                           FontSize="14" />
+                                    <Switch x:Name="{Binding Title}" 
+                                            IsToggled="{Binding On}"
+                                            Toggled="Switch_Toggled" />
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

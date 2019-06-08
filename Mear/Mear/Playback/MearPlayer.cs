@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using MediaManager;
@@ -22,6 +23,7 @@ namespace Mear.Playback
 	{
         #region Fields
         private static Song _song;
+        private static bool? _initialized = null;
 		#endregion
 
 
@@ -72,27 +74,16 @@ namespace Mear.Playback
 
 			return null;
 		}
-		public static async Task PlaySong(Song song)
-		{
-			try
-			{
-				var songPath = song.SongPath;
-
-				await CrossMediaManager.Current.Play(songPath);
-			}
-			catch (Exception ex)
-			{
-				var msg = ex.Message;
-			}
-		}
         public static async Task<Song> ControlMusic(Song song, PlayControls control)
         {
-
+            _song = song;
             switch (control)
             {
                 case PlayControls.PLAYOFFLINE:
                     var songPath = song.SongPath;
-                    await CrossMediaManager.Current.Play(songPath);
+                    await PlaySong(songPath);
+                    var plyCountRepo = new DBPlayCountRepository();
+                    plyCountRepo.AffectPlayCount(song);
                     InitializeRepeatMode();
                     break;
                 case PlayControls.PAUSE:
@@ -122,21 +113,95 @@ namespace Mear.Playback
             return null;
         }
 
+        public static async Task<string> ConvertToTime()
+        {
+            try
+            {
+                var ttlSec = (int)CrossMediaManager.Current.Position.TotalSeconds;
+                var cnvrt = new TimeFormat();
+                var curPos = cnvrt.ConvertToSongTime(ttlSec);
+
+                return curPos;
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+
+            return string.Empty;
+        }
+
+        public static async Task<double?> ProgressValue()
+        {
+            try
+            {
+                var totalSeconds = (int)CrossMediaManager.Current.Position.TotalSeconds;
+			    double progVal = ((double)totalSeconds) / ((double)_song.Duration) * 100;
+
+                return progVal;
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+
+            return null;
+        }
+
+		public static async Task PlaySong(Song song)
+		{
+			try
+			{
+				var songPath = song.SongPath;
+
+				await CrossMediaManager.Current.Play(songPath);
+			}
+			catch (Exception ex)
+			{
+				var msg = ex.Message;
+			}
+		}
+        public static async Task SeekTo(double songProress)
+        {
+            double newPosition = (songProress / 100) * ((double)_song.Duration);
+            await CrossMediaManager.Current.SeekTo(TimeSpan.FromSeconds(newPosition));
+        }
+
         public static string RetrieveRepeatString()
         {
-            var ctrlRepeatMode = CrossMediaManager.Current.RepeatMode;
+            var ctrlRepo = new DBMusicControlsRepository();
+            var ctrlRepeatMode = ctrlRepo.IsRepeatOn();
 
             switch (ctrlRepeatMode)
             {
-                case MediaManager.Playback.RepeatMode.Off:
+                case Repeat.OFF:
                     return "RepOff";
-                case MediaManager.Playback.RepeatMode.One:
+                case Repeat.ONE:
                     return "RepOn";
-                case MediaManager.Playback.RepeatMode.All:
+                case Repeat.ALL:
                     return "RepAll";
             }
 
             return string.Empty;
+        }
+
+        public static bool IsPlaying()
+        {
+            return CrossMediaManager.Current.IsPlaying();
+        }
+        public static bool RepeatMatchedDatabase()
+        {
+            var playerRepeatMode = CrossMediaManager.Current.RepeatMode;
+            var controlRepo = new DBMusicControlsRepository();
+            var repeatMode = controlRepo.IsRepeatOn();
+            var repeatModeConverted = RepeatUtility.RetrieveRepeatMode(repeatMode);
+
+            return (playerRepeatMode == repeatModeConverted);
+        }
+
+        public static void UpdateRepeatControls()
+        {
+            InitializeRepeatMode();
         }
 
         private static Song StreamSong(Song song)
@@ -196,19 +261,62 @@ namespace Mear.Playback
         private static async Task PlaySong(string songPath)
         {
             await CrossMediaManager.Current.Play(songPath);
+            if (_initialized == null)
+            {
+                CrossMediaManager.Current.MediaItemFinished += Current_MediaItemFinished;
+                //BackgroundWork();
+                _initialized = true;
+            }
         }
+
         private static void ToggleRepeat()
         {
             var musicCtrl = new DBMusicControlsRepository();
             musicCtrl.UpdateRepeat();
             var repeatMode = (Repeat)musicCtrl.IsRepeatOn();
 
-            for (var rpt = RepeatUtility.RetrieveRepeatMode(repeatMode);
-                CrossMediaManager.Current.RepeatMode != rpt;)
+            CrossMediaManager.Current.RepeatMode = RepeatUtility.RetrieveRepeatMode(repeatMode);
+        }
+
+        #region Background
+        private static async Task BackgroundWork()
+        {
+            try
             {
-                CrossMediaManager.Current.RepeatMode = RepeatUtility.RetrieveRepeatMode(repeatMode);
+                new Thread(async () =>
+                {
+
+                });
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
             }
         }
-		#endregion
-	}
+        #endregion
+
+        #region Events
+        private static void Current_MediaItemFinished(object sender, MediaManager.Media.MediaItemEventArgs e)
+        {
+            var ctrlRepo = new DBMusicControlsRepository();
+            var repeatMode = ctrlRepo.IsRepeatOn();
+            if (CrossMediaManager.Current.IsPlaying())
+            {
+                //return;
+            }
+            switch(repeatMode)
+            {
+                case Repeat.ONE:
+                    CrossMediaManager.Current.SeekToStart();
+                    //PlaySong(_song.SongPath);
+                    break;
+                case Repeat.ALL:
+                    // Will implment this fully later once Queues are a feature
+                    PlaySong(_song.SongPath);
+                    break;
+            }
+        }
+        #endregion
+        #endregion
+    }
 }
