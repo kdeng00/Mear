@@ -12,11 +12,14 @@ using Xamarin.Forms.Xaml;
 
 using Mear.Constants;
 using Mear.Models;
+using Mear.Models.PlayerControls;
 using Mear.Playback;
 using Mear.Repositories.Database;
 using Mear.Repositories.Remote;
 using Mear.Utilities;
 using Mear.ViewModels;
+
+using RepeatMode = Mear.Models.PlayerControls.Repeat;
 
 namespace Mear.Views
 {
@@ -98,10 +101,10 @@ namespace Mear.Views
 
             var controlRepo = new DBMusicControlsRepository();
             var shuffleOn = controlRepo.IsShuffleOn();
-            var repeatOn = controlRepo.IsRepeatOn();
+            var repeatMode = (RepeatMode)controlRepo.IsRepeatOn();
 
             Shuffle.Text = (shuffleOn) ? "ShfOn" : "ShfOff";
-            Repeat.Text = (repeatOn) ? "RepOn" : "RepOff";
+            Repeat.Text = MearPlayer.RetrieveRepeatString();
 
 			EndTime.Text = endTime;
 		}
@@ -185,13 +188,12 @@ namespace Mear.Views
 		}
 		private void Repeat_Clicked(object sender, EventArgs e)
 		{
-            var musicCtrl = new DBMusicControlsRepository();
-            var control = musicCtrl.IsRepeatOn();
-            Repeat.Text = (!control) ? "RepOn" : "RepOff";
+            Task.Run(async () =>
+            {
+                await MearPlayer.ControlMusic(_song, PlayControls.REPEAT);
+            }).Wait();
 
-            musicCtrl.UpdateRepeat();
-
-            MearPlayer.ControlMusic(_song, PlayControls.REPEAT);
+            Repeat.Text = MearPlayer.RetrieveRepeatString();
 		}
 		private void Shuffle_Clicked(object sender, EventArgs e)
 		{

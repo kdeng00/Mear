@@ -12,7 +12,9 @@ using Mear.Constants;
 using Mear.Constants.API;
 using Mear.Models;
 using Mear.Models.Authentication;
+using Mear.Models.PlayerControls;
 using Mear.Repositories.Database;
+using Mear.Utilities;
 
 namespace Mear.Playback
 {
@@ -85,11 +87,13 @@ namespace Mear.Playback
 		}
         public static async Task<Song> ControlMusic(Song song, PlayControls control)
         {
+
             switch (control)
             {
                 case PlayControls.PLAYOFFLINE:
                     var songPath = song.SongPath;
                     await CrossMediaManager.Current.Play(songPath);
+                    InitializeRepeatMode();
                     break;
                 case PlayControls.PAUSE:
                     await CrossMediaManager.Current.Pause();
@@ -98,12 +102,11 @@ namespace Mear.Playback
                     await CrossMediaManager.Current.Play();
                     break;
                 case PlayControls.STREAM:
-                    return StreamSong(song);
-                    break;
+                    song = StreamSong(song);
+                    InitializeRepeatMode();
+                    return song;
                 case PlayControls.REPEAT:
-                    // TODO: Not fully implemented
-                    CrossMediaManager.Current.ToggleRepeat();
-                    var i = CrossMediaManager.Current.RepeatMode;
+                    ToggleRepeat();
                     break;
                 case PlayControls.SHUFFLE:
                     // TODO: Implement shuffling
@@ -117,6 +120,23 @@ namespace Mear.Playback
             }
 
             return null;
+        }
+
+        public static string RetrieveRepeatString()
+        {
+            var ctrlRepeatMode = CrossMediaManager.Current.RepeatMode;
+
+            switch (ctrlRepeatMode)
+            {
+                case MediaManager.Playback.RepeatMode.Off:
+                    return "RepOff";
+                case MediaManager.Playback.RepeatMode.One:
+                    return "RepOn";
+                case MediaManager.Playback.RepeatMode.All:
+                    return "RepAll";
+            }
+
+            return string.Empty;
         }
 
         private static Song StreamSong(Song song)
@@ -145,7 +165,8 @@ namespace Mear.Playback
 
 					var response = client.DownloadData(request);
 
-					CrossMediaManager.Current.Play(tmpFile);
+                    PlaySong(tmpFile);
+
 					song.SongPath = tmpFile;
 				}
 
@@ -157,6 +178,36 @@ namespace Mear.Playback
 			}
 
 			return null;
+        }
+
+        private static void InitializeModes()
+        {
+            InitializeRepeatMode();
+        }
+        private static void InitializeRepeatMode()
+        {
+            var ctrlRepo = new DBMusicControlsRepository();
+            var repeatMode = ctrlRepo.IsRepeatOn();
+
+            var mode = RepeatUtility.RetrieveRepeatMode(repeatMode);
+
+            CrossMediaManager.Current.RepeatMode = mode;
+        }
+        private static async Task PlaySong(string songPath)
+        {
+            await CrossMediaManager.Current.Play(songPath);
+        }
+        private static void ToggleRepeat()
+        {
+            var musicCtrl = new DBMusicControlsRepository();
+            musicCtrl.UpdateRepeat();
+            var repeatMode = (Repeat)musicCtrl.IsRepeatOn();
+
+            for (var rpt = RepeatUtility.RetrieveRepeatMode(repeatMode);
+                CrossMediaManager.Current.RepeatMode != rpt;)
+            {
+                CrossMediaManager.Current.RepeatMode = RepeatUtility.RetrieveRepeatMode(repeatMode);
+            }
         }
 		#endregion
 	}

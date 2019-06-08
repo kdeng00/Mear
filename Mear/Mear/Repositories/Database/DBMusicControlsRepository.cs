@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using Mear.Models;
+using Mear.Models.PlayerControls;
+using Mear.Utilities;
 
 namespace Mear.Repositories.Database
 {
@@ -48,18 +50,15 @@ namespace Mear.Repositories.Database
 
             return false;
         }
-        public bool IsRepeatOn()
+        public Repeat IsRepeatOn()
         {
             try
             {
                 if (DoesTableExist("MusicControls"))
                 {
-                    bool? repeat = _Db.Table<MusicControls>().First().RepeatOn;
+                    var repeat = _Db.Table<MusicControls>().First().RepeatOn;
 
-                    if (repeat != null)
-                    {
-                        return repeat.Value;
-                    }
+                    return (Repeat)repeat;
                 }
             }
             catch (Exception ex)
@@ -67,7 +66,7 @@ namespace Mear.Repositories.Database
                 var msg = ex.Message;
             }
 
-            return false;
+            return Repeat.OFF;
         }
 
         public void UpdateRepeat()
@@ -77,7 +76,9 @@ namespace Mear.Repositories.Database
                 if (DoesTableExist("MusicControls"))
                 {
                     var control = RetrieveMusicControls();
-                    control.RepeatOn = !control.RepeatOn;
+                    var repeatMode = (Repeat)control.RepeatOn;
+                    control.RepeatOn = RepeatUtility.ToggleRepeatMode(repeatMode);
+
                     _Db.Update(control);
                 }
             }

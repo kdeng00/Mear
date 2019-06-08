@@ -5,6 +5,8 @@ using System.Text;
 
 using SQLite;
 
+using Mear.Models.PlayerControls;
+
 namespace Mear.Models
 {
     [DataContract]
@@ -14,6 +16,6 @@ namespace Mear.Models
         [PrimaryKey, Column("Id"), AutoIncrement]
         public int Id { get; set; }
         public bool ShuffleOn { get; set; } = false;
-        public bool RepeatOn { get; set; } = false;
+        public int RepeatOn { get; set; } = (int)PlayerControls.Repeat.OFF;
     }
 }
