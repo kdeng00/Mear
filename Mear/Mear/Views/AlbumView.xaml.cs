@@ -32,6 +32,7 @@ namespace Mear.Views
 		}
 		#endregion
 
+
 		#region Methods
 		#region Events
 		private void AlbumListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)

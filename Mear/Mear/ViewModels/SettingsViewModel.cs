@@ -5,6 +5,8 @@ using System.Text;
 
 using Xamarin.Forms;
 
+using Mear.Repositories.Database;
+
 namespace Mear.ViewModels
 {
     public class SettingsViewModel : BaseViewModel
@@ -36,10 +38,13 @@ namespace Mear.ViewModels
         #region Methods
         private SwitchItem RetrieveColorSchemeSwitch()
         {
+            var settingsRepo = new DBSettingsRepository();
+            var darkTheme = settingsRepo.IsDarkThemeOn();
+
             var colorScheme = new SwitchItem
             {
                 Title = "Dark Theme",
-                IsOn = true
+                IsOn = darkTheme
             };
 
             return colorScheme;

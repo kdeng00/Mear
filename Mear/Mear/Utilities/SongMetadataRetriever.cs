@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-using TagLib;
-
 using Mear.Models;
 
 using IOFile = System.IO.File;

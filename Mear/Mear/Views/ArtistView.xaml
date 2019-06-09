@@ -20,6 +20,7 @@
 				  IsPullToRefreshEnabled="True"
 				  RowHeight="80"
 				  RefreshCommand="{Binding RefreshArtists}"
+                  IsRefreshing="{Binding IsRefreshing}"
 				  ItemSelected="ArtistListView_ItemSelected" >
 			<ListView.ItemTemplate>
 				<DataTemplate>

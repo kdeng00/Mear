@@ -15,6 +15,7 @@ using Mear.Models;
 using Mear.Models.Authentication;
 using Mear.Models.PlayerControls;
 using Mear.Repositories.Database;
+using Mear.Repositories.Remote;
 using Mear.Utilities;
 
 namespace Mear.Playback
@@ -87,10 +88,10 @@ namespace Mear.Playback
                     InitializeRepeatMode();
                     break;
                 case PlayControls.PAUSE:
-                    await CrossMediaManager.Current.Pause();
+                    PauseSong();
                     break;
                 case PlayControls.RESUME:
-                    await CrossMediaManager.Current.Play();
+                    ResumeSong();
                     break;
                 case PlayControls.STREAM:
                     song = StreamSong(song);
@@ -148,6 +149,13 @@ namespace Mear.Playback
             return null;
         }
 
+        public static async Task DownloadSongToFS()
+        {
+			var songRepo = new RemoteSongRepository();
+			songRepo.DownloadSong(_song);
+
+            _song.Downloaded = true;
+        }
 		public static async Task PlaySong(Song song)
 		{
 			try
@@ -161,6 +169,17 @@ namespace Mear.Playback
 				var msg = ex.Message;
 			}
 		}
+        public static async Task RemoveSongFromFS()
+        {
+            var dbSongRepo = new DBSongRepository();
+            var plyCount = new DBPlayCountRepository();
+            dbSongRepo.DeleteSong(_song);
+            plyCount.DeletePlayCount(_song);
+
+            File.Delete(_song.SongPath);
+
+            _song.Downloaded = false;
+        }
         public static async Task SeekTo(double songProress)
         {
             double newPosition = (songProress / 100) * ((double)_song.Duration);
@@ -180,6 +199,21 @@ namespace Mear.Playback
                     return "RepOn";
                 case Repeat.ALL:
                     return "RepAll";
+            }
+
+            return string.Empty;
+        }
+        public static string RetrieveShuffleString()
+        {
+            var controlRepo = new DBMusicControlsRepository();
+            var shuffleOn = controlRepo.IsShuffleOn();
+            try
+            {
+                return shuffleOn ? "ShfOn" : "ShfOff";
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
             }
 
             return string.Empty;
@@ -258,6 +292,10 @@ namespace Mear.Playback
 
             CrossMediaManager.Current.RepeatMode = mode;
         }
+        private static async Task PauseSong()
+        {
+            await CrossMediaManager.Current.Pause();
+        }
         private static async Task PlaySong(string songPath)
         {
             await CrossMediaManager.Current.Play(songPath);
@@ -267,6 +305,10 @@ namespace Mear.Playback
                 //BackgroundWork();
                 _initialized = true;
             }
+        }
+        private static async Task ResumeSong()
+        {
+            await CrossMediaManager.Current.Play();
         }
 
         private static void ToggleRepeat()

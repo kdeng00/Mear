@@ -3,6 +3,52 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Mear.App">
     <Application.Resources>
+        <Color x:Key="NavigationPageColor">#000010</Color>
+        <Color x:Key="BarTextColor">#ffffff</Color>
+        <Color x:Key="NavigationPageBackgroundColor">#000000</Color>
+
+        <Color x:Key="TabbedBarTextColor">#ffffff</Color>
+        <Color x:Key="TabbedUnselectedColor">#000000</Color>
+        <Color x:Key="TabbedSelectedColor">#333333</Color>
+
+        <Color x:Key="ButtonColor">#660066</Color>
+        <Color x:Key="ButtonTextColor">#ffccff</Color>
+        <Color x:Key="ButtonBorderColor">#ffe6ff</Color>
+
+        <Color x:Key="LabelTextColor">#ffffee</Color>
+        <Color x:Key="LabelBackgroundColor">#aaaaaa</Color>
+
+        <Color x:Key="EntryTextColor">#ffffee</Color>
+
+        <Style TargetType="NavigationPage">
+            <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageBackgroundColor}" />
+            <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPageColor}" />
+            <Setter Property="BarTextColor" Value="{StaticResource BarTextColor}" />
+        </Style>
+        <Style TargetType="ContentPage">
+            <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageBackgroundColor}" />
+        </Style>
+        <Style TargetType="TabbedPage">
+            <Setter Property="BarTextColor" Value="{StaticResource TabbedBarTextColor}" />
+            <Setter Property="UnselectedTabColor" Value="{StaticResource TabbedUnselectedColor}" />
+            <Setter Property="SelectedTabColor" Value="{StaticResource TabbedSelectedColor}" />
+            <Setter Property="BarBackgroundColor" Value="Green" />
+        </Style>
+        <Style TargetType="StackLayout">
+            <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageColor}" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
+            <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
+            <Setter Property="BorderColor" Value="{StaticResource ButtonBorderColor}" />
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="TextColor" Value="{StaticResource LabelTextColor}" />
+        </Style>
+        <Style TargetType="Entry">
+            <Setter Property="TextColor" Value="{StaticResource EntryTextColor}" />
+        </Style>
 
     </Application.Resources>
 </Application>

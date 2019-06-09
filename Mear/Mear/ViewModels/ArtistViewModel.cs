@@ -63,6 +63,8 @@ namespace Mear.ViewModels
 			{
 				var msg = ex.Message;
 			}
+
+            IsRefreshing = false;
 		}
 		#endregion
 	}

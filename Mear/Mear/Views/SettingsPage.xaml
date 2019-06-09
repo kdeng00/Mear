@@ -31,8 +31,7 @@
                                            d:Text="{Binding .}"
                                            LineBreakMode="NoWrap"
                                            FontSize="14" />
-                                    <Switch x:Name="{Binding Title}" 
-                                            IsToggled="{Binding On}"
+                                    <Switch IsToggled="{Binding On}"
                                             Toggled="Switch_Toggled" />
                                 </StackLayout>
                             </Grid>

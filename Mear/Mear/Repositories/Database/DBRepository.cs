@@ -14,6 +14,7 @@ namespace Mear.Repositories.Database
 		#region Fields
 		protected SQLiteConnection _Db;
 		protected string _dbPath;
+        protected string _tableName;
 		#endregion
 
 

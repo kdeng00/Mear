@@ -13,7 +13,8 @@ namespace Mear
             InitializeComponent();
 
 			MainPage = new Landing();
-			//MainPage = new MusicLibrary();
+            MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.Black);
+            MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.White);
         }
 
         protected override void OnStart()

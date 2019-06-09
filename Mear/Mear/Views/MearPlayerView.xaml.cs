@@ -100,14 +100,16 @@ namespace Mear.Views
 			var dur = _song.Duration;
 			var endTime = songCnvrt.ConvertToSongTime(dur.Value);
 
-            var controlRepo = new DBMusicControlsRepository();
-            var shuffleOn = controlRepo.IsShuffleOn();
-
-            Shuffle.Text = (shuffleOn) ? "ShfOn" : "ShfOff";
+            Shuffle.Text = MearPlayer.RetrieveShuffleString();
             Repeat.Text = MearPlayer.RetrieveRepeatString();
 
 			EndTime.Text = endTime;
 		}
+        private void RemoveSyncToolbar()
+        {
+            var act = ToolbarItems.Where(tl => tl.Priority == 1).First();
+            ToolbarItems.Remove(act);
+        }
 
 		#region Background
 		private async Task BackgroundSongElasping()
@@ -212,10 +214,8 @@ namespace Mear.Views
 		private void Shuffle_Clicked(object sender, EventArgs e)
 		{
             var musicCtrl = new DBMusicControlsRepository();
-            var control = musicCtrl.IsShuffleOn();
-            Shuffle.Text = (!control) ? "ShfOn" : "ShfOff";
-
             musicCtrl.UpdateShuffle();
+            Shuffle.Text = MearPlayer.RetrieveShuffleString();
 		}
 
 
@@ -227,24 +227,20 @@ namespace Mear.Views
 
 		private void Download_Clicked(object sender, EventArgs e)
 		{
-            var act = ToolbarItems.Where(tl => tl.Priority == 1).First();
-            ToolbarItems.Remove(act);
-			var songRepo = new RemoteSongRepository();
-			songRepo.DownloadSong(_song);
+            RemoveSyncToolbar();
+            MearPlayer.DownloadSongToFS();
+
             ToolbarItems.Add(RemoveOption());
+
+            _song.Downloaded = true;
 		}
         private async void Remove_Clicked(object sender, EventArgs e)
         {
-            var act = ToolbarItems.Where(tl => tl.Priority == 1).First();
+            RemoveSyncToolbar();
+            MearPlayer.RemoveSongFromFS();
 
-            ToolbarItems.Remove(act);
-            var dbSongRepo = new DBSongRepository();
-            var plyCount = new DBPlayCountRepository();
-            dbSongRepo.DeleteSong(_song);
-            plyCount.DeletePlayCount(_song);
             _song.Downloaded = false;
 
-            File.Delete(_song.SongPath);
 
             ToolbarItems.Add(DownloadOption());
         }

@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Plugin.MediaManager">
-      <Version>0.6.1</Version>
+      <Version>0.6.7</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.6.9</Version>
@@ -64,7 +64,7 @@
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.5.231</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.0.0.425677" />
+    <PackageReference Include="Xamarin.Forms" Version="4.0.0.482894" />
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.v4" Version="28.0.0.1" />
