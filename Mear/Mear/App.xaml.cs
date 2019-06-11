@@ -13,7 +13,6 @@ namespace Mear
             InitializeComponent();
 
 			MainPage = new Landing();
-            MainPage.SetValue(NavigationPage.BarBackgroundColorProperty, Color.Black);
             MainPage.SetValue(NavigationPage.BarTextColorProperty, Color.White);
         }
 

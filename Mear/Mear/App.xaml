@@ -20,6 +20,13 @@
 
         <Color x:Key="EntryTextColor">#ffffee</Color>
 
+        <!--
+        <Color x:Key="SearchBarBackgroundColor">#ffffee</Color>
+        <Color x:Key="SearchBarCancelButtonColor">#999999</Color>
+        <Color x:Key="StaticResource SearchBarPlaceholderColor">#ffeeff</Color>
+        -->
+        <Color x:Key="StaticResource SearchBarTextColor">#ffffff</Color>
+
         <Style TargetType="NavigationPage">
             <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageBackgroundColor}" />
             <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPageColor}" />
@@ -30,9 +37,14 @@
         </Style>
         <Style TargetType="TabbedPage">
             <Setter Property="BarTextColor" Value="{StaticResource TabbedBarTextColor}" />
+            <!--
             <Setter Property="UnselectedTabColor" Value="{StaticResource TabbedUnselectedColor}" />
+            -->
+            <Setter Property="UnselectedTabColor" Value="Green" />
+            <!--
             <Setter Property="SelectedTabColor" Value="{StaticResource TabbedSelectedColor}" />
-            <Setter Property="BarBackgroundColor" Value="Green" />
+            -->
+            <Setter Property="SelectedTabColor" Value="Yellow" />
         </Style>
         <Style TargetType="StackLayout">
             <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageColor}" />
@@ -49,6 +61,14 @@
         <Style TargetType="Entry">
             <Setter Property="TextColor" Value="{StaticResource EntryTextColor}" />
         </Style>
+            <!--
+        <Style TargetType="SearchBar">
+            <Setter Property="BackgroundColor" Value="{StaticResource SearchBarBackgroundColor}" />
+            <Setter Property="CancelButtonColor" Value="{StaticResource SearchBarCancelButtonColor}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource SearchBarPlaceholderColor}" />
+            <Setter Property="TextColor" Value="{StaticResource SearchBarTextColor}" />
+        </Style>
+            -->
 
     </Application.Resources>
 </Application>

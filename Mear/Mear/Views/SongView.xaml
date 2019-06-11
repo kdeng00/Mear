@@ -13,7 +13,13 @@
 	  </ContentPage.BindingContext>
 
       <StackLayout>
-		<ListView x:Name="SongListView"
+        <SearchBar x:Name="SearchSong"
+                 Placeholder="Title, Artist"
+                 SearchCommand="{Binding SearchSongsCommand}"
+                 SearchCommandParameter="{Binding SearchedText, Source=x:Reference Search}"
+                 Text="{Binding SerachedText, Mode=TwoWay}">
+        </SearchBar>
+        <ListView x:Name="SongListView"
 				ItemsSource="{Binding SongItems}"
 				VerticalOptions="FillAndExpand"
 				HasUnevenRows="False"
