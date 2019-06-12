@@ -33,9 +33,8 @@ namespace Mear.Views
         #region Events
         private void Switch_Toggled(object sender, ToggledEventArgs e)
         {
-            var val = e;
-            var valOne = sender;
-            var yp = "";
+            bool? isDarkTheme = e.Value;
+            _viewModel.ToggleTheme(isDarkTheme);
         }
         #endregion
         #endregion

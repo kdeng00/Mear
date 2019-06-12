@@ -3,72 +3,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Mear.App">
     <Application.Resources>
-        <Color x:Key="NavigationPageColor">#000010</Color>
+        <Color x:Key="NavigationPageColor">#101010</Color>
+        <Color x:Key="NavigationBarColor">#9955fa</Color>
         <Color x:Key="BarTextColor">#ffffff</Color>
-        <Color x:Key="NavigationPageBackgroundColor">#000000</Color>
+        <Color x:Key="NavigationPageBackgroundColor">#ffffff</Color>
 
         <Color x:Key="TabbedBarTextColor">#ffffff</Color>
         <Color x:Key="TabbedUnselectedColor">#000000</Color>
         <Color x:Key="TabbedSelectedColor">#333333</Color>
 
-        <Color x:Key="ButtonColor">#660066</Color>
-        <Color x:Key="ButtonTextColor">#ffccff</Color>
-        <Color x:Key="ButtonBorderColor">#ffe6ff</Color>
+        <Color x:Key="ButtonColor">#360485</Color>
+        <Color x:Key="ButtonTextColor">#ffffff</Color>
+        <Color x:Key="ButtonBorderColor">#9555fa</Color>
 
-        <Color x:Key="LabelTextColor">#ffffee</Color>
-        <Color x:Key="LabelBackgroundColor">#aaaaaa</Color>
+        <Color x:Key="LabelTextColor">#ffffff</Color>
+        <Color x:Key="LabelBackgroundColor">#333333</Color>
 
-        <Color x:Key="EntryTextColor">#ffffee</Color>
+        <Color x:Key="EntryTextColor">#ffffff</Color>
+        <Color x:Key="EntryPlaceholderTextColor">#a300ff</Color>
+        <Color x:Key="EntryBackgroundColor">#111111</Color>
 
-        <!--
-        <Color x:Key="SearchBarBackgroundColor">#ffffee</Color>
-        <Color x:Key="SearchBarCancelButtonColor">#999999</Color>
-        <Color x:Key="StaticResource SearchBarPlaceholderColor">#ffeeff</Color>
-        -->
-        <Color x:Key="StaticResource SearchBarTextColor">#ffffff</Color>
+        <Color x:Key="SwitchBackgroundColor">#222222</Color>
+        <Color x:Key="SwitchActiveColor">#915dfa</Color>
+
+        <Color x:Key="SearchBarBackgroundColor">#222222</Color>
+        <Color x:Key="SearchBarCancelButtonColor">#9955fa</Color>
+        <Color x:Key="SearchBarPlaceholderTextColor">#eeffff</Color>
+        <Color x:Key="SearchBarTextColor">#ffffff</Color>
 
         <Style TargetType="NavigationPage">
-            <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageBackgroundColor}" />
-            <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPageColor}" />
-            <Setter Property="BarTextColor" Value="{StaticResource BarTextColor}" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource NavigationPageBackgroundColor}" />
+            <Setter Property="BarBackgroundColor" Value="{DynamicResource NavigationBarColor}" />
+            <Setter Property="BarTextColor" Value="{DynamicResource BarTextColor}" />
         </Style>
+            <!--
         <Style TargetType="ContentPage">
-            <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageBackgroundColor}" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource NavigationPageBackgroundColor}" />
+            <Setter Property="BackgroundColor" Value="Red" />
         </Style>
+            -->
+        <!--
         <Style TargetType="TabbedPage">
-            <Setter Property="BarTextColor" Value="{StaticResource TabbedBarTextColor}" />
-            <!--
-            <Setter Property="UnselectedTabColor" Value="{StaticResource TabbedUnselectedColor}" />
-            -->
-            <Setter Property="UnselectedTabColor" Value="Green" />
-            <!--
-            <Setter Property="SelectedTabColor" Value="{StaticResource TabbedSelectedColor}" />
-            -->
-            <Setter Property="SelectedTabColor" Value="Yellow" />
+            <Setter Property="BarTextColor" Value="{DynamicResource TabbedBarTextColor}" />
         </Style>
+        -->
         <Style TargetType="StackLayout">
-            <Setter Property="BackgroundColor" Value="{StaticResource NavigationPageColor}" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource NavigationPageColor}" />
         </Style>
 
         <Style TargetType="Button">
-            <Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
-            <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
-            <Setter Property="BorderColor" Value="{StaticResource ButtonBorderColor}" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource ButtonColor}" />
+            <Setter Property="TextColor" Value="{DynamicResource ButtonTextColor}" />
+            <Setter Property="BorderColor" Value="{DynamicResource ButtonBorderColor}" />
         </Style>
         <Style TargetType="Label">
-            <Setter Property="TextColor" Value="{StaticResource LabelTextColor}" />
+            <Setter Property="TextColor" Value="{DynamicResource LabelTextColor}" />
         </Style>
         <Style TargetType="Entry">
-            <Setter Property="TextColor" Value="{StaticResource EntryTextColor}" />
+            <Setter Property="TextColor" Value="{DynamicResource EntryTextColor}" />
+            <Setter Property="PlaceholderColor" Value="{DynamicResource EntryPlaceholderTextColor}" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource EntryBackgroundColor}" />
         </Style>
-            <!--
         <Style TargetType="SearchBar">
-            <Setter Property="BackgroundColor" Value="{StaticResource SearchBarBackgroundColor}" />
-            <Setter Property="CancelButtonColor" Value="{StaticResource SearchBarCancelButtonColor}" />
-            <Setter Property="PlaceholderColor" Value="{StaticResource SearchBarPlaceholderColor}" />
-            <Setter Property="TextColor" Value="{StaticResource SearchBarTextColor}" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource SearchBarBackgroundColor}" />
+            <Setter Property="CancelButtonColor" Value="{DynamicResource SearchBarCancelButtonColor}" />
+            <Setter Property="PlaceholderColor" Value="{DynamicResource SearchBarPlaceholderTextColor}" />
+            <Setter Property="TextColor" Value="{DynamicResource SearchBarTextColor}" />
         </Style>
-            -->
+        <Style TargetType="Switch">
+            <Setter Property="OnColor" Value="{DynamicResource SwitchActiveColor}" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource SwitchBackgroundColor}" />
+        </Style>
 
     </Application.Resources>
 </Application>

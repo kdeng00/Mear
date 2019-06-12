@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+using Mear.Managers;
 using Mear.Models.Authentication;
 using Mear.Repositories.Database;
 
@@ -27,6 +28,8 @@ namespace Mear.Views
 		public MusicLibrary()
 		{
 			InitializeComponent();
+            var themeMgr = new ThemeManager();
+            themeMgr.InitTheme();
 		}
 		#endregion
 

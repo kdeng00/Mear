@@ -66,6 +66,22 @@ namespace Mear.Repositories.Database
                 var msg = ex.Message;
             }
         }
+        public void UpdateDarkTheme(bool isDarkTheme)
+        {
+            try
+            {
+                if (DoesTableExist(_tableName))
+                {
+                    var settings = RetrieveSettings();
+                    settings.DarkTheme = isDarkTheme;
+                    _Db.Update(settings);
+                }
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+        }
 
         private Settings RetrieveSettings()
         {
