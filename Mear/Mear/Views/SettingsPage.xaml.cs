@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Rg.Plugins.Popup.Extensions;
+using Rg.Plugins.Popup.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+using Mear.Views.Popups;
 using Mear.ViewModels;
 
 namespace Mear.Views
@@ -33,8 +36,25 @@ namespace Mear.Views
         #region Events
         private void Switch_Toggled(object sender, ToggledEventArgs e)
         {
+            var switchItem = (Switch)sender;
             bool? isDarkTheme = e.Value;
             _viewModel.ToggleTheme(isDarkTheme);
+
+        }
+        private async void SelectionOptions_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            var item = ((sender as ListView).SelectedItem) as SettingsViewModel.SelectionItem;
+            try
+            {
+                if (item.Title.Equals("About"))
+                {
+                    await PopupNavigation.Instance.PushAsync(new AboutPopup(), false);
+                }
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
         }
         #endregion
         #endregion

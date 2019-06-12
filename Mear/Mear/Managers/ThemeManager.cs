@@ -58,7 +58,7 @@ namespace Mear.Managers
             App.Current.Resources["EntryTextColor"] = Color.FromHex("#ffffff");
             App.Current.Resources["EntryPlaceholderTextColor"] = Color.FromHex("#a300ff");
             App.Current.Resources["EntryBackgroundColor"] = Color.FromHex("#111111");
-            App.Current.Resources["SwitchBackgroundColor"] = Color.FromHex("#222222");
+            App.Current.Resources["SwitchBackgroundColor"] = Color.FromHex("#101010");
             App.Current.Resources["SwitchActiveColor"] = Color.FromHex("#915dfa");
             App.Current.Resources["SearchBarBackgroundColor"] = Color.FromHex("#222222");
             App.Current.Resources["SearchBarCancelButtonColor"] = Color.FromHex("#9955fa");

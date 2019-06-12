@@ -308,7 +308,7 @@ namespace Mear.Playback
         }
         private static async Task ResumeSong()
         {
-            await CrossMediaManager.Current.Play();
+            await CrossMediaManager.Current.PlayPause();
         }
 
         private static void ToggleRepeat()

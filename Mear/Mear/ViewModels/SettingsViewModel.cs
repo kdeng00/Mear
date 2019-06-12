@@ -14,6 +14,7 @@ namespace Mear.ViewModels
     {
         #region Fields
         private ObservableCollection<SwitchItem> _switchItems;
+        private ObservableCollection<SelectionItem> _selectionItems;
         #endregion
 
 
@@ -23,6 +24,11 @@ namespace Mear.ViewModels
             get => _switchItems;
             set => _switchItems = value;
         }
+        public ObservableCollection<SelectionItem> SelectionItems
+        {
+            get => _selectionItems;
+            set => _selectionItems = value;
+        }
         #endregion
 
 
@@ -30,8 +36,10 @@ namespace Mear.ViewModels
         public SettingsViewModel()
         {
             _switchItems = new ObservableCollection<SwitchItem>();
+            _selectionItems = new ObservableCollection<SelectionItem>();
 
             PopulateSwitch();
+            PopulateSelections();
         }
         #endregion
 
@@ -55,10 +63,22 @@ namespace Mear.ViewModels
 
             return colorScheme;
         }
+
         private void PopulateSwitch()
         {
             var colorScheme = RetrieveColorSchemeSwitch();
             _switchItems.Add(colorScheme);
+        }
+        private void PopulateSelections()
+        {
+            // TODO: When more selection options are added, will need to
+            // come up with a better way but for now, this will suffice.
+            _selectionItems.Clear();
+            _selectionItems.Add(new SelectionItem
+            {
+                Title = "About",
+                Description = "Information about the software"
+            });
         }
         #endregion
 
@@ -68,6 +88,11 @@ namespace Mear.ViewModels
         {
             public string Title { get; set; }
             public bool IsOn { get; set; }
+        }
+        public class SelectionItem
+        {
+            public string Title { get; set; }
+            public string Description { get; set; }
         }
         #endregion
     }

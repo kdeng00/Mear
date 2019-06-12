@@ -8,6 +8,8 @@ using Android.Widget;
 using Android.OS;
 
 using MediaManager;
+using Rg.Plugins.Popup;
+using Rg.Plugins.Popup.Pages;
 
 namespace Mear.Droid
 {
@@ -18,6 +20,8 @@ namespace Mear.Droid
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
+
+            Popup.Init(this, savedInstanceState);
 
             base.OnCreate(savedInstanceState);
 
@@ -33,6 +37,18 @@ namespace Mear.Droid
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        public override void OnBackPressed()
+        {
+            if (Popup.SendBackPressed(base.OnBackPressed))
+            {
+                var demo = 0;
+            }
+            else
+            {
+                var demo = 0;
+            }
+            base.OnBackPressed();
         }
     }
 }

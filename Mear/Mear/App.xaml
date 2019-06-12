@@ -23,7 +23,7 @@
         <Color x:Key="EntryPlaceholderTextColor">#a300ff</Color>
         <Color x:Key="EntryBackgroundColor">#111111</Color>
 
-        <Color x:Key="SwitchBackgroundColor">#222222</Color>
+        <Color x:Key="SwitchBackgroundColor">#101010</Color>
         <Color x:Key="SwitchActiveColor">#915dfa</Color>
 
         <Color x:Key="SearchBarBackgroundColor">#222222</Color>
@@ -36,17 +36,7 @@
             <Setter Property="BarBackgroundColor" Value="{DynamicResource NavigationBarColor}" />
             <Setter Property="BarTextColor" Value="{DynamicResource BarTextColor}" />
         </Style>
-            <!--
-        <Style TargetType="ContentPage">
-            <Setter Property="BackgroundColor" Value="{DynamicResource NavigationPageBackgroundColor}" />
-            <Setter Property="BackgroundColor" Value="Red" />
-        </Style>
-            -->
-        <!--
-        <Style TargetType="TabbedPage">
-            <Setter Property="BarTextColor" Value="{DynamicResource TabbedBarTextColor}" />
-        </Style>
-        -->
+        
         <Style TargetType="StackLayout">
             <Setter Property="BackgroundColor" Value="{DynamicResource NavigationPageColor}" />
         </Style>
