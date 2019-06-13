@@ -13,6 +13,7 @@ namespace Mear.ViewModels
 		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler PropertyChanged;
         #endregion
+        protected string _searchedText;
         private bool _isRefreshing;
         #endregion
 
@@ -25,6 +26,17 @@ namespace Mear.ViewModels
             {
                 _isRefreshing = value;
                 NotifyPropertyChanged("IsRefreshing");
+            }
+        }
+
+        public string SearchedText
+        {
+            get => _searchedText;
+            set
+            {
+                _searchedText = value;
+                NotifyPropertyChanged("SearchSong");
+                //SearchSongText(_searchedText);
             }
         }
         #endregion

@@ -81,8 +81,7 @@ namespace Mear.Playback
             switch (control)
             {
                 case PlayControls.PLAYOFFLINE:
-                    var songPath = song.SongPath;
-                    await PlaySong(songPath);
+                    await PlaySong(song);
                     var plyCountRepo = new DBPlayCountRepository();
                     plyCountRepo.AffectPlayCount(song);
                     InitializeRepeatMode();

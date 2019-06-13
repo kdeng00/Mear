@@ -37,7 +37,7 @@ namespace Mear.Views
 		#region Events
 		private void ArtistListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
 		{
-
+            var artistItem = (sender as ListView).SelectedItem = null;
 		}
 		#endregion
 		#endregion

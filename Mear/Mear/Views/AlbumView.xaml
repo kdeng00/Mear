@@ -12,7 +12,12 @@
 		<vm:AlbumViewModel />
 	</ContentPage.BindingContext>
 	<StackLayout>
-		<ListView x:Name="AlbumListView"
+        <SearchBar x:Name="SearchAlbum"
+                   Placeholder="Album"
+                   SearchCommand="{Binding SearchAlbumCommand}"
+                   SearchCommandParameter="{Binding SearchedText, Source=x:Reference Search}"
+                   Text="{Binding SearchedText, Mode=TwoWay}" />
+        <ListView x:Name="AlbumListView"
 			  ItemsSource="{Binding AlbumItems}"
 			  VerticalOptions="FillAndExpand"
 			  HasUnevenRows="False"

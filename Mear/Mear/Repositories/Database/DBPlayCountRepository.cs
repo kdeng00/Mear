@@ -70,6 +70,7 @@ namespace Mear.Repositories.Database
                     }
                     else
                     {
+                        plyCount.PlayCounter++;
                         _Db.Update(plyCount);
                     }
                 }

@@ -42,13 +42,10 @@ namespace Mear.Droid
         {
             if (Popup.SendBackPressed(base.OnBackPressed))
             {
-                var demo = 0;
             }
             else
             {
-                var demo = 0;
             }
-            base.OnBackPressed();
         }
     }
 }

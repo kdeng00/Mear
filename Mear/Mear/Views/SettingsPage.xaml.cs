@@ -55,6 +55,8 @@ namespace Mear.Views
             {
                 var msg = ex.Message;
             }
+
+            (sender as ListView).SelectedItem = null;
         }
         #endregion
         #endregion

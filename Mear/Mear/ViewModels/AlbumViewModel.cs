@@ -17,6 +17,7 @@ namespace Mear.ViewModels
 		#region Fields
 		private ObservableCollection<Album> _albumItems;
 		private Command _refreshAlbums;
+        private Command _searchAlbumCommand;
 		#endregion
 
 
@@ -30,6 +31,11 @@ namespace Mear.ViewModels
 		{
 			get => _refreshAlbums;
 		}
+        public Command SearchAlbumCommand
+        {
+            get => _searchAlbumCommand;
+            set => _searchAlbumCommand = value;
+        }
 		#endregion
 
 
@@ -38,6 +44,7 @@ namespace Mear.ViewModels
 		{
 			_albumItems = new ObservableCollection<Album>();
 			_refreshAlbums = new Command(async () => await PopulateAlbumsAsync());
+            _searchAlbumCommand = new Command(async () => await SearchAlbum());
 
 			PopulateAlbumsAsync();
 		}
@@ -66,6 +73,9 @@ namespace Mear.ViewModels
 
             IsRefreshing = false;
 		}
+        private async Task SearchAlbum()
+        {
+        }
 		#endregion
 	}
 }

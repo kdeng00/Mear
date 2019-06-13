@@ -27,6 +27,7 @@ namespace Mear.Views.Popups
         }
         #endregion
 
+
         #region Methods
         #region PopUpInit
         protected override void OnAppearing()
@@ -87,7 +88,7 @@ namespace Mear.Views.Popups
 
         protected override bool OnBackgroundClicked()
         {
-            return base.OnBackgroundClicked();
+            return true;
         }
         #endregion
         #endregion

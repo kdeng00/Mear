@@ -23,24 +23,25 @@
         HorizontalOptions="Center" 
         Padding="40, 40, 40, 40">
         <Label
-            Text="Mear"/>
+            Text="Mear"
+            FontSize="Large"/>
         <Label
-            Text="Pre-developement release version" />
-        <ListView x:Name="ContributorsView"
-                  VerticalOptions="Center"
-                  HorizontalOptions="Center"
-                  ItemsSource="{Binding ContributorItems}"
-                  HasUnevenRows="True" >
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Horizontal">
-                            <Label Text="{Binding Contributor}" />
-                            <Label Text="{Binding Role}" />
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            Text="Pre-developement release version"
+            FontSize="Medium"/>
+        <StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Kun Deng"
+               FontSize="Small" />
+                <Label Text="- Author"
+               FontSize="Small" />
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="zularizal"
+               FontSize="Small" />
+                <Label Text="- Graphic Designer"
+               FontSize="Small" />
+            </StackLayout>
+        </StackLayout>
+        <Label Text="M.I.T. Open Source License" />
     </StackLayout>
 </pages:PopupPage>

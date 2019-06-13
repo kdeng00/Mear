@@ -37,7 +37,7 @@ namespace Mear.Views
 		#region Events
 		private void AlbumListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
 		{
-
+            var albumItem = (sender as ListView).SelectedItem = null;
 		}
 		#endregion
 		#endregion

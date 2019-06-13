@@ -19,7 +19,6 @@ namespace Mear.ViewModels
         private ObservableCollection<Song> _songItems;
         private Command _refreshSongs;
         private Command _searchSongsCommand;
-        private string _searchedText;
         #endregion
 
 
@@ -41,16 +40,6 @@ namespace Mear.ViewModels
             set => _searchSongsCommand = value;
         }
 
-        public string SearchedText
-        {
-            get => _searchedText;
-            set
-            {
-                _searchedText = value;
-                NotifyPropertyChanged("SearchSong");
-                //SearchSongText(_searchedText);
-            }
-        }
         #endregion
 
 

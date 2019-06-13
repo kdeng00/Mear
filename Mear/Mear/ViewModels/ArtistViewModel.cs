@@ -17,6 +17,7 @@ namespace Mear.ViewModels
 		#region Fields
 		private ObservableCollection<Artist> _artistItems;
 		private Command _refreshArtists;
+        private Command _searchArtistCommand;
 		#endregion
 
 
@@ -30,6 +31,11 @@ namespace Mear.ViewModels
 		{
 			get => _refreshArtists;
 		}
+        public Command SearchArtistCommand
+        {
+            get => _searchArtistCommand;
+            set => _searchArtistCommand = value;
+        }
 		#endregion
 
 
@@ -38,6 +44,7 @@ namespace Mear.ViewModels
 		{
 			_artistItems = new ObservableCollection<Artist>();
 			_refreshArtists = new Command(async () => await PopulateArtistsAsync());
+            _searchArtistCommand = new Command(async () => await SearchArtists());
 
 			PopulateArtistsAsync();
 		}
@@ -66,6 +73,9 @@ namespace Mear.ViewModels
 
             IsRefreshing = false;
 		}
+        private async Task SearchArtists()
+        {
+        }
 		#endregion
 	}
 }
