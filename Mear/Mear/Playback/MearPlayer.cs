@@ -20,11 +20,18 @@ using Mear.Utilities;
 
 namespace Mear.Playback
 {
-	public class MearPlayer
-	{
+    public class MearPlayer
+    {
         #region Fields
+        private Queue<Song> _mearQueue = null;
         private static Song _song;
         private static bool? _initialized = null;
+        private static SortedDictionary<MusicViews, bool?> _songChanged =
+            new SortedDictionary<MusicViews, bool?>{
+                { MusicViews.Song, false },
+                { MusicViews.Album, false },
+                { MusicViews.Artist, false }
+            };
 		#endregion
 
 
@@ -77,7 +84,10 @@ namespace Mear.Playback
 		}
         public static async Task<Song> ControlMusic(Song song, PlayControls control)
         {
-            _song = song;
+            if (song != null)
+            {
+                _song = song;
+            }
             switch (control)
             {
                 case PlayControls.PLAYOFFLINE:
@@ -113,15 +123,16 @@ namespace Mear.Playback
             return null;
         }
 
+        public static async Task<string> SongTitle()
+        {
+            return _song.Title;
+        }
         public static async Task<string> ConvertToTime()
         {
             try
             {
                 var ttlSec = (int)CrossMediaManager.Current.Position.TotalSeconds;
-                var cnvrt = new TimeFormat();
-                var curPos = cnvrt.ConvertToSongTime(ttlSec);
-
-                return curPos;
+                return TimeFormat.ConvertToSongTime(ttlSec);
             }
             catch (Exception ex)
             {
@@ -161,7 +172,7 @@ namespace Mear.Playback
 			{
 				var songPath = song.SongPath;
 
-				await CrossMediaManager.Current.Play(songPath);
+                PlaySong(songPath);
 			}
 			catch (Exception ex)
 			{
@@ -178,6 +189,10 @@ namespace Mear.Playback
             File.Delete(_song.SongPath);
 
             _song.Downloaded = false;
+        }
+        public static async Task ResetSongChange(MusicViews type)
+        {
+            _songChanged[type] = false;
         }
         public static async Task SeekTo(double songProress)
         {
@@ -221,6 +236,10 @@ namespace Mear.Playback
         public static bool IsPlaying()
         {
             return CrossMediaManager.Current.IsPlaying();
+        }
+        public static bool SongHasBeenChanged(MusicViews type)
+        {
+            return _songChanged[type].Value;
         }
         public static bool RepeatMatchedDatabase()
         {
@@ -301,9 +320,11 @@ namespace Mear.Playback
             if (_initialized == null)
             {
                 CrossMediaManager.Current.MediaItemFinished += Current_MediaItemFinished;
-                //BackgroundWork();
                 _initialized = true;
             }
+            _songChanged[MusicViews.Song] = true;
+            _songChanged[MusicViews.Album] = true;
+            _songChanged[MusicViews.Artist] = true;
         }
         private static async Task ResumeSong()
         {
@@ -314,7 +335,7 @@ namespace Mear.Playback
         {
             var musicCtrl = new DBMusicControlsRepository();
             musicCtrl.UpdateRepeat();
-            var repeatMode = (Repeat)musicCtrl.IsRepeatOn();
+            var repeatMode = musicCtrl.IsRepeatOn();
 
             CrossMediaManager.Current.RepeatMode = RepeatUtility.RetrieveRepeatMode(repeatMode);
         }
@@ -341,15 +362,12 @@ namespace Mear.Playback
         {
             var ctrlRepo = new DBMusicControlsRepository();
             var repeatMode = ctrlRepo.IsRepeatOn();
-            if (CrossMediaManager.Current.IsPlaying())
-            {
-                //return;
-            }
+
             switch(repeatMode)
             {
                 case Repeat.ONE:
                     CrossMediaManager.Current.SeekToStart();
-                    //PlaySong(_song.SongPath);
+                    PlaySong(_song.SongPath);
                     break;
                 case Repeat.ALL:
                     // Will implment this fully later once Queues are a feature
@@ -358,6 +376,16 @@ namespace Mear.Playback
             }
         }
         #endregion
+        #endregion
+
+
+        #region Enums
+        public enum MusicViews
+        {
+            Song = 0,
+            Album,
+            Artist
+        }
         #endregion
     }
 }

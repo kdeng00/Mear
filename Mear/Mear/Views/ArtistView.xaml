@@ -12,7 +12,7 @@
 		<vm:ArtistViewModel />
 	</ContentPage.BindingContext>
 
-	<StackLayout>
+	<StackLayout x:Name="ArtistViewMainLayout">
         <SearchBar x:Name="SearchArtist"
                   Placeholder="Artist"
                   SearchCommand="{Binding SearchArtistCommand}"

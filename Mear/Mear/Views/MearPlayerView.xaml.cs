@@ -50,7 +50,7 @@ namespace Mear.Views
 			InitializeControls();
 
 			BackgroundSongElasping();
-			BackgroundSongCoverUpdate();
+			//BackgroundSongCoverUpdate();
             //BackgroundControlInit();
 
             InitializeOptions();
@@ -81,7 +81,7 @@ namespace Mear.Views
 
             return rmvOpt;
         }
-		private void InitializeOptions()
+		private async void InitializeOptions()
 		{
             if (!_song.Downloaded)
             {
@@ -96,14 +96,10 @@ namespace Mear.Views
 		}
 		private void InitializeControls()
 		{
-			var songCnvrt = new TimeFormat();
-			var dur = _song.Duration;
-			var endTime = songCnvrt.ConvertToSongTime(dur.Value);
-
             Shuffle.Text = MearPlayer.RetrieveShuffleString();
             Repeat.Text = MearPlayer.RetrieveRepeatString();
 
-			EndTime.Text = endTime;
+			EndTime.Text = TimeFormat.ConvertToSongTime(_song.Duration.Value);
 		}
         private void RemoveSyncToolbar()
         {

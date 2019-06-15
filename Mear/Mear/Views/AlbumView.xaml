@@ -11,7 +11,7 @@
 	<ContentPage.BindingContext>
 		<vm:AlbumViewModel />
 	</ContentPage.BindingContext>
-	<StackLayout>
+	<StackLayout x:Name="AlbumViewMainLayout" >
         <SearchBar x:Name="SearchAlbum"
                    Placeholder="Album"
                    SearchCommand="{Binding SearchAlbumCommand}"
