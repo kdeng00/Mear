@@ -39,7 +39,13 @@ namespace Mear.Views
 		{
             var albumItem = (sender as ListView).SelectedItem = null;
 		}
-		#endregion
-		#endregion
-	}
+
+        private async void SearchAlbum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = e.NewTextValue;
+            _viewModel.SearchAlbums(text);
+        }
+        #endregion
+        #endregion
+    }
 }

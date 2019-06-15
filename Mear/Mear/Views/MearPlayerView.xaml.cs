@@ -225,11 +225,11 @@ namespace Mear.Views
             await MearPlayer.SeekTo(progVal);
 		}
 
-		private void Download_Clicked(object sender, EventArgs e)
+		private async void Download_Clicked(object sender, EventArgs e)
 		{
-            RemoveSyncToolbar();
-            MearPlayer.DownloadSongToFS();
+            await MearPlayer.DownloadSongToFS();
 
+            RemoveSyncToolbar();
             ToolbarItems.Add(RemoveOption());
 
             _song.Downloaded = true;
@@ -237,10 +237,9 @@ namespace Mear.Views
         private async void Remove_Clicked(object sender, EventArgs e)
         {
             RemoveSyncToolbar();
-            MearPlayer.RemoveSongFromFS();
+            await MearPlayer.RemoveSongFromFS();
 
             _song.Downloaded = false;
-
 
             ToolbarItems.Add(DownloadOption());
         }

@@ -18,6 +18,7 @@ namespace Mear.ViewModels
 		private ObservableCollection<Artist> _artistItems;
 		private Command _refreshArtists;
         private Command _searchArtistCommand;
+        private List<Artist> _artists;
 		#endregion
 
 
@@ -52,19 +53,30 @@ namespace Mear.ViewModels
 
 
 		#region Methods
+        public async void SearchArtists(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                _artistItems.Clear();
+                _artists.ToList().ForEach(_artistItems.Add);
+            }
+            else
+            {
+                var artistItems = _artists.Where(a => a.Name.Contains(text)).ToList();
+                _artistItems.Clear();
+                artistItems.ToList().ForEach(_artistItems.Add);
+            }
+        }
 		private async Task PopulateArtistsAsync()
 		{
 			try
 			{
 				var artistRepo = new RemoteArtistRepository();
-				var artists = artistRepo.RetrieveArtists().OrderBy(a => a.Name).ToList();
+				_artists = artistRepo.RetrieveArtists().OrderBy(a => a.Name).ToList();
 
 				_artistItems.Clear();
 
-				foreach (var artist in artists)
-				{
-					_artistItems.Add(artist);
-				}
+                _artists.ToList().ForEach(_artistItems.Add);
 			}
 			catch (Exception ex)
 			{

@@ -17,7 +17,8 @@
                  Placeholder="Title, Artist"
                  SearchCommand="{Binding SearchSongsCommand}"
                  SearchCommandParameter="{Binding SearchedText, Source=x:Reference Search}"
-                 Text="{Binding SerachedText, Mode=TwoWay}">
+                 Text="{Binding SerachedText, Mode=TwoWay}"
+                 TextChanged="SearchSong_TextChanged" >
         </SearchBar>
         <ListView x:Name="SongListView"
 				ItemsSource="{Binding SongItems}"

@@ -18,6 +18,7 @@ namespace Mear.ViewModels
 		private ObservableCollection<Album> _albumItems;
 		private Command _refreshAlbums;
         private Command _searchAlbumCommand;
+        private List<Album> _albums;
 		#endregion
 
 
@@ -52,19 +53,31 @@ namespace Mear.ViewModels
 
 
 		#region Methods
+        public async void SearchAlbums(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                _albumItems.Clear();
+                _albums.ToList().ForEach(_albumItems.Add);
+            }
+            else
+            {
+                var albumItems = _albums.Where(a => a.Title.Contains(text)).ToList();
+                _albumItems.Clear();
+                albumItems.ToList().ForEach(_albumItems.Add);
+            }
+        }
+
 		private async Task PopulateAlbumsAsync()
 		{
 			try
 			{
 				var albumRepo = new RemoteAlbumRepository();
-				var albums = albumRepo.RetrieveAlbums().OrderBy(a => a.Title).ToList();
+				_albums = albumRepo.RetrieveAlbums().OrderBy(a => a.Title).ToList();
 
 				_albumItems.Clear();
 
-				foreach (var album in albums)
-				{
-					_albumItems.Add(album);
-				}
+                _albums.ToList().ForEach(_albumItems.Add);
 			}
 			catch (Exception ex)
 			{

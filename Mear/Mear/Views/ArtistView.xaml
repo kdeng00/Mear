@@ -17,7 +17,8 @@
                   Placeholder="Artist"
                   SearchCommand="{Binding SearchArtistCommand}"
                   SearchCommandParameter="{Binding SearchedText, Source=x:Reference Search}"
-                  Text="{Binding SearchedText, Mode=TwoWay}" />
+                  Text="{Binding SearchedText, Mode=TwoWay}"
+                  TextChanged="SearchArtist_TextChanged" />
         <ListView x:Name="ArtistListView"
 				  ItemsSource="{Binding ArtistItems}"
 				  VerticalOptions="FillAndExpand"

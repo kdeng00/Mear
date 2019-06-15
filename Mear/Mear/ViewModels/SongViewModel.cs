@@ -19,6 +19,7 @@ namespace Mear.ViewModels
         private ObservableCollection<Song> _songItems;
         private Command _refreshSongs;
         private Command _searchSongsCommand;
+        private List<Song> _songs;
         #endregion
 
 
@@ -50,7 +51,7 @@ namespace Mear.ViewModels
             _refreshSongs = new Command(async () => await PopulateSongsAsync());
             _searchSongsCommand = new Command(async () => await SearchSongText());
 
-            PopulateSongs();
+            PopulateSongsAsync();
         }
         #endregion
 
@@ -73,9 +74,22 @@ namespace Mear.ViewModels
                 songs = rmtSongs;
             }
 
-            foreach (var song in songs)
+            songs.ToList().ForEach(_songItems.Add);
+        }
+
+        public async void FilterSongs(string text)
+        {
+            if (string.IsNullOrEmpty(text))
             {
-                _songItems.Add(song);
+                _songItems.Clear();
+                _songs.ToList().ForEach(_songItems.Add);
+            }
+            else
+            {
+                var songItems = _songs.Where(s => s.Title.Contains(text) || 
+                    s.Artist.Contains(text)).ToList();
+                _songItems.Clear();
+                songItems.ToList().ForEach(_songItems.Add);
             }
         }
 
@@ -107,23 +121,19 @@ namespace Mear.ViewModels
                 var localSongRepo = new LocalSongRepository();
                 var lclSongs = localSongRepo.RetrieveSongs();
                 var rmtSongs = songRepo.RetrieveSongs().OrderBy(s => s.Title).ToList();
-                var songs = new List<Song>();
                 if (lclSongs != null)
                 {
                     lclSongs = lclSongs.OrderBy(s => s.Title).ToList();
-                    songs = MergeSongs(lclSongs, rmtSongs);
+                    _songs = MergeSongs(lclSongs, rmtSongs);
                 }
                 else
                 {
-                    songs = rmtSongs;
+                    _songs = rmtSongs;
                 }
 
                 _songItems.Clear();
 
-                foreach (var song in songs)
-                {
-                    _songItems.Add(song);
-                }
+                _songs.ToList().ForEach(_songItems.Add);
             }
             catch (Exception ex)
             {

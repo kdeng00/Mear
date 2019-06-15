@@ -43,7 +43,6 @@ namespace Mear.Views
 		#region Events
 		private async void SongListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
 		{
-			var i = "here";
 			if (SongListView.SelectedItem == null)
 			{
 				SongListView.SelectedItem = null;
@@ -72,6 +71,12 @@ namespace Mear.Views
 			SongListView.SelectedItem = null;
 		}
 
+        private void SearchSong_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = e.NewTextValue.ToString();
+            _viewModel.FilterSongs(text);
+        }
+
 		private async void SongOptions_Clicked(object sender, EventArgs e)
 		{
 			try
@@ -91,7 +96,7 @@ namespace Mear.Views
 			var songRepo = new RemoteSongRepository();
 			var songs = songRepo.RetrieveSongs();
 		}
-		#endregion
-		#endregion
-	}
+        #endregion
+        #endregion
+    }
 }

@@ -16,7 +16,8 @@
                    Placeholder="Album"
                    SearchCommand="{Binding SearchAlbumCommand}"
                    SearchCommandParameter="{Binding SearchedText, Source=x:Reference Search}"
-                   Text="{Binding SearchedText, Mode=TwoWay}" />
+                   Text="{Binding SearchedText, Mode=TwoWay}"
+                   TextChanged="SearchAlbum_TextChanged" />
         <ListView x:Name="AlbumListView"
 			  ItemsSource="{Binding AlbumItems}"
 			  VerticalOptions="FillAndExpand"

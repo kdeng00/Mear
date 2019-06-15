@@ -39,7 +39,13 @@ namespace Mear.Views
 		{
             var artistItem = (sender as ListView).SelectedItem = null;
 		}
-		#endregion
-		#endregion
-	}
+
+        private async void SearchArtist_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = e.NewTextValue.ToString();
+            _viewModel.SearchArtists(text);
+        }
+        #endregion
+        #endregion
+    }
 }
