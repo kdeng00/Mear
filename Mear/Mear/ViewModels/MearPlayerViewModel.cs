@@ -40,6 +40,11 @@ namespace Mear.ViewModels
 
 
 		#region Methods
+        public async void UpdateSongAttributes(Song song)
+        {
+            _song.Clear();
+            _song.Add(song);
+        }
 		#endregion
 	}
 }

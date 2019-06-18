@@ -23,19 +23,26 @@ namespace Mear.Playback
     public class MearPlayer
     {
         #region Fields
-        private Queue<Song> _mearQueue = null;
+        private static Queue<Song> _mearQueue = null;
         private static Song _song;
         private static bool? _initialized = null;
         private static SortedDictionary<MusicViews, bool?> _songChanged =
             new SortedDictionary<MusicViews, bool?>{
                 { MusicViews.Song, false },
                 { MusicViews.Album, false },
-                { MusicViews.Artist, false }
+                { MusicViews.Artist, false },
+                { MusicViews.Player, false }
             };
+        private static int _songIndex;
 		#endregion
 
 
 		#region Properties
+        public static Song OnSong
+        {
+            get => _song;
+            set => _song = value;
+        }
 		#endregion
 
 
@@ -113,7 +120,17 @@ namespace Mear.Playback
                     // TODO: Implement shuffling
                     break;
                 case PlayControls.NEXT:
-                    // TODO: Implement Next
+                    song = _mearQueue.ToArray()[_songIndex++];
+                    if (!song.Downloaded)
+                    {
+                        song = StreamSong(song);
+                    }
+                    else
+                    {
+                        PlaySong(song.SongPath);
+                    }
+                    _song = song;
+                    _songChanged[MusicViews.Player] = true;
                     break;
                 case PlayControls.PREVIOUS:
                     break;
@@ -159,6 +176,16 @@ namespace Mear.Playback
             return null;
         }
 
+        public static async Task LoadQueue(List<Song> songs)
+        {
+            if (_mearQueue == null)
+            {
+                _mearQueue = new Queue<Song>();
+            }
+            _mearQueue.Clear();
+            songs.ForEach(_mearQueue.Enqueue);
+            _songIndex = 0;
+        }
         public static async Task DownloadSongToFS()
         {
 			var songRepo = new RemoteSongRepository();
@@ -368,12 +395,17 @@ namespace Mear.Playback
                 case Repeat.ONE:
                     CrossMediaManager.Current.SeekToStart();
                     PlaySong(_song.SongPath);
+                    return;
                     break;
                 case Repeat.ALL:
                     // Will implment this fully later once Queues are a feature
                     PlaySong(_song.SongPath);
+                    return;
                     break;
             }
+
+            var song = _mearQueue.ToArray()[_songIndex++];
+            PlaySong(song.SongPath);
         }
         #endregion
         #endregion
@@ -384,7 +416,8 @@ namespace Mear.Playback
         {
             Song = 0,
             Album,
-            Artist
+            Artist,
+            Player
         }
         #endregion
     }

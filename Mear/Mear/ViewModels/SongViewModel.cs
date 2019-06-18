@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 
 using Mear.Models;
+using Mear.Playback;
 using Mear.Repositories.Local;
 using Mear.Repositories.Remote;
 
@@ -130,6 +131,8 @@ namespace Mear.ViewModels
                 {
                     _songs = rmtSongs;
                 }
+
+                MearPlayer.LoadQueue(_songs);
 
                 _songItems.Clear();
 

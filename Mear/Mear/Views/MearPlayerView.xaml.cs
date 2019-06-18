@@ -28,7 +28,6 @@ namespace Mear.Views
 	{
 		#region Fields
 		private MearPlayerViewModel _viewModel;
-		private Song _song;
 		#endregion
 
 
@@ -46,10 +45,11 @@ namespace Mear.Views
 		public MearPlayerView(Song song)
 		{
 			InitializeComponent();
-			_song = song;
+			MearPlayer.OnSong = song;
 			InitializeControls();
 
 			BackgroundSongElasping();
+            BackgroundSongAttributes();
 			//BackgroundSongCoverUpdate();
             //BackgroundControlInit();
 
@@ -83,7 +83,7 @@ namespace Mear.Views
         }
 		private async void InitializeOptions()
 		{
-            if (!_song.Downloaded)
+            if (!MearPlayer.OnSong.Downloaded)
             {
                 var dnloadOpt = DownloadOption();
                 ToolbarItems.Add(dnloadOpt);
@@ -99,7 +99,7 @@ namespace Mear.Views
             Shuffle.Text = MearPlayer.RetrieveShuffleString();
             Repeat.Text = MearPlayer.RetrieveRepeatString();
 
-			EndTime.Text = TimeFormat.ConvertToSongTime(_song.Duration.Value);
+			EndTime.Text = TimeFormat.ConvertToSongTime(MearPlayer.OnSong.Duration.Value);
 		}
         private void RemoveSyncToolbar()
         {
@@ -133,6 +133,41 @@ namespace Mear.Views
 				var msg = ex.Message;
 			}
 		}
+        private async Task BackgroundSongAttributes()
+        {
+            try
+            {
+                new Thread(async () =>
+                {
+                    while (true)
+                    {
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            if (MearPlayer.SongHasBeenChanged(MearPlayer.MusicViews.Player))
+                            {
+                                RemoveSyncToolbar();
+                                if (MearPlayer.OnSong.Downloaded)
+                                {
+                                    ToolbarItems.Add(RemoveOption());
+                                }
+                                {
+                                    ToolbarItems.Add(DownloadOption());
+                                }
+                                _viewModel.UpdateSongAttributes(MearPlayer.OnSong);
+                                MearPlayer.ResetSongChange(MearPlayer.MusicViews.Player);
+                            }
+                        });
+                        await Task.Delay(500);
+                    }
+
+                }).Start();
+
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+        }
 		private async Task BackgroundSongCoverUpdate()
 		{
 			try
@@ -147,7 +182,7 @@ namespace Mear.Views
 							if (SongCover.Source.IsEmpty)
 							{
 								var meta = new SongMetadataRetriever();
-								var data = meta.ExtractCoverArtData(_song);
+								var data = meta.ExtractCoverArtData(MearPlayer.OnSong);
 							}
 						});
 
@@ -191,20 +226,20 @@ namespace Mear.Views
 		{
 			if (CrossMediaManager.Current.IsPlaying())
 			{
-                await MearPlayer.ControlMusic(_song, PlayControls.PAUSE);
+                await MearPlayer.ControlMusic(MearPlayer.OnSong, PlayControls.PAUSE);
 			}
 			else
 			{
-                await MearPlayer.ControlMusic(_song, PlayControls.RESUME);
+                await MearPlayer.ControlMusic(MearPlayer.OnSong, PlayControls.RESUME);
 			}
 		}
 		private void Next_Clicked(object sender, EventArgs e)
 		{
-
+            MearPlayer.ControlMusic(null, PlayControls.NEXT);
 		}
 		private void Repeat_Clicked(object sender, EventArgs e)
 		{
-            MearPlayer.ControlMusic(_song, PlayControls.REPEAT);
+            MearPlayer.ControlMusic(MearPlayer.OnSong, PlayControls.REPEAT);
             Repeat.Text = MearPlayer.RetrieveRepeatString();
 		}
 		private void Shuffle_Clicked(object sender, EventArgs e)
@@ -228,21 +263,21 @@ namespace Mear.Views
             RemoveSyncToolbar();
             ToolbarItems.Add(RemoveOption());
 
-            _song.Downloaded = true;
+            MearPlayer.OnSong.Downloaded = true;
 		}
         private async void Remove_Clicked(object sender, EventArgs e)
         {
             RemoveSyncToolbar();
             await MearPlayer.RemoveSongFromFS();
 
-            _song.Downloaded = false;
+            MearPlayer.OnSong.Downloaded = false;
 
             ToolbarItems.Add(DownloadOption());
         }
         private async void PlayCount_Clicked(object sender, EventArgs e)
         {
             var playCountRepo = new DBPlayCountRepository();
-            var plyCount = playCountRepo.RetrievePlayCount(_song.Id);
+            var plyCount = playCountRepo.RetrievePlayCount(MearPlayer.OnSong.Id);
 
             if (plyCount == null)
             {
