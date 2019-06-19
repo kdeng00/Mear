@@ -405,7 +405,14 @@ namespace Mear.Playback
             }
 
             var song = _mearQueue.ToArray()[_songIndex++];
-            PlaySong(song.SongPath);
+            if (song.Downloaded)
+            {
+                PlaySong(song.SongPath);
+            }
+            else
+            {
+                StreamSong(song);
+            }
         }
         #endregion
         #endregion

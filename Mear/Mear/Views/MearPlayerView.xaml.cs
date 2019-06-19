@@ -46,6 +46,17 @@ namespace Mear.Views
 		{
 			InitializeComponent();
 			MearPlayer.OnSong = song;
+
+            Initialize();
+
+			BindingContext = _viewModel = new MearPlayerViewModel(song);
+		}
+		#endregion
+
+
+		#region Methods
+        private async Task Initialize()
+        {
 			InitializeControls();
 
 			BackgroundSongElasping();
@@ -54,13 +65,7 @@ namespace Mear.Views
             //BackgroundControlInit();
 
             InitializeOptions();
-
-			BindingContext = _viewModel = new MearPlayerViewModel(song);
-		}
-		#endregion
-
-
-		#region Methods
+        }
         private ToolbarItem DownloadOption()
         {
             var dnloadOpt = new ToolbarItem();
@@ -117,14 +122,17 @@ namespace Mear.Views
 					while (true)
 					{
 						Device.BeginInvokeOnMainThread(async () =>
-						{
-                            var curPos = await MearPlayer.ConvertToTime();
-							StartTime.Text = $"{curPos}";
-                            double? progVal = await MearPlayer.ProgressValue();
-							SongProgress.Value = progVal.Value;
+                        {
+                            if (MearPlayer.IsPlaying())
+                            {
+                                var curPos = await MearPlayer.ConvertToTime();
+                                StartTime.Text = $"{curPos}";
+                                double? progVal = await MearPlayer.ProgressValue();
+                                SongProgress.Value = progVal.Value;
+                            }
 						});
 
-						await Task.Delay(500);
+						await Task.Delay(250);
 					}
 				}).Start();
 			}
