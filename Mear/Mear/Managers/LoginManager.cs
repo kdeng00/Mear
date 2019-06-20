@@ -7,6 +7,7 @@ using RestSharp;
 
 using Mear.Constants.API;
 using Mear.Models.Authentication;
+using Mear.Repositories.Database;
 
 namespace Mear.Managers
 {
@@ -30,7 +31,23 @@ namespace Mear.Managers
 
 
 		#region Methods
-		public LoginResult Login()
+        public bool Authenticate()
+        {
+            var loginRes = Login();
+
+            if (loginRes.Expiration > 0 && loginRes != null)
+            {
+                DBUserRepository.DeleteUser();
+
+                SaveToDatabase(loginRes);
+
+                return true;
+            }
+
+            return false;
+        }
+
+		private LoginResult Login()
 		{
 			try
 			{
@@ -55,6 +72,19 @@ namespace Mear.Managers
 
 			return null;
 		}
+
+        private async void SaveToDatabase(LoginResult loginRes)
+        {
+            DBTokenRepository tokRepo = new DBTokenRepository();
+            tokRepo.SaveToken(new Token
+            {
+                AccessToken = loginRes.Token,
+                UserId = loginRes.UserId
+            });
+
+            DBUserRepository.SaveUser(_user);
+            var usr = DBUserRepository.RetrieveUser();
+        }
 		#endregion
 	}
 }

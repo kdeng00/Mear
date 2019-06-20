@@ -8,7 +8,6 @@ using Mear.Utilities;
 
 namespace Mear.Repositories.Database
 {
-    // TODO: Implement the database functionality #35
     public class DBMusicControlsRepository : DBRepository
     {
         #region Fields

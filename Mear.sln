@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mear.Android", "Mear\Mear.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mear.iOS", "Mear\Mear.iOS\Mear.iOS.csproj", "{A76BE057-EE1A-4B2B-997C-4D0953DB1E37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mear", "Mear\Mear\Mear.csproj", "{3A4FB936-3738-4D2B-A116-B9CABEEADDE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mear", "Mear\Mear\Mear.csproj", "{3A4FB936-3738-4D2B-A116-B9CABEEADDE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,7 +38,6 @@ Global
 		{FF6A18DF-D1DF-4D8C-A412-961A3FFF02AE}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{FF6A18DF-D1DF-4D8C-A412-961A3FFF02AE}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
 		{A76BE057-EE1A-4B2B-997C-4D0953DB1E37}.Debug|Any CPU.ActiveCfg = Debug|iPhoneSimulator
-		{A76BE057-EE1A-4B2B-997C-4D0953DB1E37}.Debug|Any CPU.Build.0 = Debug|iPhoneSimulator
 		{A76BE057-EE1A-4B2B-997C-4D0953DB1E37}.Debug|Any CPU.Deploy.0 = Debug|iPhoneSimulator
 		{A76BE057-EE1A-4B2B-997C-4D0953DB1E37}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{A76BE057-EE1A-4B2B-997C-4D0953DB1E37}.Debug|iPhone.Build.0 = Debug|iPhone

@@ -11,8 +11,10 @@ namespace Mear.Repositories.Database
 {
 	public class DBRepository
 	{
-		#region Fields
+        #region Fields
+        protected static SQLiteConnection _DbConn = null;
 		protected SQLiteConnection _Db;
+        protected static string _table;
 		protected string _dbPath;
         protected string _tableName;
 		#endregion
@@ -31,6 +33,24 @@ namespace Mear.Repositories.Database
 
 
 		#region Methods
+        protected static bool TableExists()
+        {
+            try
+            {
+                var result = _DbConn.GetTableInfo(_table).Count;
+
+                if (result > 0)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+
+            return false;
+        }
 		protected bool DoesTableExist(string tablename)
 		{
 			var result = 0;
@@ -51,6 +71,10 @@ namespace Mear.Repositories.Database
 			return false;
 		}
 
+        protected static void CloseDbConnection()
+        {
+            _DbConn.Close();
+        }
 		protected void CloseDb()
 		{
 			_Db.Close();
@@ -63,6 +87,18 @@ namespace Mear.Repositories.Database
 
 			_Db = new SQLiteConnection(_dbPath);
 		}
+        protected static void InitializeDatabase(string tablename)
+        {
+            if (_DbConn != null)
+            {
+                return;
+            }
+
+            _table = tablename;
+            var appName = Info.AppName;
+            _DbConn = new SQLiteConnection(Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.Personal), appName));
+        }
 		#endregion
 	}
 }

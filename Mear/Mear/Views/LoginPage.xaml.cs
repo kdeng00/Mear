@@ -64,16 +64,9 @@ namespace Mear.Views
 			if (user != null)
 			{
 				var loginMgr = new LoginManager(user);
-				var loginRes = loginMgr.Login();
 
-				if (loginRes.Expiration > 0 && loginRes != null)
+				if (loginMgr.Authenticate())
 				{
-					DBTokenRepository tokRepo = new DBTokenRepository();
-					tokRepo.SaveToken(new Token
-					{
-						AccessToken = loginRes.Token,
-						UserId = loginRes.UserId
-					});
 					App.Current.MainPage = new MusicLibrary();
 				}
 				else

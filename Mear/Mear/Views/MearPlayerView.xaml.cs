@@ -61,8 +61,6 @@ namespace Mear.Views
 
 			BackgroundSongElasping();
             BackgroundSongAttributes();
-			//BackgroundSongCoverUpdate();
-            //BackgroundControlInit();
 
             InitializeOptions();
         }
@@ -132,7 +130,7 @@ namespace Mear.Views
                             }
 						});
 
-						await Task.Delay(250);
+						await Task.Delay(100);
 					}
 				}).Start();
 			}
