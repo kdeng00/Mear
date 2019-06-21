@@ -47,9 +47,9 @@ namespace Mear.Views
 			InitializeComponent();
 			MearPlayer.OnSong = song;
 
-            Initialize();
-
 			BindingContext = _viewModel = new MearPlayerViewModel(song);
+
+            Initialize();
 		}
 		#endregion
 
@@ -226,7 +226,7 @@ namespace Mear.Views
 		#region Events
 		private void Previous_Clicked(object sender, EventArgs e)
 		{
-
+            MearPlayer.ControlMusic(null, PlayControls.PREVIOUS);
 		}
 		private async void Play_Clicked(object sender, EventArgs e)
 		{

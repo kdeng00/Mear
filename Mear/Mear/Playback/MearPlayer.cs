@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,6 +44,30 @@ namespace Mear.Playback
             get => _song;
             set => _song = value;
         }
+
+        private static int QueueIndex
+        {
+            get => _songIndex;
+            set
+            {
+                if (value >= QueueCount)
+                {
+                    _songIndex = 0;
+                }
+                else if (value < 0)
+                {
+                    _songIndex = QueueCount;
+                }
+                else
+                {
+                    _songIndex = value;
+                }
+            }
+        }
+        private static int QueueCount
+        {
+            get => _mearQueue.Count;
+        }
 		#endregion
 
 
@@ -51,44 +76,6 @@ namespace Mear.Playback
 
 
 		#region Methods
-		public static async Task<Song> StreamSongDemoAsync(Song song)
-		{
-			string tmpFile = Path.GetTempPath() + "track.mp3";
-
-			if (File.Exists(tmpFile))
-			{
-				File.Delete(tmpFile);
-			}
-
-			try
-			{
-				using (var writer = File.OpenWrite(tmpFile))
-				{
-					var client = new RestClient(API.ApiUrl);
-					var apiEndpoint = $@"api/{API.APIVersion}/song/stream/{song.Id}"; ;
-					var request = new RestRequest(apiEndpoint, Method.GET);
-					var tokRepo = new DBTokenRepository();
-					var token = tokRepo.RetrieveToken();
-					request.AddHeader("Authorization", $"Bearer {token.AccessToken}");
-					request.ResponseWriter = (responseStream) =>
-						responseStream.CopyTo(writer);
-
-					var response = client.DownloadData(request);
-
-					await CrossMediaManager.Current.Play(tmpFile);
-					song.SongPath = tmpFile;
-
-				}
-
-				return song;
-			}
-			catch (Exception ex)
-			{
-				var msg = ex.Message;
-			}
-
-			return null;
-		}
         public static async Task<Song> ControlMusic(Song song, PlayControls control)
         {
             if (song != null)
@@ -98,7 +85,7 @@ namespace Mear.Playback
             switch (control)
             {
                 case PlayControls.PLAYOFFLINE:
-                    await PlaySong(song);
+                    DeterminePlayType();
                     var plyCountRepo = new DBPlayCountRepository();
                     plyCountRepo.AffectPlayCount(song);
                     InitializeRepeatMode();
@@ -110,9 +97,8 @@ namespace Mear.Playback
                     ResumeSong();
                     break;
                 case PlayControls.STREAM:
-                    song = StreamSong(song);
                     InitializeRepeatMode();
-                    return song;
+                    return StreamSong(song);
                 case PlayControls.REPEAT:
                     ToggleRepeat();
                     break;
@@ -120,30 +106,22 @@ namespace Mear.Playback
                     // TODO: Implement shuffling
                     break;
                 case PlayControls.NEXT:
-                    song = _mearQueue.ToArray()[_songIndex++];
-                    if (!song.Downloaded)
-                    {
-                        song = StreamSong(song);
-                    }
-                    else
-                    {
-                        PlaySong(song.SongPath);
-                    }
-                    _song = song;
+                    _song = _mearQueue.ToArray()[++QueueIndex];
+                    DeterminePlayType();
+
                     _songChanged[MusicViews.Player] = true;
                     break;
                 case PlayControls.PREVIOUS:
+                    _song = _mearQueue.ToArray()[--QueueIndex];
+                    DeterminePlayType();
+
+                    _songChanged[MusicViews.Player] = true;
                     break;
-                    // TODO: Implement Next
             }
 
             return null;
         }
 
-        public static async Task<string> SongTitle()
-        {
-            return _song.Title;
-        }
         public static async Task<string> ConvertToTime()
         {
             try
@@ -176,6 +154,11 @@ namespace Mear.Playback
             return null;
         }
 
+        public static async Task AlterIndex(Song song)
+        {
+            QueueIndex = _mearQueue.ToArray().ToList().IndexOf(song);
+        }
+
         public static async Task LoadQueue(List<Song> songs)
         {
             if (_mearQueue == null)
@@ -193,19 +176,6 @@ namespace Mear.Playback
 
             _song.Downloaded = true;
         }
-		public static async Task PlaySong(Song song)
-		{
-			try
-			{
-				var songPath = song.SongPath;
-
-                PlaySong(songPath);
-			}
-			catch (Exception ex)
-			{
-				var msg = ex.Message;
-			}
-		}
         public static async Task RemoveSongFromFS()
         {
             var dbSongRepo = new DBSongRepository();
@@ -324,6 +294,17 @@ namespace Mear.Playback
 			return null;
         }
 
+        private static void DeterminePlayType()
+        {
+            if (!_song.Downloaded)
+            {
+                StreamSong(_song);
+            }
+            else
+            {
+                PlaySong(_song.SongPath);
+            }
+        }
         private static void InitializeModes()
         {
             InitializeRepeatMode();
@@ -396,15 +377,13 @@ namespace Mear.Playback
                     CrossMediaManager.Current.SeekToStart();
                     PlaySong(_song.SongPath);
                     return;
-                    break;
                 case Repeat.ALL:
                     // Will implment this fully later once Queues are a feature
                     PlaySong(_song.SongPath);
                     return;
-                    break;
             }
 
-            var song = _mearQueue.ToArray()[_songIndex++];
+            var song = _mearQueue.ToArray()[++QueueIndex];
             if (song.Downloaded)
             {
                 PlaySong(song.SongPath);
@@ -413,6 +392,8 @@ namespace Mear.Playback
             {
                 StreamSong(song);
             }
+
+            _songChanged[MusicViews.Player] = true;
         }
         #endregion
         #endregion

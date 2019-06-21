@@ -159,6 +159,8 @@ namespace Mear.Views
                     song = await MearPlayer.ControlMusic(song, PlayControls.STREAM);
 				}
 
+                MearPlayer.AlterIndex(song);
+
 			    Navigation.PushModalAsync(new NavigationPage(new MearPlayerView(song)));
 			}
 			catch (Exception ex)
