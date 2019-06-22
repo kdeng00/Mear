@@ -150,6 +150,7 @@ namespace Mear.Views
 			try
 			{
 				var song = (Song)SongListView.SelectedItem;
+                MearPlayer.OnSong = song;
 				if (song.Downloaded)
 				{
                     await MearPlayer.ControlMusic(song, PlayControls.PLAYOFFLINE);

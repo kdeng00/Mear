@@ -12,6 +12,7 @@ using RestSharp;
 
 using Mear.Constants;
 using Mear.Constants.API;
+using Mear.Managers;
 using Mear.Models;
 using Mear.Models.Authentication;
 using Mear.Models.PlayerControls;
@@ -87,7 +88,7 @@ namespace Mear.Playback
                 case PlayControls.PLAYOFFLINE:
                     DeterminePlayType();
                     var plyCountRepo = new DBPlayCountRepository();
-                    plyCountRepo.AffectPlayCount(song);
+                    plyCountRepo.AffectPlayCount(_song);
                     InitializeRepeatMode();
                     break;
                 case PlayControls.PAUSE:
@@ -98,21 +99,31 @@ namespace Mear.Playback
                     break;
                 case PlayControls.STREAM:
                     InitializeRepeatMode();
-                    return StreamSong(song);
+                    return StreamSong().Result; ;
                 case PlayControls.REPEAT:
                     ToggleRepeat();
                     break;
                 case PlayControls.SHUFFLE:
-                    // TODO: Implement shuffling
+                    ToggleShuffle();
                     break;
                 case PlayControls.NEXT:
-                    _song = _mearQueue.ToArray()[++QueueIndex];
+                    var res = DetermineControlFlow();
+                    if (!res)
+                    {
+                        QueueIndex++;
+                    }
+                    _song = _mearQueue.ToArray()[QueueIndex];
                     DeterminePlayType();
 
                     _songChanged[MusicViews.Player] = true;
                     break;
                 case PlayControls.PREVIOUS:
-                    _song = _mearQueue.ToArray()[--QueueIndex];
+                    var prevRes = DetermineControlFlow();
+                    if (!prevRes)
+                    {
+                        QueueIndex--;
+                    }
+                    _song = _mearQueue.ToArray()[QueueIndex];
                     DeterminePlayType();
 
                     _songChanged[MusicViews.Player] = true;
@@ -218,13 +229,13 @@ namespace Mear.Playback
         {
             var controlRepo = new DBMusicControlsRepository();
             var shuffleOn = controlRepo.IsShuffleOn();
-            try
+
+            switch (shuffleOn)
             {
-                return shuffleOn ? "ShfOn" : "ShfOff";
-            }
-            catch (Exception ex)
-            {
-                var msg = ex.Message;
+                case Shuffle.Off:
+                    return "ShfOff";
+                case Shuffle.All:
+                    return "ShfOn";
             }
 
             return string.Empty;
@@ -253,6 +264,37 @@ namespace Mear.Playback
             InitializeRepeatMode();
         }
 
+        private static Task<Song> StreamSong()
+        {
+            var tmpFile = Path.GetTempPath() + "track.mp3";
+
+            if (File.Exists(tmpFile))
+                File.Delete(tmpFile);
+
+            try
+            {
+                var songMgr = new SongManager();
+                _song.SongPath = tmpFile;
+
+                var downloaded = songMgr.DownloadStream(ref _song);
+
+                if (downloaded)
+                {
+                    PlaySong();
+                }
+
+                return Task.Run(() =>
+                {
+                    return _song;
+                });
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+
+            return null;
+        }
         private static Song StreamSong(Song song)
         {
 			string tmpFile = Path.GetTempPath() + "track.mp3";
@@ -294,15 +336,67 @@ namespace Mear.Playback
 			return null;
         }
 
+        private static bool DetermineControlFlow()
+        {
+            var ctrlRepo = new DBMusicControlsRepository();
+            var repeatMode = ctrlRepo.IsRepeatOn();
+
+            var repRes = DetermineControlFlow(repeatMode);
+            if (repRes)
+            {
+                return true;
+            }
+
+            var shuffleMode = ctrlRepo.IsShuffleOn();
+            var shfRes = DetermineControlFlow(shuffleMode);
+            if (shfRes)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private static bool DetermineControlFlow(Repeat repeatMode)
+        {
+            switch (repeatMode)
+            {
+                case Repeat.ONE:
+                    CrossMediaManager.Current.SeekToStart();
+                    PlaySong();
+                    return true;
+                case Repeat.ALL:
+                    PlaySong();
+                    return true;
+            }
+
+            return false;
+        }
+        private static bool DetermineControlFlow(Shuffle shuffleMode)
+        {
+            switch (shuffleMode)
+            {
+                case Shuffle.Off:
+                    return false;
+                case Shuffle.All:
+                    var rnd = new Random();
+                    var rando = rnd.Next(QueueCount);
+                    QueueIndex = rando;
+                    return true;
+            }
+
+            return false;
+        }
         private static void DeterminePlayType()
         {
             if (!_song.Downloaded)
             {
-                StreamSong(_song);
+                StreamSong();
             }
             else
             {
-                PlaySong(_song.SongPath);
+                PlaySong();
             }
         }
         private static void InitializeModes()
@@ -321,6 +415,20 @@ namespace Mear.Playback
         private static async Task PauseSong()
         {
             await CrossMediaManager.Current.Pause();
+        }
+        private static async Task PlaySong()
+        {
+            await CrossMediaManager.Current.Play(_song.SongPath);
+
+            if (_initialized == null)
+            {
+                CrossMediaManager.Current.MediaItemFinished += Current_MediaItemFinished;
+                _initialized = true;
+            }
+
+            _songChanged[MusicViews.Song] = true;
+            _songChanged[MusicViews.Album] = true;
+            _songChanged[MusicViews.Artist] = true;
         }
         private static async Task PlaySong(string songPath)
         {
@@ -347,6 +455,14 @@ namespace Mear.Playback
 
             CrossMediaManager.Current.RepeatMode = RepeatUtility.RetrieveRepeatMode(repeatMode);
         }
+        private static void ToggleShuffle()
+        {
+            var musicCtrl = new DBMusicControlsRepository();
+            musicCtrl.UpdateShuffle();
+            var shuffleMode = musicCtrl.IsShuffleOn();
+
+            CrossMediaManager.Current.ShuffleMode = ShuffleUtility.RetrieveShuffleMode(shuffleMode);
+        }
 
         #region Background
         private static async Task BackgroundWork()
@@ -371,6 +487,8 @@ namespace Mear.Playback
             var ctrlRepo = new DBMusicControlsRepository();
             var repeatMode = ctrlRepo.IsRepeatOn();
 
+            DetermineControlFlow();
+
             switch(repeatMode)
             {
                 case Repeat.ONE:
@@ -383,14 +501,28 @@ namespace Mear.Playback
                     return;
             }
 
-            var song = _mearQueue.ToArray()[++QueueIndex];
-            if (song.Downloaded)
+            var shuffleMode = ctrlRepo.IsShuffleOn();
+
+            switch (shuffleMode)
             {
-                PlaySong(song.SongPath);
+                case Shuffle.Off:
+                    QueueIndex++;
+                    break;
+                case Shuffle.All:
+                    Random rnd = new Random();
+                    var rando = rnd.Next(QueueCount);
+                    QueueIndex = rando;
+                    break;
+            }
+
+            _song = _mearQueue.ToArray()[QueueIndex];
+            if (_song.Downloaded)
+            {
+                PlaySong();
             }
             else
             {
-                StreamSong(song);
+                StreamSong();
             }
 
             _songChanged[MusicViews.Player] = true;

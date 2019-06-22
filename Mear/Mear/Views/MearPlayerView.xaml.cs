@@ -250,8 +250,9 @@ namespace Mear.Views
 		}
 		private void Shuffle_Clicked(object sender, EventArgs e)
 		{
-            var musicCtrl = new DBMusicControlsRepository();
-            musicCtrl.UpdateShuffle();
+            //var musicCtrl = new DBMusicControlsRepository();
+            //musicCtrl.UpdateShuffle();
+            MearPlayer.ControlMusic(null, PlayControls.SHUFFLE);
             Shuffle.Text = MearPlayer.RetrieveShuffleString();
 		}
 

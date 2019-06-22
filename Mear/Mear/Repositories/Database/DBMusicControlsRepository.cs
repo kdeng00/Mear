@@ -28,7 +28,7 @@ namespace Mear.Repositories.Database
 
 
         #region Methods
-        public bool IsShuffleOn()
+        public Shuffle IsShuffleOn()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace Mear.Repositories.Database
 
                     if (shuffle != null)
                     {
-                        return shuffle.Value; ;
+                        return shuffle.Value ? Shuffle.All : Shuffle.Off;
                     }
                 }
             }
@@ -47,7 +47,7 @@ namespace Mear.Repositories.Database
                 var msg = ex.Message;
             }
 
-            return false;
+            return Shuffle.Off;
         }
         public Repeat IsRepeatOn()
         {
