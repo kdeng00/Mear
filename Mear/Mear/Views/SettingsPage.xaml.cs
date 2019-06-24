@@ -59,6 +59,15 @@ namespace Mear.Views
             (sender as ListView).SelectedItem = null;
         }
         #endregion
+
         #endregion
+
+        private void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            var e_var = e;
+            var s_var = (Slider)sender;
+            _viewModel.SliderItems.First().DefaultInterval = Convert.ToInt32(s_var.Value);
+            var stopper = 0;
+        }
     }
 }

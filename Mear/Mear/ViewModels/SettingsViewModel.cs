@@ -15,6 +15,7 @@ namespace Mear.ViewModels
         #region Fields
         private ObservableCollection<SwitchItem> _switchItems;
         private ObservableCollection<SelectionItem> _selectionItems;
+        private ObservableCollection<SliderItem> _sliderItems;
         #endregion
 
 
@@ -29,6 +30,11 @@ namespace Mear.ViewModels
             get => _selectionItems;
             set => _selectionItems = value;
         }
+        public ObservableCollection<SliderItem> SliderItems
+        {
+            get => _sliderItems;
+            set => _sliderItems = value;
+        }
         #endregion
 
 
@@ -40,6 +46,7 @@ namespace Mear.ViewModels
 
             PopulateSwitch();
             PopulateSelections();
+            PopulateSliderItems();
         }
         #endregion
 
@@ -80,6 +87,18 @@ namespace Mear.ViewModels
                 Description = "Information about the software"
             });
         }
+        private void PopulateSliderItems()
+        {
+            _sliderItems = new ObservableCollection<SliderItem>();
+            _sliderItems.Clear();
+            _sliderItems.Add(new SliderItem
+            {
+                Title = "Default Track Interval",
+                Minimum = 0,
+                Maximum = 10,
+                DefaultInterval = 3
+            });
+        }
         #endregion
 
 
@@ -93,6 +112,13 @@ namespace Mear.ViewModels
         {
             public string Title { get; set; }
             public string Description { get; set; }
+        }
+        public class SliderItem
+        {
+            public string Title { get; set; }
+            public int Minimum { get; set; }
+            public int Maximum { get; set; }
+            public int DefaultInterval { get; set; }
         }
         #endregion
     }

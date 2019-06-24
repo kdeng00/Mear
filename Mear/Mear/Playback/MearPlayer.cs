@@ -99,7 +99,7 @@ namespace Mear.Playback
                     break;
                 case PlayControls.STREAM:
                     InitializeRepeatMode();
-                    return StreamSong().Result; ;
+                    return await StreamSong();
                 case PlayControls.REPEAT:
                     ToggleRepeat();
                     break;

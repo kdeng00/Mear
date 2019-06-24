@@ -10,7 +10,7 @@
 
     <ContentPage.Content>
         <StackLayout>
-            <ListView x:Name="Sliders"
+            <ListView x:Name="Switchers"
                       VerticalOptions="Start"
                       ItemsSource="{Binding SwitchItems}"
                       HasUnevenRows="False"
@@ -60,6 +60,43 @@
                                        LineBreakMode="WordWrap"
                                        FontSize="18" />
                             </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ListView x:Name="Sliders"
+                      VerticalOptions="Start"
+                      ItemsSource="{Binding SliderItems}"
+                      HasUnevenRows="False"
+                      RowHeight="70" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text="{Binding Title}"
+                                       Grid.Row="0" Grid.Column="0"
+                                       d:Text="{Binding .}"
+                                       LineBreakMode="NoWrap"
+                                       FontSize="22" />
+                                <Label Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding DefaultInterval}"
+                                       d:Text="{Binding .}"
+                                       LineBreakMode="NoWrap" />
+                                <Slider Grid.Row="0" Grid.Column="2"
+                                       ValueChanged="Slider_ValueChanged"
+                                       Minimum="{Binding Minimum}"
+                                       Maximum="{Binding Maximum}"
+                                       Value="{Binding DefaultInterval}" />
+                            </Grid>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
