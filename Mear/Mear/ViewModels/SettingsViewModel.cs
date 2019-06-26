@@ -93,6 +93,7 @@ namespace Mear.ViewModels
             _sliderItems.Clear();
             _sliderItems.Add(new SliderItem
             {
+                Name = "DefaultInterval",
                 Title = "Default Track Interval",
                 Minimum = 0,
                 Maximum = 10,
@@ -115,6 +116,7 @@ namespace Mear.ViewModels
         }
         public class SliderItem
         {
+            public string Name { get; set; }
             public string Title { get; set; }
             public int Minimum { get; set; }
             public int Maximum { get; set; }

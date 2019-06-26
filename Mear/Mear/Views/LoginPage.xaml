@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="Mear.Views.LoginPage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout >
             <Label Text="Login into Icarus account"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
@@ -21,6 +21,9 @@
 				   Placeholder="Password" />
 
 			<Button x:Name="AuthenticateUser"
+                    HorizontalOptions="Center"
+                    MinimumWidthRequest="250"
+                    WidthRequest="300"
 					Text="Login"
 					Clicked="AuthenticateUser_Clicked" />
 		</StackLayout>

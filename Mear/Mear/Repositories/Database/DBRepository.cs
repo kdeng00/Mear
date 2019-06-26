@@ -55,19 +55,20 @@ namespace Mear.Repositories.Database
 		{
 			var result = 0;
 
-			try
-			{
+			//try
+			//{
 				result = _Db.GetTableInfo(tablename).Count;
 
 				if (result > 0)
 				{
 					return true;
 				}
-			}
+			/**}
 			catch (Exception ex)
 			{
 				var msg = ex.Message;
 			}
+            */
 			return false;
 		}
 

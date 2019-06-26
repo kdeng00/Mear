@@ -36,22 +36,17 @@ namespace Mear.Views
 		#region Methods
 		private User ExtractCredentials()
 		{
-			try
-			{
-				var username = Username.Text;
-				var password = Password.Text;
+            if (string.IsNullOrEmpty(Username.Text) && string.IsNullOrEmpty(
+                Password.Text))
+            {
+                return null;
+            }
 
-				return new User
-				{
-					Username = username,
-					Password = password
-				};
-			}
-			catch (Exception ex)
-			{
-				var msg = ex.Message;
-			}
-			return null;
+            return new User
+            {
+                Username = Username.Text,
+                Password = Password.Text
+            };
 		}
 
 		#region Events

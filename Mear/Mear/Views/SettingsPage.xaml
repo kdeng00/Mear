@@ -87,9 +87,9 @@
                                        d:Text="{Binding .}"
                                        LineBreakMode="NoWrap"
                                        FontSize="22" />
-                                <Label Grid.Row="0" Grid.Column="1"
-                                       Text="{Binding DefaultInterval}"
-                                       d:Text="{Binding .}"
+                                <Label x:Name="{Binding Name}"
+                                       Grid.Row="0" Grid.Column="1"
+                                       Text=""
                                        LineBreakMode="NoWrap" />
                                 <Slider Grid.Row="0" Grid.Column="2"
                                        ValueChanged="Slider_ValueChanged"

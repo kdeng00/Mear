@@ -12,9 +12,17 @@
                 HorizontalOptions="CenterAndExpand" />
 
 			<Button x:Name="Login"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    MinimumWidthRequest="250"
+                    WidthRequest="300"
 					Text="Login"
 					Clicked="Login_Clicked" />
 			<Button x:Name="Register"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    MinimumWidthRequest="250"
+                    WidthRequest="300"
 					Text="Register"
 					Clicked="Register_Clicked" />
 		</StackLayout>

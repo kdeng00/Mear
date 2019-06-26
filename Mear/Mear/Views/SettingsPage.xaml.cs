@@ -64,10 +64,10 @@ namespace Mear.Views
 
         private void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
-            var e_var = e;
-            var s_var = (Slider)sender;
-            _viewModel.SliderItems.First().DefaultInterval = Convert.ToInt32(s_var.Value);
-            var stopper = 0;
+            var value = Convert.ToInt32((sender as Slider).Value);
+            var resLbl = ((sender as Slider).Parent as Grid).Children[1] as Label;
+            _viewModel.SliderItems.First().DefaultInterval = Convert.ToInt32(value);
+            resLbl.Text = $"{value}";
         }
     }
 }
