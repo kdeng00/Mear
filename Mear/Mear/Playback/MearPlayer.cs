@@ -278,6 +278,7 @@ namespace Mear.Playback
 
                 var downloaded = songMgr.DownloadStream(ref _song);
 
+
                 if (downloaded)
                 {
                     PlaySong();
@@ -433,20 +434,30 @@ namespace Mear.Playback
         private static async Task PlaySong(string songPath)
         {
             await CrossMediaManager.Current.Play(songPath);
-            if (_initialized == null)
-            {
-                CrossMediaManager.Current.MediaItemFinished += Current_MediaItemFinished;
-                _initialized = true;
-            }
-            _songChanged[MusicViews.Song] = true;
-            _songChanged[MusicViews.Album] = true;
-            _songChanged[MusicViews.Artist] = true;
+            InitializePlayer();
+
+            SongChanged();
         }
         private static async Task ResumeSong()
         {
             await CrossMediaManager.Current.PlayPause();
         }
 
+        private static void InitializePlayer()
+        {
+            if (_initialized == null)
+            {
+                CrossMediaManager.Current.MediaItemFinished += Current_MediaItemFinished;
+                CrossMediaManager.Current.VolumeManager.CurrentVolume = CrossMediaManager.Current.VolumeManager.MaxVolume;
+                _initialized = true;
+            }
+        }
+        private static void SongChanged()
+        {
+            _songChanged[MusicViews.Song] = true;
+            _songChanged[MusicViews.Album] = true;
+            _songChanged[MusicViews.Artist] = true;
+        }
         private static void ToggleRepeat()
         {
             var musicCtrl = new DBMusicControlsRepository();

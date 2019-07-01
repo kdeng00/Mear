@@ -39,6 +39,7 @@ namespace Mear.Repositories.Remote
 				DBTokenRepository tkRepo = new DBTokenRepository();
 				var token = tkRepo.RetrieveToken();
 				request.AddHeader("Authorization", $"Bearer {token.AccessToken}");
+                request.AddHeader("Connection", "Keep-Alive");
 
 				var response = client.Execute(request);
 

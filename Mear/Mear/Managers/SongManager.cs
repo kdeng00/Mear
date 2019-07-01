@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 using RestSharp;
@@ -19,7 +20,9 @@ namespace Mear.Managers
         {
             try
             {
-                using (var writer = File.OpenWrite(song.SongPath))
+                //using (var writer = File.OpenWrite(song.SongPath))
+                using (var writer = new FileStream(song.SongPath, FileMode.Create, FileAccess.Write,
+                    FileShare.ReadWrite, bufferSize: 4096, useAsync: true))
                 {
                     var client = new RestClient(API.ApiUrl);
                     var apiEndpoint = $@"api/{API.APIVersion}/song/stream/{song.Id}";
@@ -29,13 +32,20 @@ namespace Mear.Managers
                     var token = tokRepo.RetrieveToken();
 
                     request.AddHeader("Authorization", $"Bearer {token.AccessToken}");
+                    request.AddHeader("Content-type", "application/octet-stream");
+                    request.AddHeader("Connection", "Keep-Alive");
                     request.ResponseWriter = (responseStream) =>
                         responseStream.CopyTo(writer);
+                    /**
+                    */
+                    //responseStream.CopyToAsync(writer);
 
-                    var response = client.DownloadData(request);
+                    client.DownloadData(request);
+                    //var response = client.Execute(request);
 
-                    return true;
                 }
+
+                return true;
             }
             catch (Exception ex)
             {

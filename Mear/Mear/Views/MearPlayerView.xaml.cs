@@ -127,6 +127,7 @@ namespace Mear.Views
                                 StartTime.Text = $"{curPos}";
                                 double? progVal = await MearPlayer.ProgressValue();
                                 SongProgress.Value = progVal.Value;
+			                    EndTime.Text = TimeFormat.ConvertToSongTime(MearPlayer.OnSong.Duration.Value);
                             }
 						});
 
@@ -250,8 +251,6 @@ namespace Mear.Views
 		}
 		private void Shuffle_Clicked(object sender, EventArgs e)
 		{
-            //var musicCtrl = new DBMusicControlsRepository();
-            //musicCtrl.UpdateShuffle();
             MearPlayer.ControlMusic(null, PlayControls.SHUFFLE);
             Shuffle.Text = MearPlayer.RetrieveShuffleString();
 		}
