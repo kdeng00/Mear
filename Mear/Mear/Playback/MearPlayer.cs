@@ -276,6 +276,9 @@ namespace Mear.Playback
                 var songMgr = new SongManager();
                 _song.SongPath = tmpFile;
 
+                songMgr.StreamSong();
+
+                /**
                 var downloaded = songMgr.DownloadStream(ref _song);
 
 
@@ -283,7 +286,9 @@ namespace Mear.Playback
                 {
                     PlaySong();
                 }
+                */
 
+                PlaySong();
                 return Task.Run(() =>
                 {
                     return _song;

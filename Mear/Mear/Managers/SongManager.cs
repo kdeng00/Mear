@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,30 @@ namespace Mear.Managers
     public class SongManager
     {
         #region Methods
+        public async Task StreamSong()
+        {
+            var url = $"https://www.soaricarus.com/api/v1/song/stream/{Playback.MearPlayer.OnSong.Id}";
+            var streamReq = (HttpWebRequest)WebRequest.Create(url);
+            var tokRepo = new DBTokenRepository();
+            var token = tokRepo.RetrieveToken();
+            streamReq.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {token.AccessToken}");
+            streamReq.KeepAlive = true;
+            streamReq.ContentType = "application/octet-stream";
+            streamReq.AddRange(0, long.MaxValue);
+            streamReq.Method = WebRequestMethods.Http.Get;
+
+            using (var songStream = ((HttpWebResponse)streamReq.GetResponse()).GetResponseStream())
+            {
+                using (var songTemp = new FileStream(Playback.MearPlayer.OnSong.SongPath, FileMode.CreateNew, FileAccess.ReadWrite,
+                    FileShare.Read, bufferSize: 4096, useAsync: true))
+                {
+                    await songStream.CopyToAsync(songTemp);
+                    await Task.Delay(500);
+                }
+            }
+        }
+
+        // Do not use
         public bool DownloadStream(ref Song song)
         {
             try
