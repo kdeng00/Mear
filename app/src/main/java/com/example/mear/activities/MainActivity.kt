@@ -53,10 +53,14 @@ class MainActivity : BaseServiceActivity() {
     private var repeatOn: Boolean? = false
     private var shuffleOn: Boolean? = false
 
+    external fun test()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        test()
 
         permissionPrompt()
 
@@ -405,6 +409,12 @@ class MainActivity : BaseServiceActivity() {
             catch (ex: Exception) {
                 val exMsg = ex.message
             }
+        }
+    }
+
+    companion object {
+        init {
+            System.loadLibrary("native-lib")
         }
     }
 }
