@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.ealva:ealvalog-core:0.5.0@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ealva/ealvalog-core/0.5.0/b218daf48ae873b529c4e865562e6ba1d319be2f/ealvalog-core-0.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ealva/ealvalog-core/0.5.0/209381678632970027a5174c9394f0b58e33e0b9/ealvalog-core-0.5.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ealva/ealvalog-core/0.5.0/e59be27ea78b8c2ff1807cfa65cefb7df43be8d0/ealvalog-core-0.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
