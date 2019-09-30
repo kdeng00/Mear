@@ -46,6 +46,14 @@ find_library( # Sets the name of the path variable.
               # you want CMake to locate.
               log )
 
+message(${CMAKE_ANDROID_ARCH_ABI})
+
+find_library( CPPUNIT_LIBRARY NAMES libcurl curl libcurl.a curl.a
+        HINTS
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/armeabi-v7a"
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/
+        )
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
@@ -53,6 +61,7 @@ find_library( # Sets the name of the path variable.
 target_link_libraries( # Specifies the target library.
                        native-lib
         PRIVATE nlohmann_json::nlohmann_json
+        ${CPPUNIT_LIBRARY}
 
                        # Links the target library to the log library
                        # included in the NDK.
