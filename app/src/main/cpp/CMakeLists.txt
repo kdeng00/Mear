@@ -15,13 +15,16 @@ cmake_minimum_required(VERSION 3.4.1)
 
 set (SOURCES
         Demo.cpp
+        SongRepository.cpp
         Tok.cpp
-        )
+)
+
 set (HEADERS
         model/Song.h
         model/User.h
+        SongRepository.h
         Tok.h
-        )
+)
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
@@ -29,13 +32,12 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/json)
 
 
-add_library(native-lib
-             SHARED
+add_library(native-lib SHARED
 
-             # Provides a relative path to your source file(s).
-             ${SOURCES}
-             ${HEADERS}
-        )
+        # Provides a relative path to your source file(s).
+        ${SOURCES}
+        ${HEADERS}
+)
 
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -44,27 +46,26 @@ add_library(native-lib
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
-find_library( # Sets the name of the path variable.
-              log-lib
+find_library(log-lib
+        # Specifies the name of the NDK library that
+        # you want CMake to locate.
+        log
+)
 
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
-
-# message(${CMAKE_ANDROID_ARCH_ABI})
 
 set (CURL_LIBRARY
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}
-        )
+)
 
 set (CURL_INCLUDE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/include/curl
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/include
-        )
+)
 
 add_library(boo STATIC IMPORTED)
-set_target_properties(boo PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}/libcurl.a")
-#find_package(CURL REQUIRED)
+set_target_properties(boo PROPERTIES IMPORTED_LOCATION
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}/libcurl.a"
+)
 
 include_directories(${CURL_INCLUDE_DIR})
 
@@ -72,15 +73,10 @@ include_directories(${CURL_INCLUDE_DIR})
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-#target_include_directories(native-lib PUBLIC ${CURL_INCLUDE_DIR})
-target_link_libraries( # Specifies the target library.
-                       native-lib
-        PRIVATE nlohmann_json::nlohmann_json
-        boo
-        #${CURL_LIBRARIES}
+target_link_libraries(native-lib PRIVATE
 
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib}
+        nlohmann_json::nlohmann_json
+        boo
+        ${log-lib}
         z
-        )
+)
