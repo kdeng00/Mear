@@ -281,7 +281,7 @@
   <component name="ProjectFrameBounds">
     <option name="y" value="-16" />
     <option name="width" value="1920" />
-    <option name="height" value="1078" />
+    <option name="height" value="1079" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -311,7 +311,8 @@
   <component name="PropertiesComponent">
     <property name="ExportApk.ApkPath" value="$PROJECT_DIR$/app" />
     <property name="ExportApk.BuildVariants" value="debug&#10;release" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
     <property name="project.structure.last.edited" value="Dependencies" />
     <property name="project.structure.proportion" value="0.17" />
@@ -338,7 +339,7 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="app" />
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
