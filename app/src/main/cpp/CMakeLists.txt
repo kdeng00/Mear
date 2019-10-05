@@ -13,6 +13,8 @@ cmake_minimum_required(VERSION 3.4.1)
 
 # set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 
+set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "-std=c++17")
+
 set (SOURCES
         Demo.cpp
         SongRepository.cpp

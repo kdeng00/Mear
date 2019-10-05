@@ -15,7 +15,10 @@ namespace repository {
     class SongRepository {
     public:
         std::vector<model::Song> fetchSongs(const std::string&, const std::string&);
+
+        model::Song retrieveSong(const std::string&, const int);
     private:
+        static size_t respBodyRetriever(void*, size_t, size_t, char*);
     };
 }
 

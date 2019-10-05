@@ -5,6 +5,7 @@
 #ifndef MEAR_TOK_H
 #define MEAR_TOK_H
 
+#include <memory>
 #include <string>
 
 #include "model/User.h"

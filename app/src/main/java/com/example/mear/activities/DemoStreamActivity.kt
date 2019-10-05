@@ -9,6 +9,8 @@ import kotlinx.android.synthetic.main.activity_demo_stream.*
 import kotlinx.android.synthetic.main.content_demo_stream.*
 import org.jetbrains.anko.toast
 
+import com.example.mear.models.Song
+
 class DemoStreamActivity : AppCompatActivity() {
 
     companion object {
@@ -18,7 +20,11 @@ class DemoStreamActivity : AppCompatActivity() {
     }
 
 
+    private var token: String? = null
+
+
     private external fun logUser(usr: String, pass: String, api: String): String
+    private external fun retrieveSong(tok: String): Song
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +56,9 @@ class DemoStreamActivity : AppCompatActivity() {
         var passwordStr = password.text.toString()
         var apiUriStr = apiUri.text.toString()
 
-        var token = logUser(usernameStr, passwordStr, apiUriStr)
-        toast(token).show()
+        token = logUser(usernameStr, passwordStr, apiUriStr)
+        toast(token!!).show()
+        var s = retrieveSong(token!!);
     }
 
     private fun validFields(): Boolean {

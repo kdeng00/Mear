@@ -4,6 +4,7 @@
 
 #include "Tok.h"
 
+#include <memory>
 #include <cstring>
 
 #include <curl/curl.h>
@@ -20,7 +21,7 @@ namespace manager {
             return "none";
         }
 
-        char resp[2048];
+        auto resp = std::make_unique<char[]>(10000);
 
         const auto loginUri = fetchLoginUri(uri);
         const auto obj = userJsonString(user);
@@ -28,14 +29,14 @@ namespace manager {
         curl_easy_setopt(curl, CURLOPT_URL, loginUri.c_str());
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, obj.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, respBodyRetriever);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, resp);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, resp.get());
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
         if (res == CURLE_OK) {
-            auto s = nlohmann::json::parse(resp);
+            auto s = nlohmann::json::parse(resp.get());
             return s["token"].get<std::string>();
         }
 
