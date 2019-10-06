@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <filesystem>
 #include <cstring>
 #include <jni.h>
 #include <string>
@@ -15,7 +16,7 @@
 #include <android/sharedmem.h>
 #include <sys/mman.h>
 
-#include "nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 #include <curl/curl.h>
 
 #include "model/Song.h"
@@ -24,16 +25,16 @@
 #include "Tok.h"
 
 
-model::Song retrieveSong(const std::string&);
+model::Song retrieveSong(const std::string&, const std::string&);
 
 std::string fetchToken(const std::string&, const std::string&, const std::string&);
 
 
-model::Song retrieveSong(const std::string& token)
+model::Song retrieveSong(const std::string& token, const std::string& baseUri)
 {
     repository::SongRepository songRepo;
     model::Song song;
-    song.id = 2;
+    song.id = 1;
     song.title = "Smooth";
     song.album = "Amaze";
     song.artist = "The Herb";
@@ -41,7 +42,7 @@ model::Song retrieveSong(const std::string& token)
     song.duration = 420;
     song.year = 420;
 
-    song = songRepo.retrieveSong(token, song.id);
+    song = songRepo.retrieveSong(token, baseUri, song);
 
     return song;
 }
@@ -57,6 +58,22 @@ std::string fetchToken(const std::string& username, const std::string& password,
 
     return token;
 
+}
+
+
+void iterateDirectory(const std::string& path)
+{
+    /**
+    auto somePath = std::filesystem::path(path);
+    for (auto dir: std::filesystem::directory_iterator(somePath)) {
+        auto foundPath = dir;
+        if (foundPath.is_directory()) {
+            auto dirPath = foundPath.path();
+        } else {
+            auto filePath = foundPath.path();
+        }
+    }
+    */
 }
 
 
@@ -86,13 +103,13 @@ JNICALL
 Java_com_example_mear_activities_DemoStreamActivity_retrieveSong(
         JNIEnv *env,
         jobject thisObj,
-        jstring token
+        jstring token,
+        jstring apiUri
         )
 {
     const std::string tok = env->GetStringUTFChars(token, NULL);
-
-    auto song = retrieveSong(tok);
-    std::string bank = "SBI Bank";
+    const std::string baseUri = env->GetStringUTFChars(apiUri, NULL);
+    auto song = retrieveSong(tok, baseUri);
 
     jclass songClass = env->FindClass( "com/example/mear/models/Song");
     jmethodID jconstructor = env->GetMethodID( songClass,  "<init>", "()V" );
@@ -123,4 +140,19 @@ Java_com_example_mear_activities_DemoStreamActivity_retrieveSong(
     env->CallVoidMethod(songObj, songYear, year);
 
     return songObj;
+}
+
+
+
+extern "C"
+JNIEXPORT void
+JNICALL
+Java_com_example_mear_activities_DemoStreamActivity_pathIteratorDemo(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring path
+        ) {
+
+    const std::string pathStr = env->GetStringUTFChars(path, NULL);
+    iterateDirectory(pathStr);
 }

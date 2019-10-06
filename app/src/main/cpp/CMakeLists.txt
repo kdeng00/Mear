@@ -59,17 +59,29 @@ set (CURL_LIBRARY
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}
 )
 
+set (BASS_LIBRARY
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass/${ANDROID_ABI}
+        )
+
 set (CURL_INCLUDE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/include/curl
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/include
 )
+set (BASS_INCLUDE_DIR
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass/include
+        )
 
 add_library(boo STATIC IMPORTED)
+#add_library(bass SHARED IMPORTED)
+
 set_target_properties(boo PROPERTIES IMPORTED_LOCATION
         "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}/libcurl.a"
 )
+#set_target_properties(bass PROPERTIES IMPORTED_LOCATION
+#        "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass/${ANDROID_ABI}/libbass.so"
+#        )
 
-include_directories(${CURL_INCLUDE_DIR})
+include_directories(${CURL_INCLUDE_DIR}) #${BASS_INCLUDE_DIR})
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
@@ -79,6 +91,7 @@ target_link_libraries(native-lib PRIVATE
 
         nlohmann_json::nlohmann_json
         boo
+        #bass
         ${log-lib}
         z
 )

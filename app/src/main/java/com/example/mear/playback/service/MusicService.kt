@@ -1,8 +1,10 @@
 package com.example.mear.playback.service
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Binder
 import android.os.Environment
 import android.os.IBinder
@@ -16,6 +18,7 @@ import com.example.mear.constants.Interval
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
 import com.example.mear.models.PlayControls
+import com.example.mear.models.Song
 import com.example.mear.models.Track
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
@@ -89,6 +92,46 @@ class MusicService: Service() {
             val exMsg = ex.message
         }
     }
+
+    fun icarusPlaySong(token: String, song: Song) {
+        var uriBase = "https://www.soaricarus.com/api/v1/song/stream/"
+        val id = song.id
+        uriBase += "$id"
+        var uri: Uri = Uri.parse(uriBase)
+        var hddr: MutableMap<String, String> = mutableMapOf()
+        hddr["Authorization"] = "Bearer  $token"
+        try {
+            trackPlayer!!.reset()
+            trackPlayer!!.setDataSource(this, uri, hddr)
+            trackPlayer!!.prepare()
+            trackPlayer!!.start()
+        }
+        catch (ex: Exception) {
+            val msg = ex.message
+        }
+    }
+
+    fun icarusPlaySong(ctx: Context, token: String, uriBase: String, song: Song) {
+        var uriStr = uriBase
+        val id = song.id
+        uriStr += "/api/v1/song/stream/"
+        uriStr += "$id"
+
+        var uri: Uri = Uri.parse(uriStr)
+        var hddr: MutableMap<String, String> = mutableMapOf()
+        hddr["Authorization"] = "Bearer  $token"
+
+        try {
+            trackPlayer!!.reset()
+            trackPlayer!!.setDataSource(ctx, uri, hddr)
+            trackPlayer!!.prepare()
+            trackPlayer!!.start()
+        }
+        catch (ex: Exception) {
+            val msg = ex.message
+        }
+    }
+
 
     fun goToPosition(progress: Int) {
         trackPlayer!!.seekTo(progress)

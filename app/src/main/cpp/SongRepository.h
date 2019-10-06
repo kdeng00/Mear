@@ -17,6 +17,8 @@ namespace repository {
         std::vector<model::Song> fetchSongs(const std::string&, const std::string&);
 
         model::Song retrieveSong(const std::string&, const int);
+        model::Song retrieveSong(const std::string&, const std::string&, const int);
+        model::Song retrieveSong(const std::string&, const std::string&, const model::Song&);
     private:
         static size_t respBodyRetriever(void*, size_t, size_t, char*);
     };

@@ -1,6 +1,7 @@
 package com.example.mear.activities
 
 import android.os.Bundle
+import android.os.Environment
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import com.example.mear.R
@@ -11,7 +12,7 @@ import org.jetbrains.anko.toast
 
 import com.example.mear.models.Song
 
-class DemoStreamActivity : AppCompatActivity() {
+class DemoStreamActivity : BaseServiceActivity() {
 
     companion object {
         init {
@@ -24,13 +25,17 @@ class DemoStreamActivity : AppCompatActivity() {
 
 
     private external fun logUser(usr: String, pass: String, api: String): String
-    private external fun retrieveSong(tok: String): Song
+    private external fun retrieveSong(tok: String, api: String): Song
+    //private external fun testSongStream(tok: String, id: Int)
+    private external fun pathIteratorDemo(path: String)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_demo_stream)
         setSupportActionBar(toolbar)
+
+        doBindService()
 
         demoStream.setOnClickListener {
             toast("vacant").show()
@@ -57,8 +62,20 @@ class DemoStreamActivity : AppCompatActivity() {
         var apiUriStr = apiUri.text.toString()
 
         token = logUser(usernameStr, passwordStr, apiUriStr)
-        toast(token!!).show()
-        var s = retrieveSong(token!!);
+
+        try {
+
+            var s = retrieveSong(token!!, apiUriStr)
+            musicService!!.icarusPlaySong(this.applicationContext, token!!, apiUriStr, s)
+            val dir = Environment.getExternalStorageDirectory().absolutePath + "/music"
+            pathIteratorDemo(dir)
+            var currentTrack = musicService!!.getCurrentTrack()
+            val title = currentTrack.title
+            val artist = currentTrack.artist
+        }
+        catch (ex: Exception) {
+            val msg = ex.message
+        }
     }
 
     private fun validFields(): Boolean {
