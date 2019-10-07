@@ -3,12 +3,15 @@
 //
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <filesystem>
 #include <cstring>
 #include <jni.h>
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <vector>
 #include <fcntl.h>
 
 #include <android/asset_manager_jni.h>
@@ -18,16 +21,20 @@
 
 #include <nlohmann/json.hpp>
 #include <curl/curl.h>
+#include <sqlite3.h>
 
 #include "model/Song.h"
 #include "model/User.h"
 #include "SongRepository.h"
 #include "Tok.h"
+#include "UserRepository.h"
 
 
 model::Song retrieveSong(const std::string&, const std::string&);
 
 std::string fetchToken(const std::string&, const std::string&, const std::string&);
+
+void saveCredentials(const model::User&, const std::string&);
 
 
 model::Song retrieveSong(const std::string& token, const std::string& baseUri)
@@ -74,6 +81,26 @@ void iterateDirectory(const std::string& path)
         }
     }
     */
+}
+
+void saveCredentials(const model::User& user, const std::string& appDirectory)
+{
+    std::string filePath(appDirectory);
+    filePath.append("/");
+    repository::local::UserRepository userRepo;
+
+    if (!userRepo.databaseExist(filePath)) {
+        userRepo.initializedDatabase(filePath);
+    }
+    if (!userRepo.doesUserTableExist(filePath)) {
+        userRepo.createUserTable(filePath);
+    }
+
+    if (userRepo.isTableEmpty(filePath)) {
+        userRepo.deleteUserTable(filePath);
+    }
+
+    userRepo.saveUserCred(user, filePath);
 }
 
 
@@ -143,7 +170,6 @@ Java_com_example_mear_activities_DemoStreamActivity_retrieveSong(
 }
 
 
-
 extern "C"
 JNIEXPORT void
 JNICALL
@@ -155,4 +181,27 @@ Java_com_example_mear_activities_DemoStreamActivity_pathIteratorDemo(
 
     const std::string pathStr = env->GetStringUTFChars(path, NULL);
     iterateDirectory(pathStr);
+}
+
+
+extern "C"
+JNIEXPORT void
+JNICALL
+Java_com_example_mear_activities_DemoStreamActivity_saveUserCredentials(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring username,
+        jstring password,
+        jstring appDirectory
+) {
+
+    const std::string usernameStr = env->GetStringUTFChars(username, NULL);
+    const std::string passwordStr = env->GetStringUTFChars(password, NULL);
+    const std::string appDirectoryStr = env->GetStringUTFChars(appDirectory, NULL);
+
+    model::User user;
+    user.username = usernameStr;
+    user.password = passwordStr;
+
+    saveCredentials(user, appDirectoryStr);
 }

@@ -3,7 +3,7 @@
 
 # Sets the minimum version of CMake required to build the native library.
 
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.6.0)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -14,24 +14,35 @@ cmake_minimum_required(VERSION 3.4.1)
 # set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 
 set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "-std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0 -std=c++17")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -DNDEBUG")
 
 set (SOURCES
+        BaseRepository.cpp
         Demo.cpp
         SongRepository.cpp
         Tok.cpp
+        TokenRepository.cpp
+        UserRepository.cpp
 )
 
 set (HEADERS
+        BaseRepository.h
         model/Song.h
+        model/Token.h
         model/User.h
         SongRepository.h
         Tok.h
+        TokenRepository.h
+        UserRepository.h
 )
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/json)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdparty/SQLiteCpp)
 
 
 add_library(native-lib SHARED
@@ -41,12 +52,6 @@ add_library(native-lib SHARED
         ${HEADERS}
 )
 
-
-# Searches for a specified prebuilt library and stores the path as a
-# variable. Because CMake includes system libraries in the search path by
-# default, you only need to specify the name of the public NDK library
-# you want to add. CMake verifies that the library exists before
-# completing its build.
 
 find_library(log-lib
         # Specifies the name of the NDK library that
@@ -59,39 +64,33 @@ set (CURL_LIBRARY
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}
 )
 
-set (BASS_LIBRARY
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass/${ANDROID_ABI}
-        )
 
 set (CURL_INCLUDE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/include/curl
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/include
 )
-set (BASS_INCLUDE_DIR
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass/include
-        )
+
+set(SQLITECPP_INCLUDE
+        ${CMAKE_CURRENT_LIST_DIR}/3rdparty/SQLiteCpp/include
+)
 
 add_library(boo STATIC IMPORTED)
-#add_library(bass SHARED IMPORTED)
 
 set_target_properties(boo PROPERTIES IMPORTED_LOCATION
         "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}/libcurl.a"
 )
-#set_target_properties(bass PROPERTIES IMPORTED_LOCATION
-#        "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass/${ANDROID_ABI}/libbass.so"
-#        )
 
-include_directories(${CURL_INCLUDE_DIR}) #${BASS_INCLUDE_DIR})
-
-# Specifies libraries CMake should link to your target library. You
-# can link multiple libraries, such as libraries you define in this
-# build script, prebuilt third-party libraries, or system libraries.
+include_directories(${CURL_INCLUDE_DIR} ${SQLITECPP_INCLUDE}) #${BASS_INCLUDE_DIR})
 
 target_link_libraries(native-lib PRIVATE
 
         nlohmann_json::nlohmann_json
         boo
         #bass
+        SQLiteCpp
+        sqlite3
+        #pthread
+        dl
         ${log-lib}
         z
 )

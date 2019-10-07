@@ -49,11 +49,11 @@
         android:id="@+id/apiUri"
         android:layout_width="245dp"
         android:layout_height="43dp"
-        android:layout_marginBottom="76dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="apiUri"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/login"
+        app:layout_constraintBottom_toTopOf="@+id/saveUserCred"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -66,6 +66,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/saveUserCred"
+        android:layout_width="153dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginBottom="32dp"
+        android:text="Save Credentials"
+        app:layout_constraintBottom_toTopOf="@+id/login"
         app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

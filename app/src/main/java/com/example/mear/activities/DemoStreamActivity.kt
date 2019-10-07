@@ -24,10 +24,12 @@ class DemoStreamActivity : BaseServiceActivity() {
     private var token: String? = null
 
 
+    // TODO: add external call to retrieve User credentials
     private external fun logUser(usr: String, pass: String, api: String): String
     private external fun retrieveSong(tok: String, api: String): Song
     //private external fun testSongStream(tok: String, id: Int)
     private external fun pathIteratorDemo(path: String)
+    private external fun saveUserCredentials(username: String, password: String, appDir: String)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,21 +59,30 @@ class DemoStreamActivity : BaseServiceActivity() {
             return
         }
 
-        var usernameStr = username.text.toString()
-        var passwordStr = password.text.toString()
+        val saveCred = saveUserCred.isChecked
+
+        val usernameStr = username.text.toString()
+        val passwordStr = password.text.toString()
         var apiUriStr = apiUri.text.toString()
+
+        if (apiUriStr.isEmpty()) {
+            apiUriStr = ""
+        }
 
         token = logUser(usernameStr, passwordStr, apiUriStr)
 
         try {
 
-            var s = retrieveSong(token!!, apiUriStr)
+            val s = retrieveSong(token!!, apiUriStr)
             musicService!!.icarusPlaySong(this.applicationContext, token!!, apiUriStr, s)
             val dir = Environment.getExternalStorageDirectory().absolutePath + "/music"
-            pathIteratorDemo(dir)
-            var currentTrack = musicService!!.getCurrentTrack()
-            val title = currentTrack.title
-            val artist = currentTrack.artist
+            val appRelPath: String = resources.getString(R.string.app_relative_path)
+            var inStoragePath = Environment.getDataDirectory().toString()
+            inStoragePath += "/data/$appRelPath"
+
+            if (saveCred) {
+                saveUserCredentials(usernameStr, passwordStr, inStoragePath)
+            }
         }
         catch (ex: Exception) {
             val msg = ex.message

@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_relative_path">com.example.mear</string>
     <string name="app_name">Mear</string>
     <string name="app_version">Pre-development release</string>
     <string name="app_author">amazing-username - Kun Deng</string>
