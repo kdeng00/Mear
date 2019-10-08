@@ -6,14 +6,17 @@
 #define MEAR_TOKEN_H
 
 #include <string>
+#include <utility>
 
 namespace model {
     class Token
     {
     public:
-        Token(const std::string& token) : token(token) { }
+        Token(const std::string& accessToken) : accessToken(accessToken) { }
+        Token(const std::string&& accessToken) :
+            accessToken(std::move(accessToken)) { }
 
-        std::string token;
+        std::string accessToken;
     };
 }
 

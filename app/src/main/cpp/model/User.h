@@ -5,13 +5,18 @@
 #ifndef MEAR_USER_H
 #define MEAR_USER_H
 
+#include <string>
+#include <utility>
 
 namespace model {
-struct User
+class User
 {
+public:
     User() = default;
     User(const std::string& user, const std::string& pass) :
         username(user), password(pass) { }
+    User(const std::string&& user, const std::string&& pass) :
+        username(std::move(user)), password(std::move(pass)) {}
 
     std::string username;
     std::string password;

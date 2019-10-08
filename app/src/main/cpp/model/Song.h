@@ -10,8 +10,22 @@
 
 namespace model {
 
-struct Song
+class Song
 {
+public:
+    Song() = default;
+    Song(const int id, const std::string& title, const std::string& artist,
+            const std::string& album, const std::string& genre,
+            const int duration, const int year) :
+            id(id), title(title), artist(artist), album(album),
+            genre(genre), duration(duration), year(year) { }
+    Song(const int id, const std::string&& title, const std::string&& artist,
+         const std::string&& album, const std::string&& genre,
+         const int duration, const int year) :
+            id(id), title(std::move(title)), artist(std::move(artist)),
+            album(std::move(album)), genre(std::move(genre)), duration(duration),
+            year(year) { }
+
     int id;
     std::string title;
     std::string artist;

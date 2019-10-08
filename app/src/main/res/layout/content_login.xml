@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activities.DemoStreamActivity"
-    tools:showIn="@layout/activity_demo_stream">
+    tools:context=".activities.LoginActivity"
+    tools:showIn="@layout/activity_login">
 
     <Button
         android:id="@+id/demoStream"
@@ -27,7 +27,6 @@
         android:ems="10"
         android:hint="username"
         android:inputType="textPersonName"
-        android:text="kverse"
         app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -40,7 +39,6 @@
         android:ems="10"
         android:hint="password"
         android:inputType="textPassword"
-        android:text="demolaugh"
         app:layout_constraintBottom_toTopOf="@+id/apiUri"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -53,6 +51,7 @@
         android:ems="10"
         android:hint="apiUri"
         android:inputType="textPersonName"
+        android:text="https://www.soaricarus.com"
         app:layout_constraintBottom_toTopOf="@+id/saveUserCred"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

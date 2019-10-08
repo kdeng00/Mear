@@ -15,7 +15,6 @@ namespace repository { namespace local {
             const auto dbPath = pathOfDatabase(appPath);
 
             SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
-            //SQLite::Database db(m_tableName, SQLite::OPEN_READONLY);
             return true;
         } catch (std::exception& ex) {
             auto msg = ex.what();
@@ -39,7 +38,7 @@ namespace repository { namespace local {
             auto msg = ex.what();
         }
 
-        return false;
+        return true;
     }
 
 
@@ -47,11 +46,8 @@ namespace repository { namespace local {
     {
         try {
             const auto dbPath = pathOfDatabase(appPath);
-            //std::fstream cret(dbPath, std::ios::out);
-            //cret.close();
 
             SQLite::Database db(dbPath, SQLite::OPEN_CREATE | SQLite::OPEN_READWRITE);
-            //SQLite::Database db(m_tableName, SQLite::OPEN_CREATE);
         } catch (std::exception& ex) {
             auto msg = ex.what();
         }

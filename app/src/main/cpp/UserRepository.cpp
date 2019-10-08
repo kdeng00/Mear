@@ -19,7 +19,6 @@ namespace repository { namespace local {
        try {
            const auto dbPath = pathOfDatabase(appPath);
            SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
-           //SQLite::Database db(m_tableName, SQLite::OPEN_READONLY);
 
            std::string queryString("SELECT * FROM ");
            queryString.append(m_tableName);
@@ -50,7 +49,6 @@ namespace repository { namespace local {
        try {
            const auto dbPath = pathOfDatabase(appPath);
            SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
-           //SQLite::Database db(m_tableName, SQLite::OPEN_READONLY);
 
            return db.tableExists(m_tableName);
        } catch (std::exception& ex) {
@@ -66,7 +64,6 @@ namespace repository { namespace local {
        try {
            const auto dbPath = pathOfDatabase(appPath);
            SQLite::Database db(dbPath, SQLite::OPEN_READWRITE);
-           //SQLite::Database db(m_tableName, SQLite::OPEN_READWRITE);
 
            std::string queryString("CREATE TABLE ");
            queryString.append(m_tableName);
@@ -97,7 +94,6 @@ namespace repository { namespace local {
        try {
            const auto dbPath = pathOfDatabase(appPath);
            SQLite::Database db(dbPath, SQLite::OPEN_READWRITE);
-           //SQLite::Database db(m_tableName, SQLite::OPEN_READWRITE);
            std::string queryString("INSERT INTO ");
            queryString.append(m_tableName);
            queryString.append(" (Username, Password) VALUES (?, ?)");

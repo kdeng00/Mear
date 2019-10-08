@@ -30,28 +30,36 @@
 #include "UserRepository.h"
 
 
-model::Song retrieveSong(const std::string&, const std::string&);
+model::Song retrieveSong(const std::string&, const std::string&, const int);
+
+model::User retrieveCredentials(const std::string&);
 
 std::string fetchToken(const std::string&, const std::string&, const std::string&);
+
+bool doesDatabaseExist(const std::string&);
+bool userCredentialExist(const std::string&);
 
 void saveCredentials(const model::User&, const std::string&);
 
 
-model::Song retrieveSong(const std::string& token, const std::string& baseUri)
+model::Song retrieveSong(const std::string& token, const std::string& baseUri, const int songId)
 {
     repository::SongRepository songRepo;
-    model::Song song;
-    song.id = 1;
-    song.title = "Smooth";
-    song.album = "Amaze";
-    song.artist = "The Herb";
-    song.genre = "Blazing";
-    song.duration = 420;
-    song.year = 420;
+    model::Song song(songId, "Smooth", "Amaze", "The Herb", "Blazing",
+            420, 420);
 
     song = songRepo.retrieveSong(token, baseUri, song);
 
     return song;
+}
+
+
+model::User retrieveCredentials(const std::string& dataPath)
+{
+    repository::local::UserRepository userRepo;
+    auto user = userRepo.retrieveUserCredentials(dataPath);
+
+    return user;
 }
 
 
@@ -65,6 +73,22 @@ std::string fetchToken(const std::string& username, const std::string& password,
 
     return token;
 
+}
+
+
+bool doesDatabaseExist(const std::string& dataPath)
+{
+    repository::local::UserRepository userRepo;
+    const auto result = userRepo.databaseExist(dataPath);
+
+    return result;
+}
+
+bool userCredentialExist(const std::string& dataPath)
+{
+    repository::local::UserRepository userRepo;
+
+    return userRepo.isTableEmpty(dataPath);
 }
 
 
@@ -85,58 +109,37 @@ void iterateDirectory(const std::string& path)
 
 void saveCredentials(const model::User& user, const std::string& appDirectory)
 {
-    std::string filePath(appDirectory);
-    filePath.append("/");
     repository::local::UserRepository userRepo;
 
-    if (!userRepo.databaseExist(filePath)) {
-        userRepo.initializedDatabase(filePath);
+    if (!userRepo.databaseExist(appDirectory)) {
+        userRepo.initializedDatabase(appDirectory);
     }
-    if (!userRepo.doesUserTableExist(filePath)) {
-        userRepo.createUserTable(filePath);
-    }
-
-    if (userRepo.isTableEmpty(filePath)) {
-        userRepo.deleteUserTable(filePath);
+    if (!userRepo.doesUserTableExist(appDirectory)) {
+        userRepo.createUserTable(appDirectory);
     }
 
-    userRepo.saveUserCred(user, filePath);
-}
+    if (userRepo.isTableEmpty(appDirectory)) {
+        userRepo.deleteUserTable(appDirectory);
+    }
 
-
-extern "C"
-JNIEXPORT jstring
-JNICALL
-Java_com_example_mear_activities_DemoStreamActivity_logUser(
-        JNIEnv *env,
-        jobject thisObj,
-        jstring username,
-        jstring password,
-        jstring apiUri ) {
-
-    const std::string usr = env->GetStringUTFChars(username, NULL);
-    const std::string pass = env->GetStringUTFChars(password, NULL);
-    const std::string api = env->GetStringUTFChars(apiUri, NULL);
-
-    auto token = fetchToken(usr, pass, api);
-
-    return env->NewStringUTF(token.c_str());
+    userRepo.saveUserCred(user, appDirectory);
 }
 
 
 extern "C"
 JNIEXPORT jobject
 JNICALL
-Java_com_example_mear_activities_DemoStreamActivity_retrieveSong(
+Java_com_example_mear_activities_LoginActivity_retrieveSong(
         JNIEnv *env,
         jobject thisObj,
         jstring token,
-        jstring apiUri
-        )
+        jstring apiUri,
+        jint idOfSong
+)
 {
     const std::string tok = env->GetStringUTFChars(token, NULL);
     const std::string baseUri = env->GetStringUTFChars(apiUri, NULL);
-    auto song = retrieveSong(tok, baseUri);
+    auto song = retrieveSong(tok, baseUri, idOfSong);
 
     jclass songClass = env->FindClass( "com/example/mear/models/Song");
     jmethodID jconstructor = env->GetMethodID( songClass,  "<init>", "()V" );
@@ -169,11 +172,87 @@ Java_com_example_mear_activities_DemoStreamActivity_retrieveSong(
     return songObj;
 }
 
+extern "C"
+JNIEXPORT jobject
+JNICALL
+Java_com_example_mear_activities_LoginActivity_retrieveUserCredentials(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring dataPath
+) {
+    jclass userClass = env->FindClass("com/example/mear/models/User");
+    jmethodID userContructor = env->GetMethodID(userClass, "<init>", "()V");
+    jobject userObj = env->NewObject(userClass, userContructor);
+
+    const std::string dataPathStr = env->GetStringUTFChars(dataPath, nullptr);
+    auto user = retrieveCredentials(dataPathStr);
+
+    jmethodID usernameId = env->GetMethodID(userClass, "setUsername", "(Ljava/lang/String;)V");
+    jmethodID passwordId = env->GetMethodID(userClass, "setPassword", "(Ljava/lang/String;)V");
+
+    jstring username = env->NewStringUTF(user.username.c_str());
+    jstring password = env->NewStringUTF(user.password.c_str());
+
+    env->CallVoidMethod(userObj, usernameId, username);
+    env->CallVoidMethod(userObj, passwordId, password);
+
+    return userObj;
+}
+
+
+extern "C"
+JNIEXPORT jstring
+JNICALL
+Java_com_example_mear_activities_LoginActivity_logUser(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring username,
+        jstring password,
+        jstring apiUri ) {
+
+    const std::string usr = env->GetStringUTFChars(username, NULL);
+    const std::string pass = env->GetStringUTFChars(password, NULL);
+    const std::string api = env->GetStringUTFChars(apiUri, NULL);
+
+    auto token = fetchToken(usr, pass, api);
+
+    return env->NewStringUTF(token.c_str());
+}
+
+
+extern "C"
+JNIEXPORT jboolean
+JNICALL
+Java_com_example_mear_activities_LoginActivity_isUserTableEmpty(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring dataPath
+        ) {
+    const std::string dataPathStr = env->GetStringUTFChars(dataPath, NULL);
+    jboolean result = userCredentialExist(dataPathStr);
+
+    return result;
+}
+
+extern "C"
+JNIEXPORT jboolean
+JNICALL
+Java_com_example_mear_activities_LoginActivity_doesDatabaseExist(
+        JNIEnv *env,
+        jobject thidObj,
+        jstring dataPath
+        ) {
+    const std::string dataPathStr = env->GetStringUTFChars(dataPath, NULL);
+    jboolean result = doesDatabaseExist(dataPathStr);
+
+    return result;
+}
+
 
 extern "C"
 JNIEXPORT void
 JNICALL
-Java_com_example_mear_activities_DemoStreamActivity_pathIteratorDemo(
+Java_com_example_mear_activities_LoginActivity_pathIteratorDemo(
         JNIEnv *env,
         jobject thisObj,
         jstring path
@@ -187,21 +266,18 @@ Java_com_example_mear_activities_DemoStreamActivity_pathIteratorDemo(
 extern "C"
 JNIEXPORT void
 JNICALL
-Java_com_example_mear_activities_DemoStreamActivity_saveUserCredentials(
+Java_com_example_mear_activities_LoginActivity_saveUserCredentials(
         JNIEnv *env,
         jobject thisObj,
         jstring username,
         jstring password,
         jstring appDirectory
 ) {
-
     const std::string usernameStr = env->GetStringUTFChars(username, NULL);
     const std::string passwordStr = env->GetStringUTFChars(password, NULL);
     const std::string appDirectoryStr = env->GetStringUTFChars(appDirectory, NULL);
 
-    model::User user;
-    user.username = usernameStr;
-    user.password = passwordStr;
+    model::User user(usernameStr, passwordStr);
 
     saveCredentials(user, appDirectoryStr);
 }
