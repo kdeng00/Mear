@@ -9,12 +9,13 @@
 #include <vector>
 
 #include "model/Song.h"
+#include "model/Token.h"
 
 namespace repository {
 
     class SongRepository {
     public:
-        std::vector<model::Song> fetchSongs(const std::string&, const std::string&);
+        std::vector<model::Song> fetchSongs(const model::Token&, const std::string&);
 
         model::Song retrieveSong(const std::string&, const int);
         model::Song retrieveSong(const std::string&, const std::string&, const int);

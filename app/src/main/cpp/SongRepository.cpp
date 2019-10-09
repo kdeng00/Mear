@@ -8,11 +8,52 @@
 #include <nlohmann/json.hpp>
 
 namespace repository {
-    // TODO: implement this
-    std::vector<model::Song> SongRepository::fetchSongs(const std::string& token,
+    std::vector<model::Song> SongRepository::fetchSongs(const model::Token& token,
         const std::string& uri)
     {
+        std::string fullUri(uri);
+        if (fullUri.at(fullUri.size()-1) != '/') {
+            fullUri.append("/");
+        }
+        fullUri.append("api/v1/song");
         std::vector<model::Song> songs;
+
+        CURL *curl;
+        CURLcode res;
+        struct curl_slist *chunk = nullptr;
+        curl = curl_easy_init();
+
+        if (!curl) {
+            return songs;
+        }
+
+        constexpr auto EXPECTED_CHAR_AMOUNT = 100000;
+        auto resp = std::make_unique<char[]>(EXPECTED_CHAR_AMOUNT);
+
+        std::string authInfo("Authorization: Bearer ");
+        authInfo.append(token.accessToken);
+        chunk = curl_slist_append(chunk, authInfo.c_str());
+
+        curl_easy_setopt(curl, CURLOPT_URL, fullUri.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, respBodyRetriever);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, resp.get());
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        if (res == CURLE_OK) {
+            auto songsJson = nlohmann::json::parse(resp.get());
+            for (auto& songJson: songsJson) {
+                model::Song song(songJson["id"].get<int>(), songJson["title"].get<std::string>(),
+                        songJson["artist"].get<std::string>(), songJson["album"].get<std::string>(),
+                        songJson["genre"].get<std::string>(), songJson["duration"].get<int>(),
+                        songJson["year"].get<int>());
+
+                songs.push_back(song);
+            }
+        }
 
       return songs;
     }

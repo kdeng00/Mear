@@ -24,11 +24,15 @@
 #include <sqlite3.h>
 
 #include "model/Song.h"
+#include "model/Token.h"
 #include "model/User.h"
 #include "SongRepository.h"
 #include "Tok.h"
 #include "UserRepository.h"
 
+std::vector<model::Song> retrieveSongs(const model::Token&, const std::string&);
+
+jobject songToObj(JNIEnv *env, const model::Song&);
 
 model::Song retrieveSong(const std::string&, const std::string&, const int);
 
@@ -42,6 +46,50 @@ bool userCredentialExist(const std::string&);
 void saveCredentials(const model::User&, const std::string&);
 
 
+std::vector<model::Song> retrieveSongs(const model::Token& token, const std::string& baseUri)
+{
+    std::vector<model::Song> songs;
+    repository::SongRepository songRepo;
+    songs = songRepo.fetchSongs(token, baseUri);
+
+    return songs;
+}
+
+
+jobject songToObj(JNIEnv *env, const model::Song& song)
+{
+    jclass songClass = env->FindClass( "com/example/mear/models/Song");
+    jmethodID jconstructor = env->GetMethodID( songClass,  "<init>", "()V" );
+    jobject songObj = env->NewObject( songClass, jconstructor );
+
+    jmethodID songId = env->GetMethodID( songClass,  "setId", "(I)V" );
+    jmethodID songTitle = env->GetMethodID( songClass,  "setTitle", "(Ljava/lang/String;)V" );
+    jmethodID songAlbum = env->GetMethodID( songClass,  "setAlbum", "(Ljava/lang/String;)V" );
+    jmethodID songArtist = env->GetMethodID( songClass,  "setArtist", "(Ljava/lang/String;)V" );
+    jmethodID songGenre = env->GetMethodID( songClass,  "setGenre", "(Ljava/lang/String;)V" );
+    jmethodID songDuration = env->GetMethodID( songClass,  "setDuration", "(I)V" );
+    jmethodID songYear = env->GetMethodID( songClass,  "setYear", "(I)V" );
+
+    jint id = song.id;
+    jstring title = env->NewStringUTF(song.title.c_str());
+    jstring album = env->NewStringUTF(song.album.c_str());
+    jstring artist = env->NewStringUTF(song.artist.c_str());
+    jstring genre = env->NewStringUTF(song.genre.c_str());
+    jint duration = song.duration;
+    jint year = song.year;
+
+    env->CallVoidMethod( songObj, songId, id );
+    env->CallVoidMethod(songObj, songTitle, title);
+    env->CallVoidMethod(songObj, songAlbum, album);
+    env->CallVoidMethod(songObj, songArtist, artist);
+    env->CallVoidMethod(songObj, songGenre, genre);
+    env->CallVoidMethod(songObj, songDuration, duration);
+    env->CallVoidMethod(songObj, songYear, year);
+
+    return songObj;
+}
+
+
 model::Song retrieveSong(const std::string& token, const std::string& baseUri, const int songId)
 {
     repository::SongRepository songRepo;
@@ -49,6 +97,7 @@ model::Song retrieveSong(const std::string& token, const std::string& baseUri, c
             420, 420);
 
     song = songRepo.retrieveSong(token, baseUri, song);
+    auto songs = songRepo.fetchSongs(model::Token(token), baseUri);
 
     return song;
 }
@@ -123,6 +172,33 @@ void saveCredentials(const model::User& user, const std::string& appDirectory)
     }
 
     userRepo.saveUserCred(user, appDirectory);
+}
+
+
+extern "C"
+JNIEXPORT jobjectArray
+JNICALL
+Java_com_example_mear_activities_IcarusSongActivity_retrieveSongs(
+        JNIEnv *env,
+        jobject  thisOnj,
+        jobject token,
+        jstring baseUri
+        ) {
+    jclass songClass = env->FindClass( "com/example/mear/models/Song");
+    jclass tokenClass = env->FindClass("com/example/mear/models/Token");
+    jobjectArray songs = env->NewObjectArray(2, songClass, nullptr);
+    auto tok = env->CallObjectMethod(token, env->GetMethodID(tokenClass, "setAccessToken", "(Ljava/lang/String;)V"));
+    std::string tokStr = env->GetStringUTFChars((jstring)tok, nullptr);
+    model::Token tk(tokStr);
+    const std::string uri = env->GetStringUTFChars(baseUri, nullptr);
+
+    auto allSongs = retrieveSongs(tk, uri);
+    for (auto i = 0; i != allSongs.size(); ++i) {
+        auto song = songToObj(env, allSongs[i]);
+        env->SetObjectArrayElement(songs, i, song);
+    }
+
+    return songs;
 }
 
 

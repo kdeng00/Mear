@@ -1,5 +1,6 @@
 package com.example.mear.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.Snackbar
@@ -87,6 +88,7 @@ class LoginActivity : BaseServiceActivity() {
             if (saveCred && isUserTableEmpty(pa)) {
                 saveUserCredentials(usernameStr, passwordStr, pa)
             }
+            //startActivity(Intent(this, IcarusSongActivity::class.java))
         }
         catch (ex: Exception) {
             val msg = ex.message
