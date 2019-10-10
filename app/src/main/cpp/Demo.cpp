@@ -251,7 +251,7 @@ Java_com_example_mear_activities_LoginActivity_retrieveSong(
 extern "C"
 JNIEXPORT jobject
 JNICALL
-Java_com_example_mear_activities_LoginActivity_retrieveUserCredentials(
+Java_com_example_mear_repositories_UserRepository_retrieveUserCredentials(
         JNIEnv *env,
         jobject thisObj,
         jstring dataPath
@@ -273,6 +273,43 @@ Java_com_example_mear_activities_LoginActivity_retrieveUserCredentials(
     env->CallVoidMethod(userObj, passwordId, password);
 
     return userObj;
+}
+
+extern "C"
+JNIEXPORT jobject
+JNICALL
+Java_com_example_mear_repositories_UserRepository_logUser(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject user,
+        jstring apiUri ) {
+    jclass userClass = env->GetObjectClass(user);
+    //auto tok = env->CallObjectMethod(token, env->GetMethodID(tokenClass, "setAccessToken", "(Ljava/lang/String;)V"));
+    auto passwordField = env->GetFieldID(userClass, "getPassword", "(Ljava/lang/String;)V");
+    //auto passwordM = env->CallObjectMethod(user, env->GetMethodID(userClass, "password", "(Ljava/lang/String;)V"));
+    //auto passwordMOne = env->CallObjectMethod(user, env->GetMethodID(userClass, "getPassword", "(Ljava/lang/String;)V"));
+    auto password = env->GetObjectField(user, passwordField);
+    //auto username = env->CallObjectMethod(user, env->GetMethodID(userClass, "setUsername", "(Ljava/lang/String;)V"));
+    auto usernameField = env->GetFieldID(userClass, "setUsername", "(Ljava/lang/String;)V");
+    auto username = env->GetObjectField(user, usernameField);
+
+    const std::string usr = env->GetStringUTFChars((jstring)username, nullptr);
+    const std::string pass = env->GetStringUTFChars((jstring)password, nullptr);
+    const std::string api = env->GetStringUTFChars(apiUri, nullptr);
+
+    model::Token token(fetchToken(usr, pass, api));
+
+    jclass tokenClass = env->FindClass( "com/example/mear/models/Token");
+    jmethodID jconstructor = env->GetMethodID( tokenClass,  "<init>", "()V" );
+    jobject tokenObj = env->NewObject( tokenClass, jconstructor );
+
+    jmethodID tokenAccess = env->GetMethodID( tokenClass,  "setAccessToken", "(Ljava/lang/String;)V" );
+
+    jstring title = env->NewStringUTF(token.accessToken.c_str());
+
+    env->CallVoidMethod(tokenObj, tokenAccess, title);
+
+    return tokenObj;
 }
 
 
@@ -299,7 +336,7 @@ Java_com_example_mear_activities_LoginActivity_logUser(
 extern "C"
 JNIEXPORT jboolean
 JNICALL
-Java_com_example_mear_activities_LoginActivity_isUserTableEmpty(
+Java_com_example_mear_repositories_UserRepository_isUserTableEmpty(
         JNIEnv *env,
         jobject thisObj,
         jstring dataPath
@@ -313,7 +350,7 @@ Java_com_example_mear_activities_LoginActivity_isUserTableEmpty(
 extern "C"
 JNIEXPORT jboolean
 JNICALL
-Java_com_example_mear_activities_LoginActivity_doesDatabaseExist(
+Java_com_example_mear_repositories_BaseRepository_doesDatabaseExist(
         JNIEnv *env,
         jobject thidObj,
         jstring dataPath

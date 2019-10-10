@@ -11,7 +11,9 @@ import kotlinx.android.synthetic.main.content_login.*
 import org.jetbrains.anko.toast
 
 import com.example.mear.models.Song
+import com.example.mear.models.Token
 import com.example.mear.models.User
+import com.example.mear.repositories.UserRepository
 
 class LoginActivity : BaseServiceActivity() {
 
@@ -24,12 +26,12 @@ class LoginActivity : BaseServiceActivity() {
 
     private external fun retrieveSong(tok: String, api: String, songId: Int): Song
 
-    private external fun retrieveUserCredentials(path: String): User
+    //private external fun retrieveUserCredentials(path: String): User
 
     private external fun logUser(usr: String, pass: String, api: String): String
 
-    private external fun doesDatabaseExist(path: String): Boolean
-    private external fun isUserTableEmpty(path: String): Boolean
+    //private external fun doesDatabaseExist(path: String): Boolean
+    //private external fun isUserTableEmpty(path: String): Boolean
 
     private external fun pathIteratorDemo(path: String)
     private external fun saveUserCredentials(username: String, password: String, appDir: String)
@@ -41,8 +43,9 @@ class LoginActivity : BaseServiceActivity() {
         setSupportActionBar(toolbar)
 
         val pa = appDirectory()
-        if (doesDatabaseExist(pa) && !isUserTableEmpty(pa)) {
-            val usr = retrieveUserCredentials(pa)
+        val usrRepo = UserRepository()
+        if (usrRepo.databaseExist(pa) && !usrRepo.isTableEmpty(pa)) {
+            val usr = usrRepo.retrieveCredentials(pa)
             username.setText(usr.username)
             password.setText(usr.password)
         }
@@ -71,22 +74,26 @@ class LoginActivity : BaseServiceActivity() {
 
         val saveCred = saveUserCred.isChecked
 
-        val usernameStr = username.text.toString()
-        val passwordStr = password.text.toString()
         var apiUriStr = apiUri.text.toString()
+        val usr = User()
+        usr.username = username.text.toString()
+        usr.password = password.text.toString()
 
         if (apiUriStr.isEmpty()) {
-            apiUriStr = ""
+            apiUriStr = "https://www.soaricarus.com"
         }
 
-        val token = logUser(usernameStr, passwordStr, apiUriStr)
+        val myToken = Token(logUser(usr.username, usr.password, apiUriStr))
+        //val token = logUser(usernameStr, passwordStr, apiUriStr)
+        val usrRepo = UserRepository()
+        //val newToken = usrRepo.fetchToken(usr, apiUriStr)
 
         try {
             val songId = 4
-            val song = retrieveSong(token, apiUriStr, songId)
+            val song = retrieveSong(myToken.accessToken, apiUriStr, songId)
             val pa = appDirectory()
-            if (saveCred && isUserTableEmpty(pa)) {
-                saveUserCredentials(usernameStr, passwordStr, pa)
+            if (saveCred && usrRepo.isTableEmpty(pa)) {
+                saveUserCredentials(usr.username, usr.password, pa)
             }
             //startActivity(Intent(this, IcarusSongActivity::class.java))
         }
