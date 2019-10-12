@@ -23,9 +23,11 @@
 #include <curl/curl.h>
 #include <sqlite3.h>
 
+#include "model/APIInfo.h"
 #include "model/Song.h"
 #include "model/Token.h"
 #include "model/User.h"
+#include "APIRepository.h"
 #include "SongRepository.h"
 #include "Tok.h"
 #include "UserRepository.h"
@@ -44,6 +46,7 @@ model::User retrieveCredentials(const std::string&);
 std::string fetchToken(const std::string&, const std::string&, const std::string&);
 
 bool doesDatabaseExist(const std::string&);
+bool apiInformationExist(const std::string&);
 bool userCredentialExist(const std::string&);
 
 void saveCredentials(const model::User&, const std::string&);
@@ -148,6 +151,13 @@ bool doesDatabaseExist(const std::string& dataPath)
     const auto result = userRepo.databaseExist(dataPath);
 
     return result;
+}
+
+bool apiInformationExist(const std::string& dataPath)
+{
+    repository::local::APIRepository apiRepo;
+
+    return apiRepo.isTableEmpty(dataPath);
 }
 
 bool userCredentialExist(const std::string& dataPath)
@@ -380,6 +390,19 @@ Java_com_example_mear_activities_LoginActivity_logUser(
     return env->NewStringUTF(token.c_str());
 }
 
+
+extern "C"
+JNIEXPORT jboolean
+JNICALL
+Java_com_example_mear_repositories_APIRepository_isAPIInfoTableEmpty(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring pathStr
+        ) {
+    const std::string datapath = env->GetStringUTFChars(pathStr, nullptr);
+
+    return apiInformationExist(datapath);
+}
 
 extern "C"
 JNIEXPORT jboolean

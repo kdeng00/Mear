@@ -19,7 +19,6 @@ namespace repository { namespace local {
 
         model::User retrieveUserCredentials(const std::string&);
 
-        bool isEmpty(const std::string&);
         bool doesUserTableExist(const std::string&);
 
         void createUserTable(const std::string&);

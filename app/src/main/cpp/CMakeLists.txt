@@ -19,6 +19,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0 -std=c++17")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -DNDEBUG")
 
 set (SOURCES
+        APIRepository.cpp
         BaseRepository.cpp
         Demo.cpp
         SongRepository.cpp
@@ -28,7 +29,9 @@ set (SOURCES
 )
 
 set (HEADERS
+        APIRepository.h
         BaseRepository.h
+        model/APIInfo.h
         model/Song.h
         model/Token.h
         model/User.h
