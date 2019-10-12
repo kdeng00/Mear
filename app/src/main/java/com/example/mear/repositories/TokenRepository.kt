@@ -13,11 +13,11 @@ class TokenRepository: BaseRepository() {
 
     private external fun retrieveTokenRecord(path: String): Token
 
-    private external fun isTokeTableEmpty(path: String): Boolean
+    private external fun isTokenTableEmpty(path: String): Boolean
 
     private external fun saveTokenRecord(token: Token, path: String)
-    private external fun deleteTokenRecord(path: String)
-    private external fun updateTokenRecord(token: Token, path: String)
+    //private external fun deleteTokenRecord(path: String)
+    //private external fun updateTokenRecord(token: Token, path: String)
 
 
     fun retrieveToken(path: String): Token {
@@ -26,7 +26,7 @@ class TokenRepository: BaseRepository() {
 
 
     fun isTableEmpty(path: String): Boolean {
-        return isTokeTableEmpty(path)
+        return isTokenTableEmpty(path)
     }
 
 
@@ -34,6 +34,8 @@ class TokenRepository: BaseRepository() {
         return saveTokenRecord(token, path)
     }
 
+    // TODO: implement this
+    /**
     fun deleteToken(path: String) {
         return deleteTokenRecord(path)
     }
@@ -41,4 +43,5 @@ class TokenRepository: BaseRepository() {
     fun updateToken(token: Token, path: String) {
         return updateTokenRecord(token, path)
     }
+    */
 }

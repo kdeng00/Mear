@@ -28,15 +28,27 @@ namespace repository { namespace local {
 
             auto result = query.executeStep();
             apiInfo.uri = query.getColumn(1).getString();
-            apiInfo.endpoint = query.getColumn(2).getString();
-            apiInfo.version = query.getColumn(3).getInt();
+            apiInfo.version = query.getColumn(2).getInt();
 
             return apiInfo;
-        } catch (std::exception ex) {
+        } catch (std::exception& ex) {
             auto msg = ex.what();
         }
 
         return apiInfo;
+    }
+
+
+    bool APIRepository::doesAPIInfoTableExist(const std::string& path)
+    {
+        try {
+            const auto dbPath = pathOfDatabase(path);
+            SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
+
+            return db.tableExists(m_tableName);
+        } catch (std::exception& ex) {
+            auto msg = ex.what();
+        }
     }
 
 
@@ -48,7 +60,7 @@ namespace repository { namespace local {
 
             std::string queryString("CREATE TABLE ");
             queryString.append(m_tableName);
-            queryString.append(" (Id INTEGER PRIMARY KEY, Uri TEXT, Endpoint TEXT, Version INT");
+            queryString.append(" (Id INTEGER PRIMARY KEY, Uri TEXT, Version INT)");
             db.exec(queryString);
         } catch (std::exception& ex) {
             auto msg = ex.what();
@@ -77,12 +89,11 @@ namespace repository { namespace local {
             SQLite::Database db(dbPath, SQLite::OPEN_READWRITE);
             std::string queryString("INSERT INTO ");
             queryString.append(m_tableName);
-            queryString.append(" (Uri, Endpoint, Version) VALUES (?, ?, ?)");
+            queryString.append(" (Uri, Version) VALUES (?, ?)");
 
             SQLite::Statement query(db, queryString);
             query.bind(1, apiInfo.uri);
-            query.bind(2, apiInfo.endpoint);
-            query.bind(3, apiInfo.version);
+            query.bind(2, apiInfo.version);
 
             query.exec();
         } catch (std::exception& ex) {

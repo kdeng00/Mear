@@ -18,7 +18,9 @@ import com.example.mear.constants.Interval
 import com.example.mear.management.MusicFiles
 import com.example.mear.management.TrackManager
 import com.example.mear.models.PlayControls
+import com.example.mear.models.APIInfo
 import com.example.mear.models.Song
+import com.example.mear.models.Token
 import com.example.mear.models.Track
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
@@ -100,6 +102,23 @@ class MusicService: Service() {
         var uri: Uri = Uri.parse(uriBase)
         var hddr: MutableMap<String, String> = mutableMapOf()
         hddr["Authorization"] = "Bearer  $token"
+        try {
+            trackPlayer!!.reset()
+            trackPlayer!!.setDataSource(this, uri, hddr)
+            trackPlayer!!.prepare()
+            trackPlayer!!.start()
+        }
+        catch (ex: Exception) {
+            val msg = ex.message
+        }
+    }
+
+    fun icarusPlaySong(token: Token, song: Song, apiInfo: APIInfo) {
+        val uriStr = "${apiInfo.uri}/api/v${apiInfo.version}/song/stream/${song.id}"
+        val uri = Uri.parse(uriStr)
+        var hddr: MutableMap<String, String> = mutableMapOf()
+        hddr["Authorization"] = "Bearer ${token.accessToken}"
+        hddr["Content-type"] = "Keep-alive"
         try {
             trackPlayer!!.reset()
             trackPlayer!!.setDataSource(this, uri, hddr)

@@ -12,10 +12,6 @@ import kotlinx.android.synthetic.main.content_login.*
 import org.jetbrains.anko.toast
 
 import com.example.mear.repositories.*
-import mear.com.example.mear.repositories.APIRepository
-
-//import com.example.mear.repositories.TrackRepository
-//import com.example.mear.repositories.UserRepository
 
 class LoginActivity : BaseServiceActivity() {
 
@@ -45,29 +41,24 @@ class LoginActivity : BaseServiceActivity() {
 
         val saveCred = saveUserCred.isChecked
         var apiInfo = APIInfo(apiUri.text.toString(), 1)
-        //var apiUriStr = apiUri.text.toString()
         val usr = User(username.text.toString(), password.text.toString())
 
-        if (apiInfo.uri.isEmpty()) {
-            apiInfo.uri = ""
-        }
-
         val usrRepo = UserRepository()
-        val trackRepo = TrackRepository()
+        val tokenRepo = TokenRepository()
         val myToken = usrRepo.fetchToken(usr, apiInfo.uri)
 
         try {
             val pa = appDirectory()
-            val so = Song(5)
-            val song = trackRepo.fetchSong(myToken, so, apiInfo.uri)
+
             if (saveCred && usrRepo.isTableEmpty(pa)) {
                 val api = APIRepository()
                 if (api.isTableEmpty(pa)) {
-                    api.SaveRecord(apiInfo, pa)
+                    api.saveRecord(apiInfo, pa)
                 }
                 usrRepo.saveCredentials(usr, pa)
             }
-            //startActivity(Intent(this, IcarusSongActivity::class.java))
+            tokenRepo.saveToken(myToken, pa)
+            startActivity(Intent(this, IcarusSongActivity::class.java))
         }
         catch (ex: Exception) {
             val msg = ex.message
@@ -88,16 +79,10 @@ class LoginActivity : BaseServiceActivity() {
         }
         if (!apiRepo.isTableEmpty(pa)) {
             val api = apiRepo.retrieveRecord(pa)
-            val s: String = "${api.uri}" + "${api.version} ${api.endpoint}"
-            apiUri.setText(s)
+            apiUri.setText(api.uri)
         }
 
         doBindService()
-    }
-
-    private fun appDirectory(): String {
-        return Environment.getDataDirectory().toString() + "/data/" +
-                resources.getString(R.string.app_relative_path)
     }
 
 

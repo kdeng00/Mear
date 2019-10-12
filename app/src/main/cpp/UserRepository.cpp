@@ -44,6 +44,7 @@ namespace repository { namespace local {
    }
 
 
+   [[deprecated("use the base class doesTableExist() function")]]
    bool UserRepository::doesUserTableExist(const std::string &appPath)
    {
        try {

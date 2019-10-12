@@ -11,7 +11,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.example.mear"
         minSdkVersion 23
@@ -31,6 +31,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationIdSuffix = kotlin_version
+            versionNameSuffix = kotlin_version
         }
     }
     compileOptions {

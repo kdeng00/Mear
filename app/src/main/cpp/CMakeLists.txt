@@ -31,6 +31,7 @@ set (SOURCES
 set (HEADERS
         APIRepository.h
         BaseRepository.h
+        Demo.h
         model/APIInfo.h
         model/Song.h
         model/Token.h

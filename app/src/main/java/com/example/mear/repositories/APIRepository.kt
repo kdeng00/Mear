@@ -1,7 +1,6 @@
-package mear.com.example.mear.repositories
+package com.example.mear.repositories
 
 import com.example.mear.models.APIInfo
-import com.example.mear.repositories.BaseRepository
 
 class APIRepository: BaseRepository() {
 
@@ -29,7 +28,7 @@ class APIRepository: BaseRepository() {
     }
 
 
-   fun SaveRecord(api: APIInfo, path: String) {
+   fun saveRecord(api: APIInfo, path: String) {
        return saveAPIInfoRecord(api, path)
    }
 }

@@ -5,9 +5,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Environment
 import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import com.example.mear.R
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -30,6 +32,13 @@ open class BaseServiceActivity: AppCompatActivity() {
     protected open fun configureTrackDisplay() {
         val d = "l"
     }
+
+
+    protected fun appDirectory(): String {
+        return Environment.getDataDirectory().toString() + "/data/" +
+                resources.getString(R.string.app_relative_path)
+    }
+
 
     protected fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager

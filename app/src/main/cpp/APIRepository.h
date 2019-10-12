@@ -17,11 +17,13 @@ namespace repository { namespace local {
 
         model::APIInfo retrieveAPIInfo(const std::string&);
 
+        [[deprecated("use the base class function")]]
+        bool doesAPIInfoTableExist(const std::string&);
+
         void createAPiInfoTable(const std::string&);
         void deleteAPIInfo(const model::APIInfo&, const std::string&);
         void saveAPIInfo(const model::APIInfo&, const std::string&);
     private:
-        //std::string apiInfoTable();
         std::string apiInfoTable() noexcept;
     };
 }}

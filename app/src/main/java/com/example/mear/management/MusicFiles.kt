@@ -1,5 +1,7 @@
 package com.example.mear.management
 
+import android.os.Environment
+import com.example.mear.R
 import java.io.File
 import java.lang.Exception
 
@@ -12,6 +14,7 @@ class MusicFiles (private val demoPath:  File) {
     var allSongs: MutableList<String>?= null
 
     private val musicSongLimit = Int.MAX_VALUE
+
 
     fun loadAllMusicPaths() {
         try {

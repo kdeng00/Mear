@@ -23,6 +23,18 @@ namespace repository { namespace local {
         return false;
     }
 
+    bool BaseRepository::doesTableExist(const std::string& appPath)
+    {
+        try {
+            const auto dbPath = pathOfDatabase(appPath);
+            SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
+
+            return db.tableExists(m_tableName);
+        } catch (std::exception& ex) {
+            auto msg = ex.what();
+        }
+    }
+
     bool BaseRepository::isTableEmpty(const std::string& appPath)
     {
         try {
@@ -33,7 +45,9 @@ namespace repository { namespace local {
 
             SQLite::Statement query(db, queryStr);
 
-            return query.hasRow();
+            const auto result = query.hasRow();
+
+            return result;
         } catch (std::exception& ex) {
             auto msg = ex.what();
         }
@@ -53,6 +67,20 @@ namespace repository { namespace local {
         }
     }
 
+    void BaseRepository::deleteRecord(const std::string& appPath)
+    {
+        try {
+            auto db = getDbConn(appPath, ConnType::ReadWrite);
+
+            std::string queryString("DELETE FROM ");
+            queryString.append(m_tableName);
+
+            db.exec(queryString);
+        } catch (std::exception& ex) {
+            auto msg = ex.what();
+        }
+    }
+
 
     std::string BaseRepository::pathOfDatabase(const std::string& appPath)
     {
@@ -67,5 +95,20 @@ namespace repository { namespace local {
         return dbPath;
     }
 
+    SQLite::Database BaseRepository::getDbConn(const std::string& path, ConnType dbType)
+    {
+        auto dbPath = pathOfDatabase(path);
+        switch (dbType) {
+            case ConnType::ReadOnly:
+                return SQLite::Database(dbPath, SQLite::OPEN_READONLY);
+            case ConnType::ReadWrite:
+                return SQLite::Database(dbPath, SQLite::OPEN_READWRITE);
+            case ConnType::Create:
+                return SQLite::Database(dbPath, SQLite::OPEN_CREATE);
+            default:
+                break;
+        }
 
+        return SQLite::Database(dbPath);
+    }
 }}

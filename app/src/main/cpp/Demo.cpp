@@ -1,6 +1,7 @@
 //
 // Created by brahmix on 9/26/19.
 //
+#include "Demo.h"
 
 #include <iostream>
 #include <fstream>
@@ -23,33 +24,12 @@
 #include <curl/curl.h>
 #include <sqlite3.h>
 
-#include "model/APIInfo.h"
-#include "model/Song.h"
-#include "model/Token.h"
-#include "model/User.h"
 #include "APIRepository.h"
 #include "SongRepository.h"
 #include "Tok.h"
+#include "TokenRepository.h"
 #include "UserRepository.h"
 
-std::vector<model::Song> retrieveSongs(const model::Token&, const std::string&);
-
-jobject songToObj(JNIEnv *env, const model::Song&);
-
-model::Song retrieveSong(const std::string&, const std::string&, const int);
-model::Song retrieveSong(const model::Token&, const model::Song&, const std::string&);
-
-model::Token fettchToken(const model::User&, const std::string&);
-
-model::User retrieveCredentials(const std::string&);
-
-std::string fetchToken(const std::string&, const std::string&, const std::string&);
-
-bool doesDatabaseExist(const std::string&);
-bool apiInformationExist(const std::string&);
-bool userCredentialExist(const std::string&);
-
-void saveCredentials(const model::User&, const std::string&);
 
 
 std::vector<model::Song> retrieveSongs(const model::Token& token, const std::string& baseUri)
@@ -95,6 +75,14 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
 }
 
 
+model::APIInfo retrieveAPIInfo(const std::string& path)
+{
+    repository::local::APIRepository apiRepo;
+
+    return apiRepo.retrieveAPIInfo(path);
+}
+
+
 model::Song retrieveSong(const std::string& token, const std::string& baseUri, const int songId)
 {
     repository::SongRepository songRepo;
@@ -121,6 +109,14 @@ model::Token fetchToken(const model::User& user, const std::string& apiUri)
     return token;
 }
 
+model::Token retrieveSavedToken(const std::string& path)
+{
+    repository::local::TokenRepository tokenRepo;
+    auto token = tokenRepo.retrieveToken(path);
+
+    return token;
+}
+
 
 model::User retrieveCredentials(const std::string& dataPath)
 {
@@ -128,20 +124,6 @@ model::User retrieveCredentials(const std::string& dataPath)
     auto user = userRepo.retrieveUserCredentials(dataPath);
 
     return user;
-}
-
-
-[[deprecated("use fetchToken(const model::User, std::string&")]]
-std::string fetchToken(const std::string& username, const std::string& password,
-    const std::string& apiUri)
-{
-    model::User user(username, password);
-    manager::Tok tokMgr;
-
-    auto token = tokMgr.fetchToken(user, apiUri);
-
-    return token;
-
 }
 
 
@@ -160,6 +142,13 @@ bool apiInformationExist(const std::string& dataPath)
     return apiRepo.isTableEmpty(dataPath);
 }
 
+bool doesTokenExist(const std::string& dataPath)
+{
+    repository::local::TokenRepository tokenRepo;
+
+    return tokenRepo.isTableEmpty(dataPath);
+}
+
 bool userCredentialExist(const std::string& dataPath)
 {
     repository::local::UserRepository userRepo;
@@ -168,20 +157,20 @@ bool userCredentialExist(const std::string& dataPath)
 }
 
 
-[[deprecated("c++ 17 issues")]]
-void iterateDirectory(const std::string& path)
+void saveAPIInfo(const model::APIInfo& apiInfo, const std::string& path)
 {
-    /**
-    auto somePath = std::filesystem::path(path);
-    for (auto dir: std::filesystem::directory_iterator(somePath)) {
-        auto foundPath = dir;
-        if (foundPath.is_directory()) {
-            auto dirPath = foundPath.path();
-        } else {
-            auto filePath = foundPath.path();
-        }
+    repository::local::APIRepository apiRepo;
+    if (!apiRepo.databaseExist(path)) {
+        apiRepo.initializedDatabase(path);
     }
-    */
+    if (!apiRepo.doesAPIInfoTableExist(path)) {
+        apiRepo.createAPiInfoTable(path);
+    }
+    if (!apiRepo.isTableEmpty(path)) {
+        apiRepo.deleteAPIInfo(apiInfo, path);
+    }
+
+    apiRepo.saveAPIInfo(apiInfo, path);
 }
 
 void saveCredentials(const model::User& user, const std::string& appDirectory)
@@ -195,11 +184,27 @@ void saveCredentials(const model::User& user, const std::string& appDirectory)
         userRepo.createUserTable(appDirectory);
     }
 
-    if (userRepo.isTableEmpty(appDirectory)) {
+    if (!userRepo.isTableEmpty(appDirectory)) {
         userRepo.deleteUserTable(appDirectory);
     }
 
     userRepo.saveUserCred(user, appDirectory);
+}
+
+void saveToken(const model::Token& token, const std::string& path)
+{
+    repository::local::TokenRepository tokenRepo;
+    if (!tokenRepo.databaseExist(path)) {
+        tokenRepo.initializedDatabase(path);
+    }
+    if (!tokenRepo.doesTableExist(path)) {
+        tokenRepo.createTokenTable(path);
+    }
+    if (!tokenRepo.isTableEmpty(path)) {
+        tokenRepo.deleteRecord(path);
+    }
+
+    tokenRepo.saveToken(token, path);
 }
 
 
@@ -236,47 +241,52 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSongs(
 extern "C"
 JNIEXPORT jobject
 JNICALL
-Java_com_example_mear_activities_LoginActivity_retrieveSong(
+Java_com_example_mear_repositories_APIRepository_retrieveAPIInfoRecord(
         JNIEnv *env,
         jobject thisObj,
-        jstring token,
-        jstring apiUri,
-        jint idOfSong
-)
-{
-    const std::string tok = env->GetStringUTFChars(token, nullptr);
-    const std::string baseUri = env->GetStringUTFChars(apiUri, nullptr);
-    auto song = retrieveSong(tok, baseUri, idOfSong);
+        jstring pathStr ) {
+    const auto path = env->GetStringUTFChars(pathStr, nullptr);
 
-    jclass songClass = env->FindClass( "com/example/mear/models/Song");
-    jmethodID jconstructor = env->GetMethodID( songClass,  "<init>", "()V" );
-    jobject songObj = env->NewObject( songClass, jconstructor );
+    auto apiInfo = retrieveAPIInfo(path);
 
-    jmethodID songId = env->GetMethodID( songClass,  "setId", "(I)V" );
-    jmethodID songTitle = env->GetMethodID( songClass,  "setTitle", "(Ljava/lang/String;)V" );
-    jmethodID songAlbum = env->GetMethodID( songClass,  "setAlbum", "(Ljava/lang/String;)V" );
-    jmethodID songArtist = env->GetMethodID( songClass,  "setArtist", "(Ljava/lang/String;)V" );
-    jmethodID songGenre = env->GetMethodID( songClass,  "setGenre", "(Ljava/lang/String;)V" );
-    jmethodID songDuration = env->GetMethodID( songClass,  "setDuration", "(I)V" );
-    jmethodID songYear = env->GetMethodID( songClass,  "setYear", "(I)V" );
+    jclass apiInfoClass = env->FindClass( "com/example/mear/models/APIInfo");
+    jmethodID jconstructor = env->GetMethodID( apiInfoClass,  "<init>", "()V" );
+    jobject apiInfoObj = env->NewObject( apiInfoClass, jconstructor );
 
-    jint id = song.id;
-    jstring title = env->NewStringUTF(song.title.c_str());
-    jstring album = env->NewStringUTF(song.album.c_str());
-    jstring artist = env->NewStringUTF(song.artist.c_str());
-    jstring genre = env->NewStringUTF(song.genre.c_str());
-    jint duration = song.duration;
-    jint year = song.year;
+    jmethodID uriId = env->GetMethodID( apiInfoClass,  "setUri", "(Ljava/lang/String;)V" );
+    jmethodID versionId = env->GetMethodID( apiInfoClass,  "setVersion", "(I)V" );
 
-    env->CallVoidMethod( songObj, songId, id );
-    env->CallVoidMethod(songObj, songTitle, title);
-    env->CallVoidMethod(songObj, songAlbum, album);
-    env->CallVoidMethod(songObj, songArtist, artist);
-    env->CallVoidMethod(songObj, songGenre, genre);
-    env->CallVoidMethod(songObj, songDuration, duration);
-    env->CallVoidMethod(songObj, songYear, year);
+    jint versionVal = apiInfo.version;
+    jstring uriVal = env->NewStringUTF(apiInfo.uri.c_str());
 
-    return songObj;
+    env->CallVoidMethod(apiInfoObj, uriId, uriVal);
+    env->CallVoidMethod( apiInfoObj, versionId, versionVal);
+
+    return apiInfoObj;
+}
+
+extern "C"
+JNIEXPORT jobject
+JNICALL
+Java_com_example_mear_repositories_TokenRepository_retrieveTokenRecord(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring pathStr
+        ) {
+    const auto path = env->GetStringUTFChars(pathStr, nullptr);
+    auto token = retrieveSavedToken(path);
+
+    auto tokenClass = env->FindClass("com/example/mear/models/Token");
+    auto jConstructor = env->GetMethodID(tokenClass, "<init>", "()V");
+    auto tokenObj = env->NewObject(tokenClass, jConstructor);
+
+    auto accessTokenId = env->GetMethodID(tokenClass, "setAccessToken", "(Ljava/lang/String;)V");
+
+    auto accessTokenStr = env->NewStringUTF(token.accessToken.c_str());
+
+    env->CallVoidMethod(tokenObj, accessTokenId, accessTokenStr);
+
+    return tokenObj;
 }
 
 extern "C"
@@ -371,27 +381,6 @@ Java_com_example_mear_repositories_UserRepository_logUser(
 
 
 extern "C"
-JNIEXPORT jstring
-JNICALL
-Java_com_example_mear_activities_LoginActivity_logUser(
-        JNIEnv *env,
-        jobject thisObj,
-        jstring username,
-        jstring password,
-        jstring apiUri ) {
-    model::User user(env->GetStringUTFChars(username, nullptr),
-            env->GetStringUTFChars(password, nullptr));
-    const std::string usr = env->GetStringUTFChars(username, nullptr);
-    const std::string pass = env->GetStringUTFChars(password, nullptr);
-    const std::string api = env->GetStringUTFChars(apiUri, nullptr);
-
-    auto token = fetchToken(usr, pass, api);
-
-    return env->NewStringUTF(token.c_str());
-}
-
-
-extern "C"
 JNIEXPORT jboolean
 JNICALL
 Java_com_example_mear_repositories_APIRepository_isAPIInfoTableEmpty(
@@ -399,9 +388,22 @@ Java_com_example_mear_repositories_APIRepository_isAPIInfoTableEmpty(
         jobject thisObj,
         jstring pathStr
         ) {
-    const std::string datapath = env->GetStringUTFChars(pathStr, nullptr);
+    const auto dataPath = env->GetStringUTFChars(pathStr, nullptr);
 
-    return apiInformationExist(datapath);
+    return apiInformationExist(dataPath);
+}
+
+extern "C"
+JNIEXPORT jboolean
+JNICALL
+Java_com_example_mear_repositories_TokenRepository_isTokenTableEmpty(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring pathStr
+        ) {
+    const auto dataPath = env->GetStringUTFChars(pathStr, nullptr);
+
+    return doesTokenExist(dataPath);
 }
 
 extern "C"
@@ -455,4 +457,47 @@ Java_com_example_mear_repositories_UserRepository_saveUserCredentials(
     model::User usr(username, password);
 
     saveCredentials(usr, appDirectoryStr);
+}
+
+extern "C"
+JNIEXPORT void
+JNICALL
+Java_com_example_mear_repositories_APIRepository_saveAPIInfoRecord(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject apiInfoObj,
+        jstring pathStr
+        ) {
+    auto apiInfoClass = env->GetObjectClass(apiInfoObj);
+    auto uriId = env->GetFieldID(apiInfoClass, "uri", "Ljava/lang/String;");
+    auto versionId = env->GetFieldID(apiInfoClass, "version", "I");
+
+    auto uriStr = (jstring) env->GetObjectField(apiInfoObj, uriId);
+    auto versionInt = env->GetIntField(apiInfoObj, versionId);
+
+    model::APIInfo apiInfo(env->GetStringUTFChars(uriStr, nullptr), versionInt);
+    auto path = env->GetStringUTFChars(pathStr, nullptr);
+
+    saveAPIInfo(apiInfo, path);
+}
+
+
+extern "C"
+JNIEXPORT void
+JNICALL
+Java_com_example_mear_repositories_TokenRepository_saveTokenRecord(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject tokenObj,
+        jstring pathStr
+        ) {
+    auto tokenClass = env->GetObjectClass(tokenObj);
+    auto accessTokenId = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
+
+    auto accessTokenVal = (jstring) env->GetObjectField(tokenObj, accessTokenId);
+
+    model::Token token(env->GetStringUTFChars(accessTokenVal, nullptr));
+    auto path = env->GetStringUTFChars(pathStr, nullptr);
+
+    saveToken(token, path);
 }
