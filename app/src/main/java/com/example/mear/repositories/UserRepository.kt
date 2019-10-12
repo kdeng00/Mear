@@ -11,13 +11,11 @@ class UserRepository : BaseRepository() {
 
     private external fun isUserTableEmpty(path: String): Boolean
 
-    private external fun saveUserCredentials(username: User)
+    private external fun saveUserCredentials(username: User, path: String)
 
 
     fun fetchToken(user: User, apiUri: String): Token {
-        val usr = logUser(user, apiUri)
-
-        return usr
+        return logUser(user, apiUri)
     }
 
 
@@ -31,7 +29,7 @@ class UserRepository : BaseRepository() {
     }
 
 
-    fun saveCredentials(user: User) {
-        saveUserCredentials(user)
+    fun saveCredentials(user: User, path: String) {
+        saveUserCredentials(user, path)
     }
 }

@@ -14,8 +14,13 @@ Has not been updated yet
   
 ## Built with
 * [Kotlin](https://github.com/JetBrains/kotlin)
-* Android Studio
+* C++ 14
 * Gradle
+* CMake
+* curl
+* openssl
+* [json](https://github.com/nlohmann/json)
+* [SQLiteCpp](https://github.com/SRombauts/SQLiteCpp)
 * [anko](https://github.com/Kotlin/anko)
 * [Picasso](https://github.com/square/picasso)
 

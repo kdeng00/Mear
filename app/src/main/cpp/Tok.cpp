@@ -11,6 +11,40 @@
 #include <nlohmann/json.hpp>
 
 namespace manager {
+    model::Token Tok::fetchTokenTrans(const model::User &user, const std::string& uri) {
+        CURL *curl;
+        CURLcode res;
+
+        curl = curl_easy_init();
+
+        if (!curl) {
+            return model::Token("none");
+        }
+
+        auto resp = std::make_unique<char[]>(10000);
+
+        const auto loginUri = fetchLoginUri(uri);
+        const auto obj = userJsonString(user);
+
+        curl_easy_setopt(curl, CURLOPT_URL, loginUri.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, obj.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, respBodyRetriever);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, resp.get());
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        if (res == CURLE_OK) {
+            auto s = nlohmann::json::parse(resp.get());
+
+            return model::Token(s["token"].get<std::string>());
+        }
+
+        return model::Token("failure");
+    }
+
+
     std::string Tok::fetchToken(const model::User &user, const std::string& uri) {
         CURL *curl;
         CURLcode res;

@@ -20,6 +20,7 @@ namespace repository {
         model::Song retrieveSong(const std::string&, const int);
         model::Song retrieveSong(const std::string&, const std::string&, const int);
         model::Song retrieveSong(const std::string&, const std::string&, const model::Song&);
+        model::Song retrieveSong(const model::Token&, const model::Song&, const std::string&);
     private:
         static size_t respBodyRetriever(void*, size_t, size_t, char*);
     };

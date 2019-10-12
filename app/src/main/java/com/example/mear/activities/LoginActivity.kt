@@ -12,30 +12,12 @@ import org.jetbrains.anko.toast
 
 import com.example.mear.models.Song
 import com.example.mear.models.Token
+import com.example.mear.models.Track
 import com.example.mear.models.User
+import com.example.mear.repositories.TrackRepository
 import com.example.mear.repositories.UserRepository
 
 class LoginActivity : BaseServiceActivity() {
-
-    companion object {
-        init {
-            System.loadLibrary("native-lib")
-        }
-    }
-
-
-    private external fun retrieveSong(tok: String, api: String, songId: Int): Song
-
-    //private external fun retrieveUserCredentials(path: String): User
-
-    private external fun logUser(usr: String, pass: String, api: String): String
-
-    //private external fun doesDatabaseExist(path: String): Boolean
-    //private external fun isUserTableEmpty(path: String): Boolean
-
-    private external fun pathIteratorDemo(path: String)
-    private external fun saveUserCredentials(username: String, password: String, appDir: String)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,27 +55,23 @@ class LoginActivity : BaseServiceActivity() {
         }
 
         val saveCred = saveUserCred.isChecked
-
         var apiUriStr = apiUri.text.toString()
-        val usr = User()
-        usr.username = username.text.toString()
-        usr.password = password.text.toString()
+        val usr = User(username.text.toString(), password.text.toString())
 
         if (apiUriStr.isEmpty()) {
-            apiUriStr = "https://www.soaricarus.com"
+            apiUriStr = ""
         }
 
-        val myToken = Token(logUser(usr.username, usr.password, apiUriStr))
-        //val token = logUser(usernameStr, passwordStr, apiUriStr)
         val usrRepo = UserRepository()
-        //val newToken = usrRepo.fetchToken(usr, apiUriStr)
+        val trackRepo = TrackRepository()
+        val myToken = usrRepo.fetchToken(usr, apiUriStr)
 
         try {
-            val songId = 4
-            val song = retrieveSong(myToken.accessToken, apiUriStr, songId)
             val pa = appDirectory()
+            val so = Song(5)
+            val song = trackRepo.fetchSong(myToken, so, apiUriStr)
             if (saveCred && usrRepo.isTableEmpty(pa)) {
-                saveUserCredentials(usr.username, usr.password, pa)
+                usrRepo.saveCredentials(usr, pa)
             }
             //startActivity(Intent(this, IcarusSongActivity::class.java))
         }

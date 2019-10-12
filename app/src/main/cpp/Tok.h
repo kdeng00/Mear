@@ -8,12 +8,15 @@
 #include <memory>
 #include <string>
 
+#include "model/Token.h"
 #include "model/User.h"
 
 namespace manager {
 
     class Tok {
     public:
+        model::Token fetchTokenTrans(const model::User&, const std::string&);
+
         std::string fetchToken(const model::User&, const std::string&);
     private:
         std::string fetchLoginUri(const std::string&);

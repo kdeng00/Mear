@@ -59,6 +59,7 @@ namespace repository {
     }
 
 
+    [[deprecated]]
     model::Song SongRepository::retrieveSong(const std::string& token, const int id) {
         std::string uri("");
         uri.append(std::to_string(id));
@@ -104,6 +105,7 @@ namespace repository {
         return song;
     }
 
+    [[deprecated]]
     model::Song SongRepository::retrieveSong(const std::string& token, const std::string& baseUri,
             const int id) {
         std::string uri(baseUri);
@@ -151,6 +153,7 @@ namespace repository {
         return song;
     }
 
+    [[deprecated]]
     model::Song SongRepository::retrieveSong(const std::string& token, const std::string& baseUri,
                                              const model::Song& sng) {
         std::string uri(baseUri);
@@ -171,6 +174,53 @@ namespace repository {
 
         std::string authInfo("Authorization: Bearer ");
         authInfo.append(token);
+        chunk = curl_slist_append(chunk, authInfo.c_str());
+
+        curl_easy_setopt(curl, CURLOPT_URL, uri.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, respBodyRetriever);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, resp.get());
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        if (res == CURLE_OK) {
+            auto s = nlohmann::json::parse(resp.get());
+            song.id = s["id"].get<int>();
+            song.title = s["title"].get<std::string>();
+            song.album = s["album"].get<std::string>();
+            song.artist = s["artist"].get<std::string>();
+            song.genre = s["genre"].get<std::string>();
+            song.duration = s["duration"].get<int>();
+            song.year = s["year"].get<int>();
+
+            return song;
+        }
+
+        return sng;
+    }
+
+    model::Song SongRepository::retrieveSong(const model::Token& token, const model::Song& sng,
+            const std::string& baseUri) {
+        std::string uri(baseUri);
+        uri.append("/api/v1/song/");
+        uri.append(std::to_string(sng.id));
+        model::Song song;
+
+        CURL *curl;
+        CURLcode res;
+        struct curl_slist *chunk = NULL;
+        curl = curl_easy_init();
+
+        if (!curl) {
+            return sng;
+        }
+
+        auto resp = std::make_unique<char[]>(10000);
+
+        std::string authInfo("Authorization: Bearer ");
+        authInfo.append(token.accessToken);
         chunk = curl_slist_append(chunk, authInfo.c_str());
 
         curl_easy_setopt(curl, CURLOPT_URL, uri.c_str());

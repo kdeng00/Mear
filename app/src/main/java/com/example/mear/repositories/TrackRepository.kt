@@ -5,14 +5,31 @@ import android.content.Context
 import org.jetbrains.anko.db.*
 
 import com.example.mear.database
+import com.example.mear.models.Song
+import com.example.mear.models.Token
 import com.example.mear.models.Track
 
-class TrackRepository {
-    private var context: Context? = null
+class TrackRepository(var context: Context? = null) {
 
-    constructor(context: Context)
-    {
-        this.context = context
+    companion object {
+        init {
+            System.loadLibrary("native-lib")
+        }
+    }
+
+
+    private external fun retrieveSongs(token: Token, uri: String): Array<Song>
+
+    private external fun retrieveSong(token: Token, song: Song, uri: String): Song
+
+
+    fun fetchSongs(token: Token, uri: String): Array<Song> {
+        return retrieveSongs(token, uri)
+    }
+
+
+    fun fetchSong(token: Token, song: Song, uri: String): Song {
+        return retrieveSong(token, song, uri)
     }
 
     fun getAll(): List<Track> = context!!.database.use {

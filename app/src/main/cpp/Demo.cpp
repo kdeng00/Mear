@@ -35,6 +35,9 @@ std::vector<model::Song> retrieveSongs(const model::Token&, const std::string&);
 jobject songToObj(JNIEnv *env, const model::Song&);
 
 model::Song retrieveSong(const std::string&, const std::string&, const int);
+model::Song retrieveSong(const model::Token&, const model::Song&, const std::string&);
+
+model::Token fettchToken(const model::User&, const std::string&);
 
 model::User retrieveCredentials(const std::string&);
 
@@ -50,9 +53,8 @@ std::vector<model::Song> retrieveSongs(const model::Token& token, const std::str
 {
     std::vector<model::Song> songs;
     repository::SongRepository songRepo;
-    songs = songRepo.fetchSongs(token, baseUri);
 
-    return songs;
+    return songRepo.fetchSongs(token, baseUri);
 }
 
 
@@ -96,10 +98,24 @@ model::Song retrieveSong(const std::string& token, const std::string& baseUri, c
     model::Song song(songId, "Smooth", "Amaze", "The Herb", "Blazing",
             420, 420);
 
-    song = songRepo.retrieveSong(token, baseUri, song);
-    auto songs = songRepo.fetchSongs(model::Token(token), baseUri);
+    return songRepo.retrieveSong(token, song, baseUri);
+}
 
-    return song;
+model::Song retrieveSong(const model::Token& token, const model::Song& song,
+        const std::string& baseUri)
+{
+    repository::SongRepository songRepo;
+
+    return songRepo.retrieveSong(token, song, baseUri);
+}
+
+
+model::Token fetchToken(const model::User& user, const std::string& apiUri)
+{
+    manager::Tok tokMgr;
+    auto token = tokMgr.fetchTokenTrans(user, apiUri);
+
+    return token;
 }
 
 
@@ -112,6 +128,7 @@ model::User retrieveCredentials(const std::string& dataPath)
 }
 
 
+[[deprecated("use fetchToken(const model::User, std::string&")]]
 std::string fetchToken(const std::string& username, const std::string& password,
     const std::string& apiUri)
 {
@@ -141,6 +158,7 @@ bool userCredentialExist(const std::string& dataPath)
 }
 
 
+[[deprecated("c++ 17 issues")]]
 void iterateDirectory(const std::string& path)
 {
     /**
@@ -178,21 +196,24 @@ void saveCredentials(const model::User& user, const std::string& appDirectory)
 extern "C"
 JNIEXPORT jobjectArray
 JNICALL
-Java_com_example_mear_activities_IcarusSongActivity_retrieveSongs(
+Java_com_example_mear_repositories_TrackRepository_retrieveSongs(
         JNIEnv *env,
-        jobject  thisOnj,
+        jobject thisOnj,
         jobject token,
         jstring baseUri
         ) {
-    jclass songClass = env->FindClass( "com/example/mear/models/Song");
     jclass tokenClass = env->FindClass("com/example/mear/models/Token");
-    jobjectArray songs = env->NewObjectArray(2, songClass, nullptr);
-    auto tok = env->CallObjectMethod(token, env->GetMethodID(tokenClass, "setAccessToken", "(Ljava/lang/String;)V"));
-    std::string tokStr = env->GetStringUTFChars((jstring)tok, nullptr);
+    jclass songClass = env->FindClass( "com/example/mear/models/Song");
+
+    auto tokField = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
+    auto tokObj = env->GetObjectField(token, tokField);
+    std::string tokStr = env->GetStringUTFChars((jstring)tokObj, nullptr);
     model::Token tk(tokStr);
+
     const std::string uri = env->GetStringUTFChars(baseUri, nullptr);
 
     auto allSongs = retrieveSongs(tk, uri);
+    jobjectArray songs = env->NewObjectArray(allSongs.size(), songClass, nullptr);
     for (auto i = 0; i != allSongs.size(); ++i) {
         auto song = songToObj(env, allSongs[i]);
         env->SetObjectArrayElement(songs, i, song);
@@ -213,8 +234,8 @@ Java_com_example_mear_activities_LoginActivity_retrieveSong(
         jint idOfSong
 )
 {
-    const std::string tok = env->GetStringUTFChars(token, NULL);
-    const std::string baseUri = env->GetStringUTFChars(apiUri, NULL);
+    const std::string tok = env->GetStringUTFChars(token, nullptr);
+    const std::string baseUri = env->GetStringUTFChars(apiUri, nullptr);
     auto song = retrieveSong(tok, baseUri, idOfSong);
 
     jclass songClass = env->FindClass( "com/example/mear/models/Song");
@@ -246,6 +267,35 @@ Java_com_example_mear_activities_LoginActivity_retrieveSong(
     env->CallVoidMethod(songObj, songYear, year);
 
     return songObj;
+}
+
+extern "C"
+JNIEXPORT jobject
+JNICALL
+Java_com_example_mear_repositories_TrackRepository_retrieveSong(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject tokenObj,
+        jobject songObj,
+        jstring uriStr
+        ) {
+    auto tokenClass = env->GetObjectClass(tokenObj);
+    auto songClass = env->GetObjectClass(songObj);
+
+    auto accessTokenField = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
+    auto idField = env->GetFieldID(songClass, "id", "I");
+
+    auto accessTokenStr = (jstring)env->GetObjectField(tokenObj, accessTokenField);
+    auto idInt = env->GetIntField(songObj, idField);
+
+    auto uri = env->GetStringUTFChars(uriStr, nullptr);
+    model::Token token(env->GetStringUTFChars(accessTokenStr, nullptr));
+    model::Song song(idInt);
+
+    song = retrieveSong(token, song, uri);
+    auto fetchedSongObj = songToObj(env, song);
+
+    return fetchedSongObj;
 }
 
 extern "C"
@@ -284,20 +334,17 @@ Java_com_example_mear_repositories_UserRepository_logUser(
         jobject user,
         jstring apiUri ) {
     jclass userClass = env->GetObjectClass(user);
-    //auto tok = env->CallObjectMethod(token, env->GetMethodID(tokenClass, "setAccessToken", "(Ljava/lang/String;)V"));
-    auto passwordField = env->GetFieldID(userClass, "getPassword", "(Ljava/lang/String;)V");
-    //auto passwordM = env->CallObjectMethod(user, env->GetMethodID(userClass, "password", "(Ljava/lang/String;)V"));
-    //auto passwordMOne = env->CallObjectMethod(user, env->GetMethodID(userClass, "getPassword", "(Ljava/lang/String;)V"));
-    auto password = env->GetObjectField(user, passwordField);
-    //auto username = env->CallObjectMethod(user, env->GetMethodID(userClass, "setUsername", "(Ljava/lang/String;)V"));
-    auto usernameField = env->GetFieldID(userClass, "setUsername", "(Ljava/lang/String;)V");
-    auto username = env->GetObjectField(user, usernameField);
+    auto passwordField = env->GetFieldID(userClass, "password", "Ljava/lang/String;");
+    auto usernameField = env->GetFieldID(userClass, "username", "Ljava/lang/String;");
 
-    const std::string usr = env->GetStringUTFChars((jstring)username, nullptr);
-    const std::string pass = env->GetStringUTFChars((jstring)password, nullptr);
+    auto password = (jstring)env->GetObjectField(user, passwordField);
+    auto username = (jstring)env->GetObjectField(user, usernameField);
+
     const std::string api = env->GetStringUTFChars(apiUri, nullptr);
+    model::User us(env->GetStringUTFChars(username, nullptr),
+            env->GetStringUTFChars(password, nullptr));
 
-    model::Token token(fetchToken(usr, pass, api));
+    auto token = fetchToken(us, api);
 
     jclass tokenClass = env->FindClass( "com/example/mear/models/Token");
     jmethodID jconstructor = env->GetMethodID( tokenClass,  "<init>", "()V" );
@@ -322,10 +369,11 @@ Java_com_example_mear_activities_LoginActivity_logUser(
         jstring username,
         jstring password,
         jstring apiUri ) {
-
-    const std::string usr = env->GetStringUTFChars(username, NULL);
-    const std::string pass = env->GetStringUTFChars(password, NULL);
-    const std::string api = env->GetStringUTFChars(apiUri, NULL);
+    model::User user(env->GetStringUTFChars(username, nullptr),
+            env->GetStringUTFChars(password, nullptr));
+    const std::string usr = env->GetStringUTFChars(username, nullptr);
+    const std::string pass = env->GetStringUTFChars(password, nullptr);
+    const std::string api = env->GetStringUTFChars(apiUri, nullptr);
 
     auto token = fetchToken(usr, pass, api);
 
@@ -341,10 +389,9 @@ Java_com_example_mear_repositories_UserRepository_isUserTableEmpty(
         jobject thisObj,
         jstring dataPath
         ) {
-    const std::string dataPathStr = env->GetStringUTFChars(dataPath, NULL);
-    jboolean result = userCredentialExist(dataPathStr);
+    const std::string dataPathStr = env->GetStringUTFChars(dataPath, nullptr);
 
-    return result;
+    return userCredentialExist(dataPathStr);
 }
 
 extern "C"
@@ -355,7 +402,7 @@ Java_com_example_mear_repositories_BaseRepository_doesDatabaseExist(
         jobject thidObj,
         jstring dataPath
         ) {
-    const std::string dataPathStr = env->GetStringUTFChars(dataPath, NULL);
+    const std::string dataPathStr = env->GetStringUTFChars(dataPath, nullptr);
     jboolean result = doesDatabaseExist(dataPathStr);
 
     return result;
@@ -365,32 +412,24 @@ Java_com_example_mear_repositories_BaseRepository_doesDatabaseExist(
 extern "C"
 JNIEXPORT void
 JNICALL
-Java_com_example_mear_activities_LoginActivity_pathIteratorDemo(
+Java_com_example_mear_repositories_UserRepository_saveUserCredentials(
         JNIEnv *env,
         jobject thisObj,
-        jstring path
-        ) {
-
-    const std::string pathStr = env->GetStringUTFChars(path, NULL);
-    iterateDirectory(pathStr);
-}
-
-
-extern "C"
-JNIEXPORT void
-JNICALL
-Java_com_example_mear_activities_LoginActivity_saveUserCredentials(
-        JNIEnv *env,
-        jobject thisObj,
-        jstring username,
-        jstring password,
+        jobject user,
         jstring appDirectory
 ) {
-    const std::string usernameStr = env->GetStringUTFChars(username, NULL);
-    const std::string passwordStr = env->GetStringUTFChars(password, NULL);
-    const std::string appDirectoryStr = env->GetStringUTFChars(appDirectory, NULL);
+    jclass userClass = env->GetObjectClass(user);
+    auto usernameId = env->GetFieldID(userClass, "username", "Ljava/lang/String;");
+    auto passwordId = env->GetFieldID(userClass, "password", "Ljava/lang/String;");
 
-    model::User user(usernameStr, passwordStr);
+    auto usernameStr = (jstring) env->GetObjectField(user, usernameId);
+    auto passwordStr = (jstring) env->GetObjectField(user, passwordId);
 
-    saveCredentials(user, appDirectoryStr);
+    const std::string username = env->GetStringUTFChars(usernameStr, nullptr);
+    const std::string password = env->GetStringUTFChars(passwordStr, nullptr);
+    const std::string appDirectoryStr = env->GetStringUTFChars(appDirectory, nullptr);
+
+    model::User usr(username, password);
+
+    saveCredentials(usr, appDirectoryStr);
 }

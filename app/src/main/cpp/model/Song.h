@@ -14,6 +14,7 @@ class Song
 {
 public:
     Song() = default;
+    Song(const int id) : id(id) { }
     Song(const int id, const std::string& title, const std::string& artist,
             const std::string& album, const std::string& genre,
             const int duration, const int year) :

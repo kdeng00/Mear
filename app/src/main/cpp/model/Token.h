@@ -12,6 +12,7 @@ namespace model {
     class Token
     {
     public:
+        Token() = default;
         Token(const std::string& accessToken) : accessToken(accessToken) { }
         Token(const std::string&& accessToken) :
             accessToken(std::move(accessToken)) { }
