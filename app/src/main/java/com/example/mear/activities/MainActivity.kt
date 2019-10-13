@@ -33,6 +33,7 @@ import com.example.mear.listeners.TrackElaspingChange
 import com.example.mear.models.PlayControls
 import com.example.mear.R
 import com.example.mear.models.PlayCount
+import com.example.mear.models.Song
 import com.example.mear.repositories.PlayCountRepository
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.ShuffleRepository
@@ -53,18 +54,20 @@ class MainActivity : BaseServiceActivity() {
     private var repeatOn: Boolean? = false
     private var shuffleOn: Boolean? = false
 
-    external fun test()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        try {
+            setContentView(R.layout.activity_main)
+            setSupportActionBar(toolbar)
 
-        test()
+            //permissionPrompt()
 
-        permissionPrompt()
-
-        initialize()
+            initialize()
+        }
+        catch (ex: Exception) {
+            val msg = ex.message
+        }
     }
     override fun onStop() {
         super.onStop()
@@ -263,33 +266,18 @@ class MainActivity : BaseServiceActivity() {
             runOnUiThread {
                 playCountUpdated = false
                 configurePlayControlsDisplay()
-                val currTrack = musicService!!.getCurrentTrack()
-                val trackTitle = currTrack.title
-                val artistTitle = currTrack.artist
-                val albumTitle = currTrack.album
-                val trackDuration = currTrack.length
-                var trackCover: ByteArray? = null
+                val currSong= musicService!!.getCurrentSong()
                 val dur = String.format(
-                    "%02d:%02d", TimeUnit.SECONDS.toMinutes(trackDuration.toLong()),
-                    (trackDuration % 60)
+                    "%02d:%02d", TimeUnit.SECONDS.toMinutes(currSong.duration.toLong()),
+                    (currSong.duration % 60)
                 )
 
-                var coverExt = ExtractCover(currTrack.songPath)
-
-                if (coverExt.hasCover()) {
-                    trackCover = coverExt.retrieveCover()
-                }
                 resetControls()
 
-                TrackTitle.text = trackTitle
-                ArtistTitle.text = artistTitle
-                AlbumTitle.text = albumTitle
+                TrackTitle.text = currSong.title
+                ArtistTitle.text = currSong.artist
+                AlbumTitle.text = currSong.album
                 TrackDuration.text = dur
-                if (trackCover != null) {
-                    val convertToBmp =  ConvertByteArray(trackCover!!)
-                    var songImage = convertToBmp.convertToBmp()
-                    TrackCover.imageBitmap = songImage
-                }
             }
         }
         catch (ex: Exception) {
@@ -305,8 +293,6 @@ class MainActivity : BaseServiceActivity() {
     }
     override fun updateTrackProgress() {
         musicHandler!!.postDelayed(musicTrackTimeUpdateTask, 100)
-        coverArtHandler!!.postDelayed(updateCoverArt, 100)
-        updateLibraryHandler!!.postDelayed(updateLibrary, 1000)
     }
     private fun configurePlayControlsDisplay() {
         PlayTrack.background = null
@@ -322,6 +308,8 @@ class MainActivity : BaseServiceActivity() {
         }
     }
 
+    // TODO: Might need this down the road for playing songs off an external
+    // storage
     private fun permissionPrompt() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -348,10 +336,10 @@ class MainActivity : BaseServiceActivity() {
                         startActivity(Intent(this, SettingsActivity::class.java))
                     }
                     R.id.action_song_view -> {
-                        startActivity(Intent(this, SongViewActivity::class.java))
+                        startActivity(Intent(this, IcarusSongActivity::class.java))
                     }
                     R.id.action_song_play_count-> {
-                        val trk = musicService!!.getCurrentTrack()
+                        val trk = musicService!!.getCurrentSong()
                         val pc = PlayCountRepository(this).getPlayCount(trk.id)
                         val playCount = pc.playCount
                         Toast.makeText(this, "Song played $playCount times", Toast.LENGTH_LONG).show()
@@ -379,42 +367,8 @@ class MainActivity : BaseServiceActivity() {
                musicHandler!!.postDelayed(this, 100)
            }
            catch (ex: Exception) {
-                   val exMsg = ex.message
+               val exMsg = ex.message
            }
        }
-    }
-    private var updateCoverArt = object: Runnable {
-        override fun run() {
-            try {
-                val trackTitle = musicService!!.getCurrentTrack().title
-
-                if (!(TrackTitle.text == trackTitle)) {
-                    configureTrackDisplay()
-                }
-
-                coverArtHandler!!.postDelayed(this, 100)
-            }
-            catch (ex: Exception) {
-                val exMsg = ex.message
-            }
-        }
-    }
-    private var updateLibrary = object: Runnable {
-        override fun run() {
-            try {
-                musicService!!.updateLibrary()
-
-                updateLibraryHandler!!.postDelayed(this, 1000)
-            }
-            catch (ex: Exception) {
-                val exMsg = ex.message
-            }
-        }
-    }
-
-    companion object {
-        init {
-            System.loadLibrary("native-lib")
-        }
     }
 }

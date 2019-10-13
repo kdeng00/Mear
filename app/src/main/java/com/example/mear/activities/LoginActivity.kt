@@ -58,7 +58,8 @@ class LoginActivity : BaseServiceActivity() {
                 usrRepo.saveCredentials(usr, pa)
             }
             tokenRepo.saveToken(myToken, pa)
-            startActivity(Intent(this, IcarusSongActivity::class.java))
+            //startActivity(Intent(this, IcarusSongActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         }
         catch (ex: Exception) {
             val msg = ex.message

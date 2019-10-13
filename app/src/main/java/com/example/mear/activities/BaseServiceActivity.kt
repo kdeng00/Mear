@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Bundle
 import android.os.Environment
 import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
@@ -83,6 +84,7 @@ open class BaseServiceActivity: AppCompatActivity() {
             val suc = "Service is already running"
         }
         else {
+            intent.putExtra("appPath", appDirectory())
             startService(intent)
         }
 
