@@ -22,6 +22,8 @@ set (SOURCES
         APIRepository.cpp
         BaseRepository.cpp
         Demo.cpp
+        RepeatRepository.cpp
+        ShuffleRepository.cpp
         SongRepository.cpp
         Tok.cpp
         TokenRepository.cpp
@@ -36,6 +38,10 @@ set (HEADERS
         model/Song.h
         model/Token.h
         model/User.h
+        RepeatRepository.h
+        RepeatTypes.h
+        ShuffleRepository.h
+        ShuffleTypes.h
         SongRepository.h
         Tok.h
         TokenRepository.h
@@ -50,16 +56,12 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdparty/SQLiteCpp)
 
 
 add_library(native-lib SHARED
-
-        # Provides a relative path to your source file(s).
         ${SOURCES}
         ${HEADERS}
 )
 
 
 find_library(log-lib
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
         log
 )
 
@@ -84,16 +86,13 @@ set_target_properties(boo PROPERTIES IMPORTED_LOCATION
         "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}/libcurl.a"
 )
 
-include_directories(${CURL_INCLUDE_DIR} ${SQLITECPP_INCLUDE}) #${BASS_INCLUDE_DIR})
+include_directories(${CURL_INCLUDE_DIR} ${SQLITECPP_INCLUDE})
 
 target_link_libraries(native-lib PRIVATE
-
         nlohmann_json::nlohmann_json
         boo
-        #bass
         SQLiteCpp
         sqlite3
-        #pthread
         dl
         ${log-lib}
         z

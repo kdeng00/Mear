@@ -88,10 +88,6 @@ open class BaseServiceActivity: AppCompatActivity() {
             startService(intent)
         }
 
-        var result = bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
-        if (result) {
-        }
-        else {
-        }
+        val result = bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
     }
 }

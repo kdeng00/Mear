@@ -2,7 +2,6 @@ package com.example.mear.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
 import android.support.design.widget.Snackbar
 import com.example.mear.R
 import com.example.mear.models.*
@@ -58,7 +57,6 @@ class LoginActivity : BaseServiceActivity() {
                 usrRepo.saveCredentials(usr, pa)
             }
             tokenRepo.saveToken(myToken, pa)
-            //startActivity(Intent(this, IcarusSongActivity::class.java))
             startActivity(Intent(this, MainActivity::class.java))
         }
         catch (ex: Exception) {
