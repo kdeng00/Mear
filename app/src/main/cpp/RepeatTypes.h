@@ -8,7 +8,7 @@
 
 enum class RepeatTypes {
     RepeatSong = 0,
-    RepeatOff
+    RepeatOff = 1
 };
 
 

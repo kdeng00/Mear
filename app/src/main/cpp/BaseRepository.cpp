@@ -29,10 +29,13 @@ namespace repository { namespace local {
             const auto dbPath = pathOfDatabase(appPath);
             SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
 
-            return db.tableExists(m_tableName);
+            auto result = db.tableExists(m_tableName);
+            return result;
         } catch (std::exception& ex) {
             auto msg = ex.what();
         }
+
+        return false;
     }
 
     bool BaseRepository::isTableEmpty(const std::string& appPath)

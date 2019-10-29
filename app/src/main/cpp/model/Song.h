@@ -34,6 +34,7 @@ public:
     std::string genre;
     int duration;
     int year;
+    int coverArtId;
 };
 }
 

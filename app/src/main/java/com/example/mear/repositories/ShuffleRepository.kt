@@ -17,6 +17,11 @@ class ShuffleRepository {
     }
 
 
+    companion object {
+        init {
+            System.loadLibrary("native-lib")
+        }
+    }
     fun getShuffleMode(): String = context!!.database.use {
         select("Shuffle").limit(1)
             .parseSingle(object : MapRowParser<String> {

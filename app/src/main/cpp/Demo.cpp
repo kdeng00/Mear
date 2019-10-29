@@ -18,13 +18,13 @@
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
 #include <android/sharedmem.h>
+#include <curl/curl.h>
+#include <nlohmann/json.hpp>
+#include <sqlite3.h>
 #include <sys/mman.h>
 
-#include <nlohmann/json.hpp>
-#include <curl/curl.h>
-#include <sqlite3.h>
-
 #include "APIRepository.h"
+#include "RepeatRepository.h"
 #include "SongRepository.h"
 #include "Tok.h"
 #include "TokenRepository.h"
@@ -72,6 +72,12 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     env->CallVoidMethod(songObj, songYear, year);
 
     return songObj;
+}
+
+
+std::string jstringToString(JNIEnv *env, jstring& val)
+{
+    return env->GetStringUTFChars(val, nullptr);
 }
 
 
@@ -124,6 +130,19 @@ model::User retrieveCredentials(const std::string& dataPath)
     auto user = userRepo.retrieveUserCredentials(dataPath);
 
     return user;
+}
+
+
+int retrieveRepeatMode(const std::string& path)
+{
+    repository::local::RepeatRepository repeatRepo;
+    if (!repeatRepo.doesTableExist(path)) {
+        repeatRepo.createRepeatTable(path);
+    }
+
+    auto repeatMode = repeatRepo.retrieveRepeatMode(path);
+
+    return static_cast<int>(repeatMode);
 }
 
 
@@ -205,6 +224,12 @@ void saveToken(const model::Token& token, const std::string& path)
     }
 
     tokenRepo.saveToken(token, path);
+}
+
+void updateRepeatMode(const std::string& path)
+{
+    repository::local::RepeatRepository repeatRepo;
+    repeatRepo.updateRepeat(path);
 }
 
 
@@ -381,6 +406,21 @@ Java_com_example_mear_repositories_UserRepository_logUser(
 
 
 extern "C"
+JNIEXPORT jint
+JNICALL
+Java_com_example_mear_repositories_RepeatRepository_retrieveRepeatMode(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring pathStr
+        ) {
+    const auto dataPath = jstringToString(env, pathStr);
+    auto repeatMode = retrieveRepeatMode(dataPath);
+
+    return repeatMode;
+}
+
+
+extern "C"
 JNIEXPORT jboolean
 JNICALL
 Java_com_example_mear_repositories_APIRepository_isAPIInfoTableEmpty(
@@ -500,4 +540,16 @@ Java_com_example_mear_repositories_TokenRepository_saveTokenRecord(
     auto path = env->GetStringUTFChars(pathStr, nullptr);
 
     saveToken(token, path);
+}
+
+extern "C"
+JNIEXPORT void
+JNICALL
+Java_com_example_mear_repositories_RepeatRepository_updateRepeatMode(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring pathStr
+        ) {
+    const auto dataPath = jstringToString(env, pathStr);
+    updateRepeatMode(dataPath);
 }

@@ -20,7 +20,7 @@ namespace repository { namespace local {
         void createRepeatTable(const std::string&);
         void updateRepeat(const std::string&);
     private:
-        constexpr std::string repeatTable() noexcept;
+        std::string repeatTable() noexcept;
     };
 }}
 

@@ -164,12 +164,13 @@ class MainActivity : BaseServiceActivity() {
         }
     }
     private fun initializeRepeat() {
-        val repeatMode = RepeatRepository(this).getRepeatMode()
+        val repeatRepo = RepeatRepository(null)
+        val repeatMode = repeatRepo.repeatMode(appDirectory())
         when (repeatMode) {
-            ControlTypes.REPEAT_ON -> {
+            RepeatRepository.RepeatTypes.RepeatSong -> {
                 RepeatTrack.text = resources.getText(R.string.repeat_on)
             }
-            ControlTypes.REPEAT_OFF -> {
+            RepeatRepository.RepeatTypes.RepeatOff -> {
                 RepeatTrack.text = resources.getText(R.string.repeat_off)
             }
         }
@@ -197,6 +198,7 @@ class MainActivity : BaseServiceActivity() {
         ShuffleRepository(this).updateShuffleMode(playC)
     }
     private fun toggleRepeat() {
+        /**
         val repeatText = RepeatTrack.text.toString()
         val on = resources.getString(R.string.repeat_on)
         val off = resources.getString(R.string.repeat_off)
@@ -216,6 +218,23 @@ class MainActivity : BaseServiceActivity() {
         }
         val playC = PlayControls(null, repeatOn)
         RepeatRepository(this).updateRepeatMode(playC)
+        */
+        val repeatRepo = RepeatRepository(null)
+
+        val appPath = appDirectory()
+        repeatRepo.alterRepeatMode(appPath)
+        val repeatMode = repeatRepo.repeatMode(appPath)
+
+        when (repeatMode) {
+            RepeatRepository.RepeatTypes.RepeatOff -> {
+                repeatOn = false
+                RepeatTrack.text = resources.getText(R.string.repeat_off)
+            }
+            RepeatRepository.RepeatTypes.RepeatSong -> {
+                repeatOn = true
+                RepeatTrack.text = resources.getText(R.string.repeat_on)
+            }
+        }
     }
 
     private fun playSongTrack() {

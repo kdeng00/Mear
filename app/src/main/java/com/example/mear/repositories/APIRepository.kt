@@ -1,6 +1,7 @@
 package com.example.mear.repositories
 
 import android.net.Uri
+import com.example.mear.constants.CPPLib
 import com.example.mear.models.APIInfo
 import com.example.mear.models.Song
 import com.example.mear.models.Token
@@ -9,7 +10,7 @@ class APIRepository: BaseRepository() {
 
     companion object {
         init {
-            System.loadLibrary("native-lib")
+            System.loadLibrary(CPPLib.NATIVE_LIB)
         }
 
 

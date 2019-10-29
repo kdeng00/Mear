@@ -5,16 +5,22 @@ import android.content.Context
 import org.jetbrains.anko.db.*
 
 import com.example.mear.constants.ControlTypes
+import com.example.mear.constants.CPPLib
 import com.example.mear.database
 import com.example.mear.models.PlayControls
 
-class RepeatRepository {
-   var context: Context? = null
+class RepeatRepository(var context: Context?) {
 
-
-    constructor(context: Context) {
-        this.context = context
+    companion object {
+        init {
+            System.loadLibrary(CPPLib.NATIVE_LIB)
+        }
     }
+
+
+    private external fun retrieveRepeatMode(path: String): Int
+
+    private external fun updateRepeatMode(path: String)
 
 
     fun getRepeatMode(): String = context!!.database.use {
@@ -27,6 +33,18 @@ class RepeatRepository {
             })
     }
 
+    fun repeatMode(path: String): RepeatTypes {
+        val repeatType = RepeatTypes.valueOf(retrieveRepeatMode(path))
+
+        return repeatType!!
+    }
+
+
+    fun alterRepeatMode(path: String) {
+        updateRepeatMode(path)
+    }
+
+
     fun updateRepeatMode(playControls: PlayControls?) = context!!.database.use {
         var repeatMode = ControlTypes.REPEAT_OFF
         if (playControls!!.repeatOn!!) {
@@ -34,5 +52,14 @@ class RepeatRepository {
         }
         update("Repeat",
             "Mode" to repeatMode).exec()
+    }
+
+    enum class RepeatTypes(val value: Int) {
+        RepeatSong(0),
+        RepeatOff(1);
+
+        companion object {
+            fun valueOf(value: Int) = values().find { it.value == value }
+        }
     }
 }

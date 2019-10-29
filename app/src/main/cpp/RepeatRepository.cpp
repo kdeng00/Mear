@@ -21,7 +21,9 @@ namespace repository { namespace local {
 
             const auto result = query.executeStep();
 
-            return static_cast<RepeatTypes>(query.getColumn(1).getInt());
+            auto repeatType = query.getColumn(1).getInt();
+            auto val = static_cast<RepeatTypes>(result);
+            return val;
         } catch (std::exception& ex) {
             auto msg = ex.what();
         }
@@ -83,5 +85,5 @@ namespace repository { namespace local {
     }
 
 
-    std::string RepeatRepository::repeatTable() { return "Repeat"; }
+    std::string RepeatRepository::repeatTable() noexcept { return "Repeat"; }
 }}
