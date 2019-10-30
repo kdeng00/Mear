@@ -23,6 +23,7 @@ class RepeatRepository(var context: Context?) {
     private external fun updateRepeatMode(path: String)
 
 
+    /**
     fun getRepeatMode(): String = context!!.database.use {
         select("Repeat").limit(1)
             .parseSingle(object: MapRowParser<String>{
@@ -32,6 +33,8 @@ class RepeatRepository(var context: Context?) {
                 }
             })
     }
+
+    */
 
     fun repeatMode(path: String): RepeatTypes {
         val repeatType = RepeatTypes.valueOf(retrieveRepeatMode(path))
@@ -45,6 +48,7 @@ class RepeatRepository(var context: Context?) {
     }
 
 
+    /**
     fun updateRepeatMode(playControls: PlayControls?) = context!!.database.use {
         var repeatMode = ControlTypes.REPEAT_OFF
         if (playControls!!.repeatOn!!) {
@@ -53,6 +57,7 @@ class RepeatRepository(var context: Context?) {
         update("Repeat",
             "Mode" to repeatMode).exec()
     }
+    */
 
     enum class RepeatTypes(val value: Int) {
         RepeatSong(0),

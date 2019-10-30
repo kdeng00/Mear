@@ -22,7 +22,7 @@ namespace repository { namespace local {
             const auto result = query.executeStep();
 
             auto repeatType = query.getColumn(1).getInt();
-            auto val = static_cast<RepeatTypes>(result);
+            auto val = static_cast<RepeatTypes>(repeatType);
             return val;
         } catch (std::exception& ex) {
             auto msg = ex.what();
@@ -40,6 +40,12 @@ namespace repository { namespace local {
             queryString.append(" (Id INTEGER PRIMARY KEY, RepeatMode INT)");
 
             db.exec(queryString);
+
+            queryString = "INSERT INTO " + m_tableName + " (RepeatMode) VALUES(?)";
+            SQLite::Statement query(db, queryString);
+            query.bind(1, static_cast<int>(RepeatTypes::RepeatOff));
+            query.exec();
+
         } catch (std::exception& ex) {
             auto msg = ex.what();
         }

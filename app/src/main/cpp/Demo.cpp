@@ -54,6 +54,7 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     jmethodID songGenre = env->GetMethodID( songClass,  "setGenre", "(Ljava/lang/String;)V" );
     jmethodID songDuration = env->GetMethodID( songClass,  "setDuration", "(I)V" );
     jmethodID songYear = env->GetMethodID( songClass,  "setYear", "(I)V" );
+    jmethodID songCoverArtId = env->GetMethodID(songClass, "setCoverArtId", "(I)V");
 
     jint id = song.id;
     jstring title = env->NewStringUTF(song.title.c_str());
@@ -62,6 +63,7 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     jstring genre = env->NewStringUTF(song.genre.c_str());
     jint duration = song.duration;
     jint year = song.year;
+    jint coverArtId = song.coverArtId;
 
     env->CallVoidMethod( songObj, songId, id );
     env->CallVoidMethod(songObj, songTitle, title);
@@ -70,6 +72,7 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     env->CallVoidMethod(songObj, songGenre, genre);
     env->CallVoidMethod(songObj, songDuration, duration);
     env->CallVoidMethod(songObj, songYear, year);
+    env->CallVoidMethod(songObj, songCoverArtId, coverArtId);
 
     return songObj;
 }

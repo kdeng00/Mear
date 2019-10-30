@@ -1,20 +1,5 @@
 package com.example.mear.activities
 
-import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.os.Bundle
-import android.os.Handler
-import android.R as RDroid
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.view.MenuItem
-import android.view.View
-import android.widget.PopupMenu
-import android.widget.Toast
-
 import java.lang.Exception
 import java.lang.Runnable
 import java.util.concurrent.TimeUnit
@@ -26,21 +11,31 @@ import kotlinx.android.synthetic.main.fragment_track_details.*
 import kotlinx.android.synthetic.main.fragment_track_elapsing.*
 import kotlinx.android.synthetic.main.fragment_track_flow.*
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Bundle
+import android.os.Handler
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
+import android.widget.Toast
 import org.jetbrains.anko.imageBitmap
 
 import com.example.mear.constants.ControlTypes
 import com.example.mear.listeners.TrackElaspingChange
 import com.example.mear.models.PlayControls
-import com.example.mear.R
 import com.example.mear.models.PlayCount
 import com.example.mear.models.Song
+import com.example.mear.R
 import com.example.mear.repositories.PlayCountRepository
 import com.example.mear.repositories.RepeatRepository
+import com.example.mear.repositories.RepeatRepository.RepeatTypes
 import com.example.mear.repositories.ShuffleRepository
-import com.example.mear.repositories.TrackRepository
-import com.example.mear.util.ConvertByteArray
-import com.example.mear.util.ExtractCover
-import kotlinx.coroutines.delay
 
 
 class MainActivity : BaseServiceActivity() {
@@ -111,6 +106,7 @@ class MainActivity : BaseServiceActivity() {
             initializeRepeat()
             initializeServices()
             initializeClickListeners()
+            configurePlayControlsDisplay()
         }
         catch (ex: Exception) {
             val exMsg = ex.message
@@ -167,10 +163,10 @@ class MainActivity : BaseServiceActivity() {
         val repeatRepo = RepeatRepository(null)
         val repeatMode = repeatRepo.repeatMode(appDirectory())
         when (repeatMode) {
-            RepeatRepository.RepeatTypes.RepeatSong -> {
+            RepeatTypes.RepeatSong -> {
                 RepeatTrack.text = resources.getText(R.string.repeat_on)
             }
-            RepeatRepository.RepeatTypes.RepeatOff -> {
+            RepeatTypes.RepeatOff -> {
                 RepeatTrack.text = resources.getText(R.string.repeat_off)
             }
         }
@@ -223,14 +219,13 @@ class MainActivity : BaseServiceActivity() {
 
         val appPath = appDirectory()
         repeatRepo.alterRepeatMode(appPath)
-        val repeatMode = repeatRepo.repeatMode(appPath)
 
-        when (repeatMode) {
-            RepeatRepository.RepeatTypes.RepeatOff -> {
+        when (repeatRepo.repeatMode(appPath)) {
+            RepeatTypes.RepeatOff -> {
                 repeatOn = false
                 RepeatTrack.text = resources.getText(R.string.repeat_off)
             }
-            RepeatRepository.RepeatTypes.RepeatSong -> {
+            RepeatTypes.RepeatSong -> {
                 repeatOn = true
                 RepeatTrack.text = resources.getText(R.string.repeat_on)
             }
@@ -317,13 +312,13 @@ class MainActivity : BaseServiceActivity() {
         PlayTrack.background = null
         PlayTrack.colorFilter = null
 
-        if (!musicService!!.isPlaying()) {
-            PlayTrack.setImageResource(android.R.drawable.ic_media_pause)
-            PlayTrack.setColorFilter(Color.RED)
-        }
-        else {
+        if ((musicService == null || !musicService!!.isPlaying())) {
             PlayTrack.setImageResource(android.R.drawable.ic_media_play)
             PlayTrack.setColorFilter(Color.GREEN)
+        }
+        else {
+            PlayTrack.setImageResource(android.R.drawable.ic_media_pause)
+            PlayTrack.setColorFilter(Color.RED)
         }
     }
 

@@ -1,5 +1,8 @@
 package com.example.mear.playback.service
 
+import java.lang.Exception
+import kotlin.random.Random
+
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -9,9 +12,6 @@ import android.os.Binder
 import android.os.Environment
 import android.os.IBinder
 import android.widget.Toast
-
-import java.lang.Exception
-import kotlin.random.Random
 
 import com.example.mear.constants.ControlTypes
 import com.example.mear.constants.Interval
@@ -23,8 +23,7 @@ import com.example.mear.models.Song
 import com.example.mear.models.Token
 import com.example.mear.models.Track
 import com.example.mear.repositories.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.example.mear.repositories.RepeatRepository.RepeatTypes
 
 
 class MusicService(var appPath: String = ""): Service() {
@@ -34,14 +33,14 @@ class MusicService(var appPath: String = ""): Service() {
     }
 
     private var trackPlayer: MediaPlayer? = null
-    private var trackMgr: TrackManager? = null
+    //private var trackMgr: TrackManager? = null
     private var songQueue = mutableListOf<Song>()
-    private var currentTrack = Track()
+    //private var currentTrack = Track()
     private var currentSong = Song()
     private var currentSongIndex: Int? = null
-    private var addingMusic: Boolean? = false
+    //private var addingMusic: Boolean? = false
     private var shuffleOn: Boolean? = null
-    private var repeatOn: Boolean? = null
+    //private var repeatOn: Boolean? = null
     private val mBinder = LocalBinder()
     private val seconds = Interval.SONG_REWIND
 
@@ -87,6 +86,7 @@ class MusicService(var appPath: String = ""): Service() {
     fun icarusPlaySong(token: Token, song: Song, apiInfo: APIInfo) {
         val uri = APIRepository.retrieveSongStreamUri(apiInfo, song)
         val hddr = APIRepository.retrieveSongStreamHeader(token)
+        currentSong = song
 
         try {
             trackPlayer!!.reset()
@@ -99,10 +99,8 @@ class MusicService(var appPath: String = ""): Service() {
         }
     }
 
+    fun goToPosition(progress: Int) { trackPlayer!!.seekTo(progress) }
 
-    fun goToPosition(progress: Int) {
-        trackPlayer!!.seekTo(progress)
-    }
     fun playSongTrack() {
         try {
             trackPlayer!!.start()
@@ -111,6 +109,7 @@ class MusicService(var appPath: String = ""): Service() {
             val exMsg = ex.message
         }
     }
+
     fun pauseSongTrack() {
         try {
             trackPlayer!!.pause()
@@ -119,30 +118,47 @@ class MusicService(var appPath: String = ""): Service() {
             val exMsg = ex.message
         }
     }
+
     fun playPreviousTrack() {
         try {
             val duration = trackPlayer!!.currentPosition / 1000
             shuffleOn = retrieveShuffleMode()
             val apiRepo = APIRepository()
+            val repeatRepo = RepeatRepository(null)
             val tokenRepo = TokenRepository()
 
+            val repeatMode = repeatRepo.repeatMode(appPath)
             val token = tokenRepo.retrieveToken(appPath)
             val apiInfo = apiRepo.retrieveRecord(appPath)
-            currentSong = songQueue[Random.nextInt(0, songQueue.size - 1)]
-
-            trackPlayer!!.reset()
-            if (duration > seconds) {
+            if (parseRepeatMode(repeatMode) || duration > seconds) {
+                /**
                 trackPlayer!!.setDataSource(this,
                     APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
                     APIRepository.retrieveSongStreamHeader(token))
-                trackPlayer!!.prepare()
+                */
+                //trackPlayer!!.prepare()
+                trackPlayer!!.pause()
+                trackPlayer!!.seekTo(0)
                 trackPlayer!!.start()
 
             }
             else {
+                if (currentSongIndex == 0) {
+                    currentSongIndex = songQueue.size - 1
+                }
+                else {
+                    currentSongIndex = currentSongIndex!! - 1
+                }
+                currentSong = songQueue[currentSongIndex!!]
+                val uri = APIRepository.retrieveSongStreamUri(apiInfo, currentSong)
+                val hddr = APIRepository.retrieveSongStreamHeader(token)
+                trackPlayer!!.reset()
                 trackPlayer!!.setDataSource(this,
+                    uri, hddr)
+                    /**
                     APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
                     APIRepository.retrieveSongStreamHeader(token))
+                    */
                 trackPlayer!!.prepare()
                 trackPlayer!!.start()
             }
@@ -156,11 +172,27 @@ class MusicService(var appPath: String = ""): Service() {
             trackPlayer!!.reset()
             shuffleOn = retrieveShuffleMode()
             val apiRepo = APIRepository()
+            val repeatRepo = RepeatRepository(null)
             val tokenRepo = TokenRepository()
 
             val token = tokenRepo.retrieveToken(appPath)
+            val repeatMode = repeatRepo.repeatMode(appPath)
             val apiInfo = apiRepo.retrieveRecord(appPath)
-            currentSong = songQueue[Random.nextInt(0, songQueue.size - 1)]
+
+            /**
+            if (parseRepeatMode(repeatMode)) {
+                //trackPlayer!!.pause()
+                trackPlayer!!.seekTo(0)
+                //trackPlayer!!.start()
+                return
+            }
+            else*/ if ((currentSongIndex!! + 1) == songQueue.size) {
+                currentSongIndex = 0
+            }
+            else {
+                currentSongIndex = currentSongIndex!! + 1
+            }
+            currentSong = songQueue[currentSongIndex!!]
 
             trackPlayer!!.setDataSource(this,
                 APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
@@ -173,26 +205,22 @@ class MusicService(var appPath: String = ""): Service() {
         }
     }
 
+    /**
     fun configureControl(controls: PlayControls) {
         shuffleOn = controls.shuffleOn
         repeatOn = controls.repeatOn
     }
+    */
 
-    fun getCurrentSong(): Song {
-        return currentSong
-    }
+    fun getCurrentSong(): Song { return currentSong }
 
 
-    fun currentPositionOfTrack(): Int {
-        return trackPlayer!!.currentPosition
-    }
-    fun durationOfTrack(): Int {
-        return trackPlayer!!.duration
-    }
+    fun currentPositionOfTrack(): Int { return trackPlayer!!.currentPosition }
 
-    fun isPlaying(): Boolean {
-        return trackPlayer!!.isPlaying
-    }
+    fun durationOfTrack(): Int { return trackPlayer!!.duration }
+
+
+    fun isPlaying(): Boolean { return trackPlayer!!.isPlaying }
 
 
     private fun initializeMediaPlayer() {
@@ -213,7 +241,8 @@ class MusicService(var appPath: String = ""): Service() {
             val songs = trackRepo.fetchSongs(token, apiInfo.uri)
             songQueue = songs.toMutableList()
 
-            currentSong = songQueue[Random.nextInt(0, songs.size - 1)]
+            currentSongIndex = Random.nextInt(0, songs.size - 1)
+            currentSong = songQueue[currentSongIndex!!]
             trackPlayer!!.setDataSource(this,
                 APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
                 APIRepository.retrieveSongStreamHeader(token))
@@ -227,6 +256,7 @@ class MusicService(var appPath: String = ""): Service() {
         }
     }
 
+    /**
     private fun initializeShuffleMode() {
         try {
             val shuffleMode = ShuffleRepository(this).getShuffleMode()
@@ -259,6 +289,7 @@ class MusicService(var appPath: String = ""): Service() {
             val exMsg = ex.message
         }
     }
+    */
 
 
     private fun retrieveShuffleMode(): Boolean? {
@@ -276,6 +307,17 @@ class MusicService(var appPath: String = ""): Service() {
         }
     }
 
+    private fun parseRepeatMode(repeatMode: RepeatTypes): Boolean {
+        var repeatOn: Boolean? = null
+        when (repeatMode) {
+            RepeatTypes.RepeatOff -> repeatOn = false
+            RepeatTypes.RepeatSong -> repeatOn = true
+        }
+
+        return repeatOn!!
+    }
+
+    /**
     private fun retrieveRepeatMode(): Boolean? {
         val repeatMode = RepeatRepository(this).getRepeatMode()
         when (repeatMode) {
@@ -290,4 +332,5 @@ class MusicService(var appPath: String = ""): Service() {
             }
         }
     }
+    */
 }
