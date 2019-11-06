@@ -11,6 +11,7 @@ open class BaseRepository {
 
     private external fun doesDatabaseExist(path: String): Boolean
 
+
     fun databaseExist(path: String): Boolean {
         return doesDatabaseExist(path)
     }

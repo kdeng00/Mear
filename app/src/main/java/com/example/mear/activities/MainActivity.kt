@@ -26,16 +26,14 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import org.jetbrains.anko.imageBitmap
 
-import com.example.mear.constants.ControlTypes
 import com.example.mear.listeners.TrackElaspingChange
-import com.example.mear.models.PlayControls
-import com.example.mear.models.PlayCount
 import com.example.mear.models.Song
 import com.example.mear.R
 import com.example.mear.repositories.PlayCountRepository
 import com.example.mear.repositories.RepeatRepository
 import com.example.mear.repositories.RepeatRepository.RepeatTypes
 import com.example.mear.repositories.ShuffleRepository
+import com.example.mear.repositories.ShuffleRepository.ShuffleTypes
 
 
 class MainActivity : BaseServiceActivity() {
@@ -149,13 +147,14 @@ class MainActivity : BaseServiceActivity() {
         doBindService()
     }
     private fun initializeShuffle() {
-        val shuffleMode = ShuffleRepository(this).getShuffleMode()
+        val shuffleRepo = ShuffleRepository(null)
+        val shuffleMode = shuffleRepo.shuffleMode(appDirectory())
         when (shuffleMode) {
-            ControlTypes.SHUFFLE_ON -> {
-                ShuffleTracks.setText(R.string.shuffle_on)
-            }
-            ControlTypes.SHUFFLE_OFF -> {
+            ShuffleTypes.ShuffleOff -> {
                 ShuffleTracks.setText(R.string.shuffle_off)
+            }
+            ShuffleTypes.ShuffleOn -> {
+                ShuffleTracks.setText(R.string.shuffle_on)
             }
         }
     }
@@ -173,48 +172,23 @@ class MainActivity : BaseServiceActivity() {
     }
 
     private fun toggleShuffle() {
-        val shuffleText = ShuffleTracks.text.toString()
-        val on = getString(R.string.shuffle_on)
-        val off = getString(R.string.shuffle_off)
-        when (shuffleText) {
-            on -> {
+        val shuffleRepo = ShuffleRepository(null)
+        shuffleRepo.alterShuffleMode(appDirectory())
+        val shuffleMode = shuffleRepo.shuffleMode(appDirectory())
+
+        when (shuffleMode) {
+            ShuffleTypes.ShuffleOff -> {
                 shuffleOn = false
-                ShuffleTracks.setText(R.string.shuffle_off)
+                ShuffleTracks.text = getString(R.string.shuffle_off)
             }
-            off -> {
+            ShuffleTypes.ShuffleOn -> {
                 shuffleOn = true
-                ShuffleTracks.setText(R.string.shuffle_on)
-            }
-            else -> {
-                shuffleOn = false
-                ShuffleTracks.setText(R.string.shuffle_off)
+                ShuffleTracks.text = getString(R.string.shuffle_on)
             }
         }
-        val playC  =  PlayControls(shuffleOn!!, null)
-        ShuffleRepository(this).updateShuffleMode(playC)
     }
+
     private fun toggleRepeat() {
-        /**
-        val repeatText = RepeatTrack.text.toString()
-        val on = resources.getString(R.string.repeat_on)
-        val off = resources.getString(R.string.repeat_off)
-        when (repeatText) {
-            on -> {
-                repeatOn = false
-                RepeatTrack.text = off
-            }
-            off -> {
-                repeatOn = true
-                RepeatTrack.text = on
-            }
-            else -> {
-                repeatOn = false
-                RepeatTrack.text = off
-            }
-        }
-        val playC = PlayControls(null, repeatOn)
-        RepeatRepository(this).updateRepeatMode(playC)
-        */
         val repeatRepo = RepeatRepository(null)
 
         val appPath = appDirectory()
@@ -275,6 +249,8 @@ class MainActivity : BaseServiceActivity() {
         PreviousTrack.isEnabled = true
         playCountUpdated = false
     }
+
+
     override fun configureTrackDisplay() {
         try {
             runOnUiThread {
@@ -372,6 +348,7 @@ class MainActivity : BaseServiceActivity() {
     private var musicTrackTimeUpdateTask = object: Runnable {
        override fun run() {
            try {
+               configureTrackDisplay()
                val currentPosition = musicService!!.currentPositionOfTrack() / 1000
                val dur = String.format( "%02d:%02d", TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
                                      (currentPosition % 60) )

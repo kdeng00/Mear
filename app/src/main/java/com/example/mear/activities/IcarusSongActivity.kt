@@ -1,19 +1,13 @@
 package com.example.mear.activities
 
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
 
 import kotlinx.android.synthetic.main.activity_icarus_song.*
 import kotlinx.android.synthetic.main.content_song_view.*
 
-import com.example.mear.activities.BaseServiceActivity
-import com.example.mear.adapters.RecyclerAdapter
 import com.example.mear.adapters.SongAdapter
-import com.example.mear.models.TrackItems
 import com.example.mear.models.APIInfo
 import com.example.mear.models.Song
 import com.example.mear.models.Token

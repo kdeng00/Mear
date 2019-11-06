@@ -2,51 +2,41 @@ package com.example.mear.repositories
 
 import android.content.Context
 
-import org.jetbrains.anko.db.*
-
-import com.example.mear.constants.ControlTypes
-import com.example.mear.database
-import com.example.mear.models.PlayControls
-
-class ShuffleRepository {
-    private  var context: Context? = null
+import com.example.mear.constants.CPPLib
 
 
-    constructor(context: Context) {
-        this.context = context
-    }
-
+class ShuffleRepository(var context: Context?) {
 
     companion object {
         init {
-            System.loadLibrary("native-lib")
+            System.loadLibrary(CPPLib.NATIVE_LIB)
         }
     }
-    fun getShuffleMode(): String = context!!.database.use {
-        select("Shuffle").limit(1)
-            .parseSingle(object : MapRowParser<String> {
-                override fun parseRow(columns: Map<String, Any?>): String {
 
-                    return columns.getValue("Mode").toString()
-                }
-            })
+
+    private external fun retrieveShuffleMode(path: String): Int
+
+    private external fun updateShuffle(path: String)
+
+
+    fun shuffleMode(path: String): ShuffleTypes {
+        val shuffleType = ShuffleTypes.valueOf(retrieveShuffleMode(path))
+
+        return shuffleType!!
     }
 
-    fun insertShuffleMode(shuffleControls: PlayControls) = context!!.database.use {
-        var shuffleMode: String? = ControlTypes.SHUFFLE_OFF
-        if (shuffleControls.shuffleOn!!) {
-            shuffleMode = ControlTypes.SHUFFLE_ON
-        }
-        insert("Shuffle",
-            "Mode" to shuffleMode)
+
+    fun alterShuffleMode(path: String) {
+        updateShuffle(path)
     }
 
-    fun updateShuffleMode(shuffleControls: PlayControls) = context!!.database.use {
-        var shuffleMode: String? = ControlTypes.SHUFFLE_OFF
-        if (shuffleControls.shuffleOn!!) {
-            shuffleMode = ControlTypes.SHUFFLE_ON
+
+    enum class ShuffleTypes(val value: Int) {
+        ShuffleOn(0),
+        ShuffleOff(1);
+
+        companion object {
+            fun valueOf(value: Int) = values().find { it.value == value }
         }
-        update("Shuffle",
-                        "Mode" to shuffleMode).exec()
     }
 }

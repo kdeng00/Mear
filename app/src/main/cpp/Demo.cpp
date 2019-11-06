@@ -25,6 +25,7 @@
 
 #include "APIRepository.h"
 #include "RepeatRepository.h"
+#include "ShuffleRepository.h"
 #include "SongRepository.h"
 #include "Tok.h"
 #include "TokenRepository.h"
@@ -92,15 +93,6 @@ model::APIInfo retrieveAPIInfo(const std::string& path)
 }
 
 
-model::Song retrieveSong(const std::string& token, const std::string& baseUri, const int songId)
-{
-    repository::SongRepository songRepo;
-    model::Song song(songId, "Smooth", "Amaze", "The Herb", "Blazing",
-            420, 420);
-
-    return songRepo.retrieveSong(token, song, baseUri);
-}
-
 model::Song retrieveSong(const model::Token& token, const model::Song& song,
         const std::string& baseUri)
 {
@@ -148,6 +140,18 @@ int retrieveRepeatMode(const std::string& path)
     return static_cast<int>(repeatMode);
 }
 
+int retrieveShuffleMode(const std::string& path)
+{
+    repository::local::ShuffleRepository shuffleRepo;
+    if (!shuffleRepo.doesTableExist(path)) {
+        shuffleRepo.createShuffleTable(path);
+    }
+
+    auto shuffleMode = shuffleRepo.retrieveShuffleMode(path);
+
+    return static_cast<int>(shuffleMode);
+}
+
 
 bool doesDatabaseExist(const std::string& dataPath)
 {
@@ -185,7 +189,7 @@ void saveAPIInfo(const model::APIInfo& apiInfo, const std::string& path)
     if (!apiRepo.databaseExist(path)) {
         apiRepo.initializedDatabase(path);
     }
-    if (!apiRepo.doesAPIInfoTableExist(path)) {
+    if (!apiRepo.doesTableExist(path)) {
         apiRepo.createAPiInfoTable(path);
     }
     if (!apiRepo.isTableEmpty(path)) {
@@ -233,6 +237,12 @@ void updateRepeatMode(const std::string& path)
 {
     repository::local::RepeatRepository repeatRepo;
     repeatRepo.updateRepeat(path);
+}
+
+void updateShuffleMode(const std::string& path)
+{
+    repository::local::ShuffleRepository shuffleRepo;
+    shuffleRepo.updateShuffle(path);
 }
 
 
@@ -422,6 +432,20 @@ Java_com_example_mear_repositories_RepeatRepository_retrieveRepeatMode(
     return repeatMode;
 }
 
+extern "C"
+JNIEXPORT jint
+JNICALL
+Java_com_example_mear_repositories_ShuffleRepository_retrieveShuffleMode(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring pathStr
+        ) {
+    const auto dataPath = jstringToString(env, pathStr);
+    auto shuffleMode = retrieveShuffleMode(dataPath);
+
+    return shuffleMode;
+}
+
 
 extern "C"
 JNIEXPORT jboolean
@@ -555,4 +579,16 @@ Java_com_example_mear_repositories_RepeatRepository_updateRepeatMode(
         ) {
     const auto dataPath = jstringToString(env, pathStr);
     updateRepeatMode(dataPath);
+}
+
+extern "C"
+JNIEXPORT void
+JNICALL
+Java_com_example_mear_repositories_ShuffleRepository_updateShuffle(
+        JNIEnv *env,
+        jobject thisObj,
+        jstring pathStr
+        ) {
+    const auto dataPath = jstringToString(env, pathStr);
+    updateShuffleMode(dataPath);
 }

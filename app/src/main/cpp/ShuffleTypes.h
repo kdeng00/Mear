@@ -6,8 +6,8 @@
 #define MEAR_SHUFFLETYPES_H
 
 enum class ShuffleTypes {
-    ShuffleQueue = 0,
-    ShuffleOff
+    ShuffleOn = 0,
+    ShuffleOff = 1
 };
 
 #endif //MEAR_SHUFFLETYPES_H
