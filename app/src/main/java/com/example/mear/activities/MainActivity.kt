@@ -29,11 +29,11 @@ import org.jetbrains.anko.imageBitmap
 import com.example.mear.listeners.TrackElaspingChange
 import com.example.mear.models.Song
 import com.example.mear.R
-import com.example.mear.repositories.PlayCountRepository
-import com.example.mear.repositories.RepeatRepository
+import com.example.mear.repositories.*
 import com.example.mear.repositories.RepeatRepository.RepeatTypes
-import com.example.mear.repositories.ShuffleRepository
 import com.example.mear.repositories.ShuffleRepository.ShuffleTypes
+import com.example.mear.util.ConvertByteArray
+import org.jetbrains.anko.image
 
 
 class MainActivity : BaseServiceActivity() {
@@ -44,6 +44,7 @@ class MainActivity : BaseServiceActivity() {
     private var updateLibraryHandler: Handler? = Handler()
     private var playCountUpdated: Boolean? = false
     private var serviceBinded: Boolean? = false
+    private var metadataInitialized: Boolean = false
     private var repeatOn: Boolean? = false
     private var shuffleOn: Boolean? = false
 
@@ -262,12 +263,25 @@ class MainActivity : BaseServiceActivity() {
                     (currSong.duration % 60)
                 )
 
+                val coverArtRepo = CoverArtRepository()
+                val apiRepo = APIRepository()
+                val tokenRepo = TokenRepository()
+                val path = appDirectory()
+                val apiUri = apiRepo.retrieveRecord(path)
+                val myToken = tokenRepo.retrieveToken(path)
+                val coverArt = CoverArtRepository.CoverArt(currSong.coverArtId, currSong.title)
+                val imgData = coverArtRepo.fetchCoverArtImage(myToken, coverArt, apiUri.uri)
+                val ImageConvByte = ConvertByteArray(imgData)
+                val convertedImage = ImageConvByte.convertToBmp(imgData)
+
+
                 resetControls()
 
                 TrackTitle.text = currSong.title
                 ArtistTitle.text = currSong.artist
                 AlbumTitle.text = currSong.album
                 TrackDuration.text = dur
+                TrackCover.imageBitmap = convertedImage
             }
         }
         catch (ex: Exception) {
@@ -296,6 +310,32 @@ class MainActivity : BaseServiceActivity() {
             PlayTrack.setImageResource(android.R.drawable.ic_media_pause)
             PlayTrack.setColorFilter(Color.RED)
         }
+    }
+
+    private fun songMetadataLoaded(): Boolean {
+        if (TrackTitle.text.isEmpty()) {
+            return false
+        }
+        if (ArtistTitle.text.isEmpty()) {
+            return false
+        }
+        if (AlbumTitle.text.isEmpty()) {
+            return false
+        }
+        if (TrackCover.image == null) {
+            return false
+        }
+
+        val currSong = musicService!!.getCurrentSong()
+
+        if (!TrackTitle.text.equals(currSong.title)) {
+            return false
+        }
+        if ((ArtistTitle.text != currSong.artist)) {
+            return false
+        }
+
+        return true
     }
 
     // TODO: Might need this down the road for playing songs off an external
@@ -348,7 +388,9 @@ class MainActivity : BaseServiceActivity() {
     private var musicTrackTimeUpdateTask = object: Runnable {
        override fun run() {
            try {
-               configureTrackDisplay()
+               if (!songMetadataLoaded()) {
+                   configureTrackDisplay()
+               }
                val currentPosition = musicService!!.currentPositionOfTrack() / 1000
                val dur = String.format( "%02d:%02d", TimeUnit.SECONDS.toMinutes(currentPosition.toLong()),
                                      (currentPosition % 60) )

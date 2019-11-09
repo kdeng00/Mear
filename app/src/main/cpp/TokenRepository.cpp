@@ -26,7 +26,8 @@ namespace repository { namespace local {
             SQLite::Statement query(db, queryString);
 
             auto result = query.executeStep();
-            model::Token token(query.getColumn(1).getString());
+            //const std::string t(query.getColumn(1).getString());
+            token.accessToken = std::move(query.getColumn(1).getString());
 
             return token;
         } catch (std::exception& ex) {

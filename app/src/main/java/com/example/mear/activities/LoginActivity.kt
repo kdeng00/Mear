@@ -1,15 +1,15 @@
 package com.example.mear.activities
 
+import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.content_login.*
+
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import com.example.mear.R
-import com.example.mear.models.*
-
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.content_login.*
 import org.jetbrains.anko.toast
 
+import com.example.mear.models.*
+import com.example.mear.R
 import com.example.mear.repositories.*
 
 class LoginActivity : BaseServiceActivity() {

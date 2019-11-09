@@ -30,6 +30,7 @@ public:
     int id;
     std::string title;
     std::string artist;
+    std::string albumArtist;
     std::string album;
     std::string genre;
     int duration;

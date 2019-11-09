@@ -20,7 +20,13 @@ namespace repository {
         model::Song retrieveSong(const model::Token&, const model::Song&, const std::string&);
     private:
         static size_t respBodyRetriever(void*, size_t, size_t, char*);
+
+        constexpr auto songRecordEndpoint() noexcept;
     };
+
+    constexpr auto SongRepository::songRecordEndpoint() noexcept {
+        return "api/v1/song/";
+    }
 }
 
 

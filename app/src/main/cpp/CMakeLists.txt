@@ -21,6 +21,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -DNDEBUG")
 set (SOURCES
         APIRepository.cpp
         BaseRepository.cpp
+        CoverArtRepository.cpp
         Demo.cpp
         RepeatRepository.cpp
         ShuffleRepository.cpp
@@ -33,6 +34,8 @@ set (SOURCES
 set (HEADERS
         APIRepository.h
         BaseRepository.h
+        model/CoverArt.h
+        CoverArtRepository.h
         Demo.h
         model/APIInfo.h
         model/Song.h

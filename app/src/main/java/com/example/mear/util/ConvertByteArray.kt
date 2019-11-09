@@ -7,7 +7,12 @@ class ConvertByteArray(private val byteArray: ByteArray?) {
 
     fun convertToBmp(): Bitmap {
         val songImage = BitmapFactory
-            .decodeByteArray(byteArray, 0, byteArray!!.size)
+            .decodeByteArray(byteArray!!, 0, byteArray!!.size)
+
+        return songImage
+    }
+    fun convertToBmp(rawData: ByteArray): Bitmap {
+        val songImage = BitmapFactory.decodeByteArray(rawData, 0, rawData.size)
 
         return songImage
     }

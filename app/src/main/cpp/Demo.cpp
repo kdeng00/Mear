@@ -24,6 +24,7 @@
 #include <sys/mman.h>
 
 #include "APIRepository.h"
+#include "CoverArtRepository.h"
 #include "RepeatRepository.h"
 #include "ShuffleRepository.h"
 #include "SongRepository.h"
@@ -51,6 +52,7 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     jmethodID songId = env->GetMethodID( songClass,  "setId", "(I)V" );
     jmethodID songTitle = env->GetMethodID( songClass,  "setTitle", "(Ljava/lang/String;)V" );
     jmethodID songAlbum = env->GetMethodID( songClass,  "setAlbum", "(Ljava/lang/String;)V" );
+    jmethodID songAlbumArtist = env->GetMethodID(songClass, "setAlbumArtist", "(Ljava/lang/String;)V");
     jmethodID songArtist = env->GetMethodID( songClass,  "setArtist", "(Ljava/lang/String;)V" );
     jmethodID songGenre = env->GetMethodID( songClass,  "setGenre", "(Ljava/lang/String;)V" );
     jmethodID songDuration = env->GetMethodID( songClass,  "setDuration", "(I)V" );
@@ -60,6 +62,7 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     jint id = song.id;
     jstring title = env->NewStringUTF(song.title.c_str());
     jstring album = env->NewStringUTF(song.album.c_str());
+    jstring albumArtist = env->NewStringUTF(song.albumArtist.c_str());
     jstring artist = env->NewStringUTF(song.artist.c_str());
     jstring genre = env->NewStringUTF(song.genre.c_str());
     jint duration = song.duration;
@@ -69,6 +72,7 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     env->CallVoidMethod( songObj, songId, id );
     env->CallVoidMethod(songObj, songTitle, title);
     env->CallVoidMethod(songObj, songAlbum, album);
+    env->CallVoidMethod(songObj, songAlbumArtist, albumArtist);
     env->CallVoidMethod(songObj, songArtist, artist);
     env->CallVoidMethod(songObj, songGenre, genre);
     env->CallVoidMethod(songObj, songDuration, duration);
@@ -113,6 +117,9 @@ model::Token fetchToken(const model::User& user, const std::string& apiUri)
 model::Token retrieveSavedToken(const std::string& path)
 {
     repository::local::TokenRepository tokenRepo;
+    if (!tokenRepo.databaseExist(path)) {
+        tokenRepo.initializedDatabase(path);
+    }
     auto token = tokenRepo.retrieveToken(path);
 
     return token;
@@ -122,6 +129,9 @@ model::Token retrieveSavedToken(const std::string& path)
 model::User retrieveCredentials(const std::string& dataPath)
 {
     repository::local::UserRepository userRepo;
+    if (!userRepo.databaseExist(dataPath)) {
+        userRepo.initializedDatabase(dataPath);
+    }
     auto user = userRepo.retrieveUserCredentials(dataPath);
 
     return user;
@@ -131,6 +141,9 @@ model::User retrieveCredentials(const std::string& dataPath)
 int retrieveRepeatMode(const std::string& path)
 {
     repository::local::RepeatRepository repeatRepo;
+    if (!repeatRepo.databaseExist(path)) {
+        repeatRepo.initializedDatabase(path);
+    }
     if (!repeatRepo.doesTableExist(path)) {
         repeatRepo.createRepeatTable(path);
     }
@@ -143,6 +156,9 @@ int retrieveRepeatMode(const std::string& path)
 int retrieveShuffleMode(const std::string& path)
 {
     repository::local::ShuffleRepository shuffleRepo;
+    if (!shuffleRepo.databaseExist(path)) {
+        shuffleRepo.initializedDatabase(path);
+    }
     if (!shuffleRepo.doesTableExist(path)) {
         shuffleRepo.createShuffleTable(path);
     }
@@ -236,12 +252,18 @@ void saveToken(const model::Token& token, const std::string& path)
 void updateRepeatMode(const std::string& path)
 {
     repository::local::RepeatRepository repeatRepo;
+    if (!repeatRepo.databaseExist(path)) {
+        repeatRepo.initializedDatabase(path);
+    }
     repeatRepo.updateRepeat(path);
 }
 
 void updateShuffleMode(const std::string& path)
 {
     repository::local::ShuffleRepository shuffleRepo;
+    if (!shuffleRepo.databaseExist(path)) {
+        shuffleRepo.initializedDatabase(path);
+    }
     shuffleRepo.updateShuffle(path);
 }
 
@@ -415,6 +437,47 @@ Java_com_example_mear_repositories_UserRepository_logUser(
     env->CallVoidMethod(tokenObj, tokenAccess, title);
 
     return tokenObj;
+}
+
+
+extern "C"
+JNIEXPORT jbyteArray
+JNICALL
+Java_com_example_mear_repositories_CoverArtRepository_retrieveCoverArtImage(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject tokenObj,
+        jobject coverArt,
+        jstring apiUri
+        ) {
+    jclass coverArtClass = env->GetObjectClass(coverArt);
+    auto idField = env->GetFieldID(coverArtClass, "id", "I");
+    auto titleField = env->GetFieldID(coverArtClass, "title", "Ljava/lang/String;");
+    auto id = env->GetIntField(coverArt, idField);
+    auto title = (jstring)env->GetObjectField(coverArt, titleField);
+
+    jclass tokenClass = env->GetObjectClass(tokenObj);
+    auto accessTokenId = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
+    auto accessTokenVal = (jstring) env->GetObjectField(tokenObj, accessTokenId);
+
+    model::Token token;
+    token.accessToken = env->GetStringUTFChars(accessTokenVal, nullptr);
+
+    model::CoverArt cover(id, env->GetStringUTFChars(title, nullptr));
+    repository::CoverArtRepository<model::CoverArt> coverArtRepo;
+    auto data = coverArtRepo.retrieveCoverArtData(token, cover, env->GetStringUTFChars(apiUri, nullptr));
+
+    jbyteArray image = env->NewByteArray(data.size());
+    //for (auto& b: data) {
+    env->SetByteArrayRegion(image, 0, data.size(), (jbyte*) data.data());
+    //}
+    //constexpr auto testImagePath = "/data/data/com.example.mear/image.png";
+    //std::ofstream out(testImagePath, std::ios::out | std::ios::binary);
+    //out.write(reinterpret_cast<char*>(data.data()), data.size());
+    //out.close();
+
+
+    return image;
 }
 
 

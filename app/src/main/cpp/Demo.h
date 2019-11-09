@@ -10,6 +10,7 @@
 #include <jni.h>
 
 #include "model/APIInfo.h"
+#include "model/CoverArt.h"
 #include "model/Song.h"
 #include "model/Token.h"
 #include "model/User.h"

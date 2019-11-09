@@ -91,7 +91,7 @@ class SongAdapter(val mOnClickListener: (Song) -> Unit,
                 this.songItem = songItems
 
                 v.trackTitle.setText(songItems.title)
-                v.trackArtist.setText(songItems.artist)
+                v.trackArtist.setText(songItems.albumArtist)
 
                 v.setOnClickListener { clickList(songItem!!)}
             }

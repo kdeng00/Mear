@@ -31,7 +31,6 @@ class IcarusSongActivity : BaseServiceActivity() {
         //setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-            val colr = R.color.track_seek
             window.statusBarColor = resources.getColor(R.color.track_seek)
             doBindService()
             initializeAdapter()
