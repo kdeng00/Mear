@@ -79,6 +79,12 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     env->CallVoidMethod(songObj, songYear, year);
     env->CallVoidMethod(songObj, songCoverArtId, coverArtId);
 
+    env->DeleteLocalRef(title);
+    env->DeleteLocalRef(album);
+    env->DeleteLocalRef(albumArtist);
+    env->DeleteLocalRef(artist);
+    env->DeleteLocalRef(genre);
+
     return songObj;
 }
 
@@ -290,8 +296,12 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSongs(
     auto allSongs = retrieveSongs(tk, uri);
     jobjectArray songs = env->NewObjectArray(allSongs.size(), songClass, nullptr);
     for (auto i = 0; i != allSongs.size(); ++i) {
-        auto song = songToObj(env, allSongs[i]);
-        env->SetObjectArrayElement(songs, i, song);
+        try {
+            auto song = songToObj(env, allSongs[i]);
+            env->SetObjectArrayElement(songs, i, song);
+        } catch (std::exception& ex) {
+            auto msg = ex.what();
+        }
     }
 
     return songs;

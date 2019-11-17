@@ -15,7 +15,7 @@ namespace repository {
         if (fullUri.at(fullUri.size()-1) != '/') {
             fullUri.append("/");
         }
-        //fullUri.append("api/v1/song");
+
         fullUri.append(songRecordEndpoint());
         std::vector<model::Song> songs;
 
@@ -120,11 +120,4 @@ namespace repository {
         ((std::string*)e)->append((char*)ptr, size * nmemb);
         return size * nmemb;
     }
-
-
-    /**
-    constexpr auto SongRepository::songRecordEndpoint() noexcept {
-        return "api/v1/song";
-    }
-     */
 }

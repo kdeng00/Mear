@@ -80,13 +80,6 @@ namespace repository {
 
         std::stringstream buff(data);
         std::vector<char> vals(data.begin(), data.end());
-        //vals.reserve(data.size());
-        //vals.assign(data.begin(), data.end());
-        /**
-        vals.assign(std::istream_iterator<unsigned char>(buff),
-                std::istream_iterator<unsigned char>());
-         */
-        //std::copy(data.begin(), data.end(), &vals);
 
         return vals;
     }
