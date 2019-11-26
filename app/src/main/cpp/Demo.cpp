@@ -391,6 +391,24 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSong(
 extern "C"
 JNIEXPORT jobject
 JNICALL
+Java_com_example_mear_repositories_TrackRepositories_downloadSong(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject tokenObj,
+        jobject songObj,
+        jstring uriStr
+        ) {
+    // TODO: left off here
+    model::Song downloadedSong;
+    auto downloadedSongObj = songToObj(env, downloadedSong);
+
+    return downloadedSongObj;
+
+}
+
+extern "C"
+JNIEXPORT jobject
+JNICALL
 Java_com_example_mear_repositories_UserRepository_retrieveUserCredentials(
         JNIEnv *env,
         jobject thisObj,
@@ -478,14 +496,7 @@ Java_com_example_mear_repositories_CoverArtRepository_retrieveCoverArtImage(
     auto data = coverArtRepo.retrieveCoverArtData(token, cover, env->GetStringUTFChars(apiUri, nullptr));
 
     jbyteArray image = env->NewByteArray(data.size());
-    //for (auto& b: data) {
     env->SetByteArrayRegion(image, 0, data.size(), (jbyte*) data.data());
-    //}
-    //constexpr auto testImagePath = "/data/data/com.example.mear/image.png";
-    //std::ofstream out(testImagePath, std::ios::out | std::ios::binary);
-    //out.write(reinterpret_cast<char*>(data.data()), data.size());
-    //out.close();
-
 
     return image;
 }

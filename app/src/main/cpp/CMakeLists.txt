@@ -21,11 +21,9 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -DNDEBUG")
 set (SOURCES
         APIRepository.cpp
         BaseRepository.cpp
-        CoverArtRepository.cpp
         Demo.cpp
         RepeatRepository.cpp
         ShuffleRepository.cpp
-        SongRepository.cpp
         Tok.cpp
         TokenRepository.cpp
         UserRepository.cpp
@@ -49,6 +47,7 @@ set (HEADERS
         Tok.h
         TokenRepository.h
         UserRepository.h
+        GeneralUtility.h
 )
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")

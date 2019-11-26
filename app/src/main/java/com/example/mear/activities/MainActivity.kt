@@ -368,6 +368,17 @@ class MainActivity : BaseServiceActivity() {
                     R.id.action_song_view -> {
                         startActivity(Intent(this, IcarusSongActivity::class.java))
                     }
+                    R.id.action_song_download -> {
+                        // TODO: implement download functionality
+                        val appPath = appDirectory()
+                        val apiRepo = APIRepository()
+                        val tokenRepo = TokenRepository()
+                        val trackRepo = TrackRepository()
+                        val song = musicService!!.getCurrentSong()
+
+                        val token = tokenRepo.retrieveToken(appPath)
+                        val apiInfo = apiRepo.retrieveRecord(appPath)
+                    }
                     R.id.action_song_play_count-> {
                         val trk = musicService!!.getCurrentSong()
                         val pc = PlayCountRepository(this).getPlayCount(trk.id)

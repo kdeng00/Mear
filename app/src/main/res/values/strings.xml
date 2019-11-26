@@ -37,6 +37,7 @@
     <string name="settings">Settings</string>
     <string name="song_view">Songs</string>
     <string name="song_play_count">Play Count</string>
+    <string name="song_download">Download</string>
 
     <!-- Popups -->
     <string name="popup_about_header">About</string>
