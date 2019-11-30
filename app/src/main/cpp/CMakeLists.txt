@@ -3,7 +3,7 @@
 
 # Sets the minimum version of CMake required to build the native library.
 
-cmake_minimum_required(VERSION 3.6.0)
+cmake_minimum_required(VERSION 3.10)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -13,41 +13,39 @@ cmake_minimum_required(VERSION 3.6.0)
 
 # set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 
-set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "-std=c++17")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0 -std=c++17")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -DNDEBUG")
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "-std=c++17")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+# set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0 -std=c++17")
+# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -DNDEBUG")
 
 set (SOURCES
-        APIRepository.cpp
-        BaseRepository.cpp
         Demo.cpp
-        RepeatRepository.cpp
-        ShuffleRepository.cpp
-        Tok.cpp
-        TokenRepository.cpp
-        UserRepository.cpp
 )
 
 set (HEADERS
-        APIRepository.h
-        BaseRepository.h
-        model/CoverArt.h
-        CoverArtRepository.h
         Demo.h
+        manager/DirectoryManager.h
+        manager/Tok.h
         model/APIInfo.h
+        model/CoverArt.h
         model/Song.h
         model/Token.h
         model/User.h
-        RepeatRepository.h
-        RepeatTypes.h
-        ShuffleRepository.h
-        ShuffleTypes.h
-        SongRepository.h
-        Tok.h
-        TokenRepository.h
-        UserRepository.h
-        GeneralUtility.h
+        repository/APIRepository.h
+        repository/BaseRepository.h
+        repository/CoverArtRepository.h
+        repository/RepeatRepository.h
+        repository/ShuffleRepository.h
+        repository/SongRepository.h
+        repository/TokenRepository.h
+        repository/UserRepository.h
+        types/ConnType.h
+        types/RepeatTypes.h
+        types/ShuffleTypes.h
+        utility/GeneralUtility.h
 )
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
@@ -88,7 +86,7 @@ set_target_properties(boo PROPERTIES IMPORTED_LOCATION
         "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/android/${ANDROID_ABI}/libcurl.a"
 )
 
-include_directories(${CURL_INCLUDE_DIR} ${SQLITECPP_INCLUDE})
+include_directories(${CURL_INCLUDE_DIR} ${SQLITECPP_INCLUDE} ${HEADERS})
 
 target_link_libraries(native-lib PRIVATE
         nlohmann_json::nlohmann_json

@@ -23,14 +23,14 @@
 #include <sqlite3.h>
 #include <sys/mman.h>
 
-#include "APIRepository.h"
-#include "CoverArtRepository.h"
-#include "RepeatRepository.h"
-#include "ShuffleRepository.h"
-#include "SongRepository.h"
-#include "Tok.h"
-#include "TokenRepository.h"
-#include "UserRepository.h"
+#include "repository/APIRepository.h"
+#include "repository/CoverArtRepository.h"
+#include "repository/RepeatRepository.h"
+#include "repository/ShuffleRepository.h"
+#include "repository/SongRepository.h"
+#include "manager/Tok.h"
+#include "repository/TokenRepository.h"
+#include "repository/UserRepository.h"
 
 
 
@@ -228,7 +228,7 @@ void saveCredentials(const model::User& user, const std::string& appDirectory)
     if (!userRepo.databaseExist(appDirectory)) {
         userRepo.initializedDatabase(appDirectory);
     }
-    if (!userRepo.doesUserTableExist(appDirectory)) {
+    if (!userRepo.doesTableExist(appDirectory)) {
         userRepo.createUserTable(appDirectory);
     }
 
@@ -303,6 +303,22 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSongs(
             auto msg = ex.what();
         }
     }
+
+    auto curPath = "/data/data/com.example.mear/";
+    std::string filename;
+    std::string currPathStr(curPath);
+    std::fstream tmp;
+    if (currPathStr.at(currPathStr.size() - 1) == '/') {
+        filename.assign(currPathStr);
+    } else {
+        filename.assign(currPathStr);
+        filename.append("/");
+    }
+    filename.append("test.txt");
+    tmp.open(filename.c_str(), std::ios::out);
+    auto content = "hello fs";
+    tmp.write(content, std::strlen(content));
+    tmp.close();
 
     return songs;
 }

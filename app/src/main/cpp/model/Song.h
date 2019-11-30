@@ -26,14 +26,6 @@ public:
          const int duration, const int year, const int coverArtId) :
             id(id), title(title), artist(artist), album(album), albumArtist(albumArtist),
             genre(genre), duration(duration), year(year), coverArtId(coverArtId) { }
-    /**
-Song(const int id, const std::string&& title, const std::string&& artist,
- const std::string&& album, const std::string&& genre,
- const int duration, const int year) :
-    id(id), title(std::move(title)), artist(std::move(artist)),
-    album(std::move(album)), genre(std::move(genre)), duration(duration),
-    year(year) { }
-     */
 
     int id;
     std::string title;
@@ -45,6 +37,8 @@ Song(const int id, const std::string&& title, const std::string&& artist,
     int year;
     int coverArtId;
     std::vector<char> data;
+    bool downloaded;
+    std::string path;
 };
 }
 
