@@ -58,6 +58,9 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     jmethodID songDuration = env->GetMethodID( songClass,  "setDuration", "(I)V" );
     jmethodID songYear = env->GetMethodID( songClass,  "setYear", "(I)V" );
     jmethodID songCoverArtId = env->GetMethodID(songClass, "setCoverArtId", "(I)V");
+    jmethodID songPathId = env->GetMethodID(songClass, "setPath", "(Ljava/lang/String;)V");
+    jmethodID songFilenameId = env->GetMethodID(songClass, "setFilename", "(Ljava/lang/String;)V");
+    jmethodID songDownloadedId = env->GetMethodID(songClass, "setDownloaded", "(B)V");
 
     jint id = song.id;
     jstring title = env->NewStringUTF(song.title.c_str());
@@ -68,6 +71,10 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     jint duration = song.duration;
     jint year = song.year;
     jint coverArtId = song.coverArtId;
+    jstring songPath = env->NewStringUTF(song.path.c_str());
+    jstring songFilename = env->NewStringUTF(song.filename.c_str());
+    jboolean songDownloaded = song.downloaded;
+
 
     env->CallVoidMethod( songObj, songId, id );
     env->CallVoidMethod(songObj, songTitle, title);
@@ -78,12 +85,17 @@ jobject songToObj(JNIEnv *env, const model::Song& song)
     env->CallVoidMethod(songObj, songDuration, duration);
     env->CallVoidMethod(songObj, songYear, year);
     env->CallVoidMethod(songObj, songCoverArtId, coverArtId);
+    env->CallVoidMethod(songObj, songPathId, songPath);
+    env->CallVoidMethod(songObj, songFilenameId, songFilename);
+    env->CallVoidMethod(songObj, songDownloadedId, songDownloaded);
 
     env->DeleteLocalRef(title);
     env->DeleteLocalRef(album);
     env->DeleteLocalRef(albumArtist);
     env->DeleteLocalRef(artist);
     env->DeleteLocalRef(genre);
+    env->DeleteLocalRef(songPath);
+    env->DeleteLocalRef(songFilename);
 
     return songObj;
 }
@@ -407,24 +419,6 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSong(
 extern "C"
 JNIEXPORT jobject
 JNICALL
-Java_com_example_mear_repositories_TrackRepositories_downloadSong(
-        JNIEnv *env,
-        jobject thisObj,
-        jobject tokenObj,
-        jobject songObj,
-        jstring uriStr
-        ) {
-    // TODO: left off here
-    model::Song downloadedSong;
-    auto downloadedSongObj = songToObj(env, downloadedSong);
-
-    return downloadedSongObj;
-
-}
-
-extern "C"
-JNIEXPORT jobject
-JNICALL
 Java_com_example_mear_repositories_UserRepository_retrieveUserCredentials(
         JNIEnv *env,
         jobject thisObj,
@@ -648,7 +642,6 @@ Java_com_example_mear_repositories_APIRepository_saveAPIInfoRecord(
     saveAPIInfo(apiInfo, path);
 }
 
-
 extern "C"
 JNIEXPORT void
 JNICALL
@@ -667,6 +660,21 @@ Java_com_example_mear_repositories_TokenRepository_saveTokenRecord(
     auto path = env->GetStringUTFChars(pathStr, nullptr);
 
     saveToken(token, path);
+}
+
+extern "C"
+JNIEXPORT void
+JNICALL
+Java_com_example_mear_repositories_TrackRepositories_downloadSong(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject tokenObj,
+        jobject songObj,
+        jstring uriStr
+) {
+    // TODO: left off here
+    auto song = ObjToSong<jobject, JNIEnv>(env, songObj);
+
 }
 
 extern "C"
