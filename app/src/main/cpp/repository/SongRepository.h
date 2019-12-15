@@ -61,6 +61,9 @@ namespace repository {
                             songJson["album_artist"].get<std::string>(),
                             songJson["genre"].get<std::string>(), songJson["duration"].get<int>(),
                             songJson["year"].get<int>(), songJson["coverart_id"].get<int>());
+                    song.filename = "";
+                    song.path = "";
+                    song.downloaded = false;
 
                     songs.push_back(song);
                 }
@@ -109,6 +112,9 @@ namespace repository {
                         s["album_artist"].get<std::string>(), s["genre"].get<std::string>(),
                         s["duration"].get<int>(), s["year"].get<int>(),
                         s["coverart_id"].get<int>());
+                song.filename = "";
+                song.path = "";
+                song.downloaded = false;
 
                 return song;
             }

@@ -21,12 +21,8 @@ set(CMAKE_CXX_STANDARD 17)
 # set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0 -std=c++17")
 # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -DNDEBUG")
 
-set (SOURCES
-        Demo.cpp
-)
-
 set (HEADERS
-        Demo.h
+        Demo.hpp
         manager/DirectoryManager.h
         manager/Tok.h
         model/APIInfo.h
@@ -56,7 +52,7 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdparty/SQLiteCpp)
 
 
 add_library(native-lib SHARED
-        ${SOURCES}
+        Demo.cpp
         ${HEADERS}
 )
 
