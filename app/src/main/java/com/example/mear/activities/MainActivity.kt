@@ -378,6 +378,7 @@ class MainActivity : BaseServiceActivity() {
 
                         val token = tokenRepo.retrieveToken(appPath)
                         val apiInfo = apiRepo.retrieveRecord(appPath)
+                        trackRepo.download(token, song, appPath)
                     }
                     R.id.action_song_play_count-> {
                         val trk = musicService!!.getCurrentSong()

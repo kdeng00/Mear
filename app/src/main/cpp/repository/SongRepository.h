@@ -122,9 +122,9 @@ namespace repository {
             return sng;
         }
 
-        template<typename Token = model::Token>
-        Song downloadSong(const Token &token, const Song song, const std::string& uri) {
-            auto fullUri = utility::GeneralUtility::appendForwardSlashToUri(uri);
+        template<typename Token = model::Token, typename API = model::APIInfo>
+        Song downloadSong(const Token &token, const Song song, const API& uri) {
+            auto fullUri = utility::GeneralUtility::appendForwardSlashToUri(uri.uri);
             fullUri.append(songDownloadEndpoint());
             fullUri.append(std::to_string(song.id));
             Song downloadedSong;
@@ -146,7 +146,13 @@ namespace repository {
             auto res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
             downloadedSong.data = std::move(std::vector<char>(data.begin(), data.end()));
-            downloadedSong.filename = downloadedSong.title;
+            downloadedSong.filename = "track";
+            if (song.id < 10) {
+                downloadedSong.filename.append("0");
+                downloadedSong.filename.append(std::to_string(song.id));
+            } else {
+                downloadedSong.filename.append(std::to_string(song.id));
+            }
             downloadedSong.filename.append(".mp3");
 
             return downloadedSong;

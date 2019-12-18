@@ -22,7 +22,7 @@ class TrackRepository(var context: Context? = null) {
 
     private external fun retrieveSong(token: Token, song: Song, uri: String): Song
 
-    private external fun downloadSong(token: Token, song: Song, uri: String)
+    private external fun downloadSong(token: Token, song: Song, path: String)
 
 
     fun fetchSongs(token: Token, uri: String): Array<Song> {
@@ -36,6 +36,11 @@ class TrackRepository(var context: Context? = null) {
 
     fun fetchSongFile(token: Token, song: Song, uri: String) {
         downloadSong(token, song, uri)
+    }
+
+    fun download(token: Token, song: Song, path: String) {
+        downloadSong(token, song, path)
+        val s = 4
     }
 
 

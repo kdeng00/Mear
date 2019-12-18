@@ -21,43 +21,46 @@ namespace manager {
     class DirectoryManager {
     public:
         template<typename Str = std::string>
-        Str fullSongPath(const Song& song, const Str& path) {
-            auto s = utility::GeneralUtility::appendForwardSlashToUri(path);
+        std::string fullSongPath(const Song& song, const Str& path) {
+            std::string s = utility::GeneralUtility::appendForwardSlashToUri<std::string>(path);
             s.append(song.albumArtist);
             s.append("/");
             s.append(song.album);
             s.append("/");
             s.append(song.filename);
+            s.append(".mp3");
 
             return s;
         }
 
         template<typename Str = std::string>
         Str albumPath(const Song& song, const Str& path) {
-            auto s = utility::GeneralUtility::appendForwardSlashToUri(path);
+            std::string s = utility::GeneralUtility::appendForwardSlashToUri<std::string>(path);
             s.append(song.albumArtist);
             s.append("/");
             s.append(song.album);
 
-            return s;
+            auto ss = s;
+
+            return ss.c_str();
         }
 
         template<typename Str = std::string>
         Str artistPath(const Song& song, const Str& path) {
-            auto s = utility::GeneralUtility::appendForwardSlashToUri(path);
+            Str s = utility::GeneralUtility::appendForwardSlashToUri<std::string>(path);
             s.append(song.albumArtist);
 
-            return s;
+            return s.c_str();
         }
 
 
         template<typename Str = std::string, typename B = bool>
         B doesSongExist(const Song& song, const Str& path) {
-            auto s = albumPath(song, path);
+            std::string s = albumPath(song, path);
             s.append("/");
             s.append(song.filename);
 
-            stat buffer;
+            struct stat buffer;
             return (stat (s.c_str(), &buffer) == 0);
         }
 
@@ -77,7 +80,7 @@ namespace manager {
         template<typename Str = std::string>
         void createSongDirectory(const Song& song, const Str& path) {
             if (!artistDirectoryExists(song, path)) {
-                auto status = mkdir(artistPath(song, path).c_str(), 0777);
+                auto status = mkdir(artistPath<std::string>(song, path).c_str(), 0777);
             }
             if (!albumDirectoryExists(song, path)) {
                 auto status = mkdir(albumPath(song, path), 0777);
@@ -91,7 +94,7 @@ namespace manager {
     private:
         template<typename Str = std::string, typename B = bool>
         B albumDirectoryExists(const Song song, const Str& path) {
-            auto albumPath = utility::GeneralUtility::appendForwardSlashToUri(path);
+            auto albumPath = utility::GeneralUtility::appendForwardSlashToUri<std::string>(path);
             albumPath.append(song.albumArtist);
             albumPath.append("/");
             albumPath.append(song.album);
@@ -109,7 +112,7 @@ namespace manager {
 
         template<typename Str = std::string, typename B = bool>
         B artistDirectoryExists(const Song song, const Str& path) {
-            auto artistPath = utility::GeneralUtility::appendForwardSlashToUri(path);
+            auto artistPath = utility::GeneralUtility::appendForwardSlashToUri<std::string>(path);
             artistPath.append(song.albumArtist);
             DIR* dir = opendir(artistPath.c_str());
 

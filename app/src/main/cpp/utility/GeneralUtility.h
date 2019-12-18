@@ -14,7 +14,7 @@ namespace utility {
     public:
         template<typename S = std::string>
         static S appendForwardSlashToUri(const S& uri) {
-            S fullUri(uri);
+            std::string fullUri(uri);
             if (fullUri.at(fullUri.size() - 1) != '/') {
                 fullUri.append("/");
             }

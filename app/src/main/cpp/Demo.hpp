@@ -6,6 +6,7 @@
 #define MEAR_DEMO_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <cstring>
 
@@ -18,6 +19,7 @@
 #include <sys/mman.h>
 
 #include "manager/Tok.h"
+#include "manager/DirectoryManager.h"
 #include "model/APIInfo.h"
 #include "model/CoverArt.h"
 #include "model/Song.h"
@@ -70,6 +72,7 @@ Song ObjToSong(JE *env, SongObj obj) {
     auto songFilenameId = env->GetFieldID(songClass, "filename", "Ljava/lang/String;");
     auto songDownloadedId = env->GetFieldID(songClass, "downloaded", "Z");
 
+    auto songIdVal = env->GetIntField(obj, songId);
     auto titleVal = (jstring)env->GetObjectField(obj, songTitle);
     auto albumVal = (jstring)env->GetObjectField(obj, songAlbum);
     auto albumArtistVal = (jstring)env->GetObjectField(obj, songAlbumArtist);
@@ -83,6 +86,7 @@ Song ObjToSong(JE *env, SongObj obj) {
 
 
     Song song;
+    song.id = songIdVal;
     song.title = env->GetStringUTFChars(titleVal, nullptr);
     song.artist = env->GetStringUTFChars(songArtistVal, nullptr);
     song.album = env->GetStringUTFChars(albumVal, nullptr);
@@ -91,8 +95,8 @@ Song ObjToSong(JE *env, SongObj obj) {
     song.duration = songDurationVal;
     song.year = songYearVal;
     song.coverArtId = songCoverArtIdVal;
-    song.path = env->GetStringUTFChars(songPathVal, nullptr);
-    song.filename = env->GetStringUTFChars(songFilenameVal, nullptr);
+    song.path = (songPathVal == nullptr) ? "" : env->GetStringUTFChars(songPathVal, nullptr);
+    song.filename = (songFilenameVal == nullptr) ? "" : env->GetStringUTFChars(songFilenameVal, nullptr);
 
     return song;
 }
@@ -255,8 +259,24 @@ void updateShuffleMode(const std::string& path) {
 
 template<class Song = model::Song, class Token = model::Token, typename Str = std::string>
 void downloadSong(Song& song, const Token& token, const Str& path) {
+    song.filename = song.title;
+    song.path = path;
+    repository::local::APIRepository apiRepo;
+    auto apiInfo = apiRepo.retrieveAPIInfo(path);
     repository::SongRepository songRepo;
-    // songRepo.downloadSong();
+    auto downloadedSong = songRepo.downloadSong(token, song, apiInfo);
+    manager::DirectoryManager dirMgr;
+    if (dirMgr.doesSongExist(song, path)) {
+        auto a = 0;
+        std::cout << "song already exists\n";
+        return;
+    }
+
+    dirMgr.createSongDirectory(song, path);
+    const auto fullSongPath = dirMgr.fullSongPath(song, path);
+    std::fstream saveSong(fullSongPath, std::ios::out | std::ios::binary);
+    saveSong.write((char*)&downloadedSong.data[0], downloadedSong.data.size());
+    saveSong.close();
 }
 
 
@@ -666,7 +686,7 @@ Java_com_example_mear_repositories_TokenRepository_saveTokenRecord(
 extern "C"
 JNIEXPORT void
 JNICALL
-Java_com_example_mear_repositories_TrackRepositories_downloadSong(
+Java_com_example_mear_repositories_TrackRepository_downloadSong(
         JNIEnv *env,
         jobject thisObj,
         jobject tokenObj,
@@ -681,8 +701,7 @@ Java_com_example_mear_repositories_TrackRepositories_downloadSong(
 
     auto song = ObjToSong<jobject, JNIEnv>(env, songObj);
     auto path = env->GetStringUTFChars(pathStr, nullptr);
-
-
+    downloadSong(song, token, path);
 }
 
 extern "C"
