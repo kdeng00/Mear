@@ -94,6 +94,10 @@ class SongAdapter(val mOnClickListener: (Song) -> Unit,
                 v.trackArtist.setText(songItems.albumArtist)
 
                 v.setOnClickListener { clickList(songItem!!)}
+                if (songItems.downloaded) {
+                    var rs = v.resources
+                    v.setBackgroundColor(v.resources.getColor(R.color.track_seek))
+                }
             }
             catch (ex: Exception) {
                 val msg = ex.message

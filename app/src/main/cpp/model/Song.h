@@ -32,6 +32,8 @@ namespace model {
         std::string albumArtist;
         std::string genre;
         int duration;
+        int track;
+        int disc;
         int year;
         int coverArtId;
         std::vector<char> data;

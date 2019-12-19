@@ -66,6 +66,8 @@ Song ObjToSong(JE *env, SongObj obj) {
     auto songArtist = env->GetFieldID( songClass,  "artist", "Ljava/lang/String;" );
     auto songGenre = env->GetFieldID( songClass,  "genre", "Ljava/lang/String;" );
     auto songDuration = env->GetFieldID( songClass,  "duration", "I" );
+    auto songTrack = env->GetFieldID(songClass, "track", "I");
+    auto songDisc = env->GetFieldID(songClass, "disc", "I");
     auto songYear = env->GetFieldID( songClass,  "year", "I" );
     auto songCoverArtId = env->GetFieldID(songClass, "coverArtId", "I");
     auto songPathId = env->GetFieldID(songClass, "path", "Ljava/lang/String;");
@@ -79,6 +81,8 @@ Song ObjToSong(JE *env, SongObj obj) {
     auto songArtistVal = (jstring)env->GetObjectField(obj, songArtist);
     auto songGenreVal = (jstring)env->GetObjectField(obj, songGenre);
     auto songDurationVal = env->GetIntField(obj, songDuration);
+    auto songTrackVal = env->GetIntField(obj, songTrack);
+    auto songDiscVal = env->GetIntField(obj, songDisc);
     auto songYearVal = env->GetIntField(obj, songYear);
     auto songCoverArtIdVal = env->GetIntField(obj, songCoverArtId);
     auto songPathVal = (jstring)env->GetObjectField(obj, songPathId);
@@ -93,6 +97,8 @@ Song ObjToSong(JE *env, SongObj obj) {
     song.albumArtist = env->GetStringUTFChars(albumArtistVal, nullptr);
     song.genre = env->GetStringUTFChars(songGenreVal, nullptr);
     song.duration = songDurationVal;
+    song.track = songTrackVal;
+    song.disc = songDiscVal;
     song.year = songYearVal;
     song.coverArtId = songCoverArtIdVal;
     song.path = (songPathVal == nullptr) ? "" : env->GetStringUTFChars(songPathVal, nullptr);
@@ -294,6 +300,8 @@ jobject songToObj(JNIEnv *env, const Song& song) {
     auto songGenre = env->GetFieldID( songClass,  "genre", "Ljava/lang/String;" );
     auto songYear = env->GetFieldID( songClass,  "year", "I" );
     auto songDuration = env->GetFieldID( songClass,  "duration", "I" );
+    auto songTrack = env->GetFieldID(songClass, "track", "I");
+    auto songDisc = env->GetFieldID(songClass, "disc", "I");
     auto songCoverArtId = env->GetFieldID(songClass, "coverArtId", "I");
     auto songDownloadedId = env->GetFieldID(songClass, "downloaded", "Z");
     auto songPathId = env->GetFieldID(songClass, "path", "Ljava/lang/String;");
@@ -310,6 +318,8 @@ jobject songToObj(JNIEnv *env, const Song& song) {
     env->SetObjectField(songObj, songGenre, env->NewStringUTF(song.genre.c_str()));
     env->SetIntField(songObj, songYear, song.year);
     env->SetIntField(songObj, songDuration, song.duration);
+    env->SetIntField(songObj, songTrack, song.track);
+    env->SetIntField(songObj, songDisc, song.disc);
     env->SetIntField(songObj, songCoverArtId, song.coverArtId);
     env->SetBooleanField(songObj, songDownloadedId, song.downloaded);
     env->SetObjectField(songObj, songPathId, songPath);

@@ -96,7 +96,7 @@ namespace repository { namespace local {
             }
         }
     private:
-        std::string userTable() noexcept { return "User"; }
+        const std::string userTable() noexcept { return "User"; }
     };
 
 }}
