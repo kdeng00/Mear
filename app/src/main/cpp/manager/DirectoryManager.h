@@ -27,7 +27,23 @@ namespace manager {
             s.append("/");
             s.append(song.album);
             s.append("/");
-            s.append(song.filename);
+
+            if (song.disc == 0) {
+                s.append("disc1");
+            } else {
+                s.append("disc");
+                s.append(std::to_string(song.disc));
+            }
+
+            s.append("/");
+            s.append("track");
+            if (song.track < 10) {
+                s.append("0");
+                s.append(std::to_string(song.track));
+            } else {
+                s.append(std::to_string(song.track));
+            }
+
             s.append(".mp3");
 
             return s;
@@ -46,6 +62,19 @@ namespace manager {
         }
 
         template<typename Str = std::string>
+        Str albumDiscPath(const Song& song, const Str& path) {
+            std::string songPath = albumPath(song, path);
+            songPath.append("/disc");
+            if (song.disc == 0) {
+                songPath.append("1");
+            } else {
+                songPath.append(std::to_string(song.disc));
+            }
+
+            return songPath.c_str();
+        }
+
+        template<typename Str = std::string>
         Str artistPath(const Song& song, const Str& path) {
             Str s = utility::GeneralUtility::appendForwardSlashToUri<std::string>(path);
             s.append(song.albumArtist);
@@ -56,9 +85,7 @@ namespace manager {
 
         template<typename Str = std::string, typename B = bool>
         B doesSongExist(const Song& song, const Str& path) {
-            std::string s = albumPath(song, path);
-            s.append("/");
-            s.append(song.filename);
+            std::string s = fullSongPath(song, path);
 
             struct stat buffer;
             return (stat (s.c_str(), &buffer) == 0);
@@ -85,6 +112,9 @@ namespace manager {
             if (!albumDirectoryExists(song, path)) {
                 auto status = mkdir(albumPath(song, path), 0777);
             }
+            if (!albumDiscDirectoryExists(song, path)) {
+                auto status = mkdir(albumDiscPath(song, path), 0777);
+            }
         }
 
         template<typename Str = std::string>
@@ -98,7 +128,39 @@ namespace manager {
             albumPath.append(song.albumArtist);
             albumPath.append("/");
             albumPath.append(song.album);
+            /**
+            if (song.disc == 0) {
+                albumPath.append("/");
+                albumPath.append("disc1");
+            } else {
+                albumPath.append("/");
+                albumPath.append("disc");
+                albumPath.append(std::to_string(song.disc));
+            }
+             */
             DIR* dir = opendir(albumPath.c_str());
+
+            if (dir) {
+                closedir(dir);
+                return true;
+            } else if (ENOENT == errno) {
+                return false;
+            }
+
+            return true;
+        }
+
+        template<typename Str = std::string, typename B = bool>
+        B albumDiscDirectoryExists(const Song& song, const Str& path) {
+            std::string albumDistPath = albumPath(song, path);
+            albumDistPath.append("/disc");
+            if (song.disc == 0) {
+                albumDistPath.append("1");
+            } else {
+                albumDistPath.append(std::to_string(song.disc));
+            }
+
+            DIR *dir = opendir(albumDistPath.c_str());
 
             if (dir) {
                 closedir(dir);

@@ -128,11 +128,11 @@ namespace repository {
         }
 
         template<typename Token = model::Token, typename API = model::APIInfo>
-        Song downloadSong(const Token &token, const Song song, const API& uri) {
+        Song downloadSong(const Token &token, const Song& song, const API& uri) {
             auto fullUri = utility::GeneralUtility::appendForwardSlashToUri(uri.uri);
             fullUri.append(songDownloadEndpoint());
             fullUri.append(std::to_string(song.id));
-            Song downloadedSong;
+            Song downloadedSong = song;
 
             CURL *curl = curl_easy_init();
             struct curl_slist *chunk = nullptr;
@@ -151,6 +151,7 @@ namespace repository {
             auto res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
             downloadedSong.data = std::move(std::vector<char>(data.begin(), data.end()));
+            /**
             downloadedSong.filename = "track";
             if (song.track < 10) {
                 downloadedSong.filename.append("0");
@@ -159,6 +160,7 @@ namespace repository {
                 downloadedSong.filename.append(std::to_string(song.track));
             }
             downloadedSong.filename.append(".mp3");
+             */
 
             return downloadedSong;
         }
@@ -186,7 +188,33 @@ namespace repository {
                 std::vector<Song> downloadedSongs;
                 try {
                     // TODO: left off here
+                    const auto dbPath = pathOfDatabase(appPath);
+                    SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
 
+                    std::string queryString("SELECT * FROM ");
+                    queryString.append(m_tableName);
+
+                    SQLite::Statement query(db, queryString);
+
+                    while (query.executeStep()) {
+                        Song song;
+                        song.id = query.getColumn(0).getInt();
+                        song.title = query.getColumn(1).getString();
+                        song.artist = query.getColumn(2).getString();
+                        song.album = query.getColumn(3).getString();
+                        song.albumArtist = query.getColumn(4).getString();
+                        song.genre = query.getColumn(5).getString();
+                        song.year = query.getColumn(6).getInt();
+                        song.duration = query.getColumn(7).getInt();
+                        song.track = query.getColumn(8).getInt();
+                        song.disc = query.getColumn(9).getInt();
+                        song.filename = query.getColumn(10).getString();
+                        song.path = query.getColumn(11).getString();
+                        song.coverArtId = query.getColumn(12).getInt();
+                        song.downloaded = true;
+
+                        downloadedSongs.push_back(song);
+                    }
                 } catch (std::exception& ex) {
                     auto msg = ex.what();
                 }

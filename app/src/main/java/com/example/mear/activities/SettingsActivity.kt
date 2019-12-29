@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.content_settings.*
 import com.example.mear.adapters.SettingsAdapter
 import com.example.mear.R
 import com.example.mear.management.MusicFiles
-import com.example.mear.management.TrackManager
 import com.example.mear.ui.popups.AboutPopup
 import com.example.mear.repositories.TrackRepository
 import kotlinx.android.synthetic.main.popup_layout.*
@@ -56,22 +55,8 @@ class SettingsActivity : AppCompatActivity() {
 
         return allSongs!!
     }
-    private fun loadTracks(allSongs: MutableList<String>) {
-        try {
-            TrackRepository(this).delete()
-            val trackMgr = TrackManager(allSongs)
-            trackMgr.configureTracks(this)
-        }
-        catch (ex: Exception) {
-            val exMsg = ex.message
-        }
-    }
 
 
-
-    private fun updateLibrary() {
-        loadTracks(loadSongPaths())
-    }
 
     class AboutListener(var layout: LinearLayout?, val ctx: Context): View.OnClickListener {
         override fun onClick(v: View?) {

@@ -265,7 +265,7 @@ void updateShuffleMode(const std::string& path) {
 
 template<class Song = model::Song, class Token = model::Token, typename Str = std::string>
 void downloadSong(Song& song, const Token& token, const Str& path) {
-    song.filename = song.title;
+    song.filename = "track";
     song.path = path;
     repository::local::APIRepository apiRepo;
     auto apiInfo = apiRepo.retrieveAPIInfo(path);
@@ -273,16 +273,26 @@ void downloadSong(Song& song, const Token& token, const Str& path) {
     auto downloadedSong = songRepo.downloadSong(token, song, apiInfo);
     manager::DirectoryManager dirMgr;
     if (dirMgr.doesSongExist(song, path)) {
-        auto a = 0;
         std::cout << "song already exists\n";
         return;
     }
 
     dirMgr.createSongDirectory(song, path);
-    const auto fullSongPath = dirMgr.fullSongPath(song, path);
-    std::fstream saveSong(fullSongPath, std::ios::out | std::ios::binary);
+    downloadedSong.path = dirMgr.fullSongPath(song, path);
+    std::fstream saveSong(downloadedSong.path, std::ios::out | std::ios::binary);
     saveSong.write((char*)&downloadedSong.data[0], downloadedSong.data.size());
     saveSong.close();
+
+    repository::local::SongRepository localSongRepo;
+    if (!localSongRepo.databaseExist(path)) {
+        localSongRepo.initializedDatabase(path);
+    }
+
+    if (!localSongRepo.doesTableExist(path)) {
+        localSongRepo.createSongTable(path);
+    }
+
+    localSongRepo.saveSong(downloadedSong, path);
 }
 
 
@@ -347,6 +357,43 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSongs(
     auto tokField = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
     auto tokObj = env->GetObjectField(token, tokField);
     std::string tokStr = env->GetStringUTFChars((jstring)tokObj, nullptr);
+    model::Token tk(tokStr);
+
+    const std::string uri = env->GetStringUTFChars(baseUri, nullptr);
+    env->DeleteLocalRef(baseUri);
+
+    auto allSongs = retrieveSongs(tk, uri);
+    jobjectArray songs = env->NewObjectArray(allSongs.size(), songClass, nullptr);
+    auto i = 0;
+    for (auto& sng: allSongs) {
+        try {
+            auto song = songToObj<model::Song>(env, sng);
+            env->SetObjectArrayElement(songs, i++, song);
+        } catch (std::exception& ex) {
+            auto msg = ex.what();
+        }
+    }
+
+    return songs;
+}
+
+extern "C"
+JNIEXPORT jobjectArray
+JNICALL
+Java_com_example_mear_repositories_TrackRepository_retrieveSongsIncludingDownloaded(
+        JNIEnv *env,
+        jobject thisOnj,
+        jobject token,
+        jstring baseUri,
+        jstring appPathStr
+) {
+    jclass tokenClass = env->FindClass("com/example/mear/models/Token");
+    jclass songClass = env->FindClass( "com/example/mear/models/Song");
+
+    auto tokField = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
+    auto tokObj = env->GetObjectField(token, tokField);
+    std::string tokStr = env->GetStringUTFChars((jstring)tokObj, nullptr);
+    std::string appPath = env->GetStringUTFChars((jstring)appPathStr, nullptr);
     model::Token tk(tokStr);
 
     const std::string uri = env->GetStringUTFChars(baseUri, nullptr);
