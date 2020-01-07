@@ -183,11 +183,21 @@ namespace repository {
                 m_tableName = songTable();
             }
 
+            template<typename Str = std::string>
+            SongRepository(const Str& val) {
+                m_tableName = songTable();
+                if (!databaseExist(val)) {
+                    initializedDatabase(val);
+                }
+                if (!doesTableExist(val)) {
+                    createSongTable(val);
+                }
+            }
+
 
             std::vector<Song> retrieveAllSongs(const std::string& appPath) {
                 std::vector<Song> downloadedSongs;
                 try {
-                    // TODO: left off here
                     const auto dbPath = pathOfDatabase(appPath);
                     SQLite::Database db(dbPath, SQLite::OPEN_READONLY);
 

@@ -1,26 +1,17 @@
 package com.example.mear.adapters
 
-import android.app.Activity
+import java.lang.Exception
+import kotlinx.android.synthetic.main.fragment_song_view.view.*
+
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 
-import java.lang.Exception
-import kotlinx.android.synthetic.main.fragment_song_view.view.*
-import kotlinx.coroutines.GlobalScope
-
-import com.squareup.picasso.Picasso
-
-import com.example.mear.constants.Filenames
 import com.example.mear.inflate
 import com.example.mear.models.Song
-import com.example.mear.models.TrackItems
 import com.example.mear.R
-import com.example.mear.util.ConvertByteArray
-import com.example.mear.util.ExtractCover
-import org.jetbrains.anko.imageBitmap
 
 
 class SongAdapter(val mOnClickListener: (Song) -> Unit,

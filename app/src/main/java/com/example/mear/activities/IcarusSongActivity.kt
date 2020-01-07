@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 
-import kotlinx.android.synthetic.main.activity_icarus_song.*
 import kotlinx.android.synthetic.main.content_song_view.*
 
 import com.example.mear.adapters.SongAdapter
@@ -58,7 +57,7 @@ class IcarusSongActivity : BaseServiceActivity() {
             val apiRepo = APIRepository()
             val token = tokenRepo.retrieveToken(pa)
             val apiInfo = apiRepo.retrieveRecord(pa)
-            val fetchedSongs = trackRepo.fetchSongs(token, apiInfo.uri).toCollection(ArrayList())
+            val fetchedSongs = trackRepo.fetchSongsIncludingDownloaded(token, apiInfo.uri, pa).toCollection(ArrayList())
             songs = fetchedSongs
 
             songs!!.sortedWith(compareBy{it.title})

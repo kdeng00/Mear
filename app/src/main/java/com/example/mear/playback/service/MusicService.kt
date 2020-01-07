@@ -21,19 +21,11 @@ import com.example.mear.repositories.ShuffleRepository.ShuffleTypes
 
 class MusicService(var appPath: String = ""): Service() {
 
-    companion object {
-        //fun curSongIndex(): Int = currentSongIndex
-    }
-
     private var trackPlayer: MediaPlayer? = null
-    //private var trackMgr: TrackManager? = null
     private var songQueue = mutableListOf<Song>()
-    //private var currentTrack = Track()
     private var currentSong = Song()
     private var currentSongIndex: Int? = null
-    //private var addingMusic: Boolean? = false
     private var shuffleOn: Boolean? = null
-    //private var repeatOn: Boolean? = null
     private val mBinder = LocalBinder()
     private val seconds = Interval.SONG_REWIND
 
@@ -77,6 +69,11 @@ class MusicService(var appPath: String = ""): Service() {
 
 
     fun icarusPlaySong(token: Token, song: Song, apiInfo: APIInfo) {
+        if (song.downloaded) {
+            offlinePlaySong(song)
+            return
+        }
+
         val uri = APIRepository.retrieveSongStreamUri(apiInfo, song)
         val hddr = APIRepository.retrieveSongStreamHeader(token)
         currentSong = song
@@ -142,11 +139,16 @@ class MusicService(var appPath: String = ""): Service() {
                 }
 
                 currentSong = songQueue[currentSongIndex!!]
-                val uri = APIRepository.retrieveSongStreamUri(apiInfo, currentSong)
-                val hddr = APIRepository.retrieveSongStreamHeader(token)
                 trackPlayer!!.reset()
-                trackPlayer!!.setDataSource(this,
-                    uri, hddr)
+                if (currentSong.downloaded) {
+                    trackPlayer!!.setDataSource(currentSong.path)
+                }
+                else {
+                    val uri = APIRepository.retrieveSongStreamUri(apiInfo, currentSong)
+                    val hddr = APIRepository.retrieveSongStreamHeader(token)
+                    trackPlayer!!.setDataSource(this,
+                        uri, hddr)
+                }
 
                 trackPlayer!!.prepare()
                 trackPlayer!!.start()
@@ -181,9 +183,14 @@ class MusicService(var appPath: String = ""): Service() {
 
             currentSong = songQueue[currentSongIndex!!]
 
-            trackPlayer!!.setDataSource(this,
-                APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
-                APIRepository.retrieveSongStreamHeader(token))
+            if (currentSong.downloaded) {
+                trackPlayer!!.setDataSource(currentSong.path)
+            }
+            else {
+                trackPlayer!!.setDataSource(this,
+                    APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
+                    APIRepository.retrieveSongStreamHeader(token))
+            }
             trackPlayer!!.prepare()
             trackPlayer!!.start()
         }
@@ -228,9 +235,15 @@ class MusicService(var appPath: String = ""): Service() {
             }
 
             currentSong = songQueue[currentSongIndex!!]
-            trackPlayer!!.setDataSource(this,
-                APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
-                APIRepository.retrieveSongStreamHeader(token))
+            if (currentSong.downloaded) {
+                trackPlayer!!.setDataSource(currentSong.path)
+            }
+            else {
+
+                trackPlayer!!.setDataSource(this,
+                    APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
+                    APIRepository.retrieveSongStreamHeader(token))
+            }
             trackPlayer!!.prepareAsync()
             trackPlayer!!.setOnCompletionListener {
                 playNextTrack()
@@ -264,4 +277,17 @@ class MusicService(var appPath: String = ""): Service() {
 
         return repeatOn!!
     }
+
+    private fun offlinePlaySong(song: Song) {
+        try {
+            trackPlayer!!.reset()
+            trackPlayer!!.setDataSource(song.path)
+            trackPlayer!!.prepare()
+            trackPlayer!!.start()
+        }
+        catch (ex: Exception) {
+            var msg = ex.message
+        }
+    }
 }
+

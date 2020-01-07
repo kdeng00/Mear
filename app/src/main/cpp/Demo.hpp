@@ -6,6 +6,7 @@
 #define MEAR_DEMO_H
 
 #include <iostream>
+#include <algorithm>
 #include <fstream>
 #include <string>
 #include <cstring>
@@ -402,8 +403,34 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSongsIncludingDownloa
     auto allSongs = retrieveSongs(tk, uri);
     jobjectArray songs = env->NewObjectArray(allSongs.size(), songClass, nullptr);
     auto i = 0;
+
+    repository::local::SongRepository localSongRepo(appPath);
+    auto localSongs = (localSongRepo.isTableEmpty(appPath)) ?
+            localSongRepo.retrieveAllSongs(appPath) : std::vector<model::Song>();
+
     for (auto& sng: allSongs) {
         try {
+            if (localSongs.size() > 0) {
+                auto result = std::any_of(localSongs.begin(), localSongs.end(),
+                        [&](model::Song s) {
+                   auto result = s.artist.compare(sng.artist) == 0 &&
+                       s.title.compare(sng.title) == 0 &&
+                       s.album.compare(sng.album) == 0 &&
+                       s.albumArtist.compare(sng.albumArtist) == 0;
+
+                   if (result) {
+                       auto song = songToObj<model::Song>(env, s);
+                       env->SetObjectArrayElement(songs, i++, song);
+                   }
+
+                   return result;
+                });
+
+                if (result) {
+                    continue;
+                }
+            }
+
             auto song = songToObj<model::Song>(env, sng);
             env->SetObjectArrayElement(songs, i++, song);
         } catch (std::exception& ex) {
@@ -750,7 +777,6 @@ Java_com_example_mear_repositories_TrackRepository_downloadSong(
         jobject songObj,
         jstring pathStr
 ) {
-// TODO: left off here
     auto tokenClass = env->GetObjectClass(tokenObj);
     auto accessTokenId = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
     auto accessTokenVal = (jstring) env->GetObjectField(tokenObj, accessTokenId);

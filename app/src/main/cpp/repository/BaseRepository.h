@@ -52,6 +52,7 @@ namespace repository { namespace local {
                 queryStr.append(m_tableName);
 
                 SQLite::Statement query(db, queryStr);
+                auto r = query.exec();
 
                 const auto result = query.hasRow();
 
