@@ -298,7 +298,6 @@ namespace repository {
                     std::string queryString("DELETE FROM ");
                     queryString.append(m_tableName);
                     queryString.append(" WHERE Id = ?");
-                    // queryString.append("Duration, Track, Disc, Filename, Path, CoverArtId)");
                     SQLite::Statement query(db, queryString);
                     query.bind(1, song.id);
 
@@ -334,7 +333,7 @@ namespace repository {
                     query.bind(12, song.path);
                     query.bind(13, song.coverArtId);
 
-                    query.exec();
+                    auto result = query.exec();
                 } catch (std::exception& ex) {
                     auto msg = ex.what();
                 }

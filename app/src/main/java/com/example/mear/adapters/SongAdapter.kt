@@ -86,7 +86,6 @@ class SongAdapter(val mOnClickListener: (Song) -> Unit,
 
                 v.setOnClickListener { clickList(songItem!!)}
                 if (songItems.downloaded) {
-                    var rs = v.resources
                     v.setBackgroundColor(v.resources.getColor(R.color.track_seek))
                 }
             }

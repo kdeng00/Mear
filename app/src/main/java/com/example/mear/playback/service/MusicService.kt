@@ -89,6 +89,17 @@ class MusicService(var appPath: String = ""): Service() {
         }
     }
 
+    fun changeSongDownloadStatus() {
+        currentSong.downloaded = true
+        songQueue.forEach {
+            s ->
+            if (s.id == currentSong.id) {
+                s.downloaded = true
+            }
+        }
+        // songQueue[currentSongIndex!!].downloaded = true
+    }
+
     fun goToPosition(progress: Int) { trackPlayer!!.seekTo(progress) }
 
     fun playSongTrack() {
@@ -225,7 +236,8 @@ class MusicService(var appPath: String = ""): Service() {
 
             val token = tokenRepo.retrieveToken(appPath)
             val apiInfo = apiRepo.retrieveRecord(appPath)
-            val songs = trackRepo.fetchSongs(token, apiInfo.uri)
+            // val songs = trackRepo.fetchSongs(token, apiInfo.uri)
+            val songs = trackRepo.fetchSongsIncludingDownloaded(token, apiInfo.uri, appPath)
             songQueue = songs.toMutableList()
 
             if (retrieveShuffleMode()!!) {
@@ -280,6 +292,14 @@ class MusicService(var appPath: String = ""): Service() {
 
     private fun offlinePlaySong(song: Song) {
         try {
+            currentSong = song
+            songQueue.forEach{ s ->
+                if (s.id == currentSong.id) {
+                    s.downloaded = currentSong.downloaded
+                    s.filename = currentSong.filename
+                    s.path = currentSong.path
+                }
+            }
             trackPlayer!!.reset()
             trackPlayer!!.setDataSource(song.path)
             trackPlayer!!.prepare()

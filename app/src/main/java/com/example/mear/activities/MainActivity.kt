@@ -27,7 +27,6 @@ import android.widget.Toast
 import org.jetbrains.anko.imageBitmap
 
 import com.example.mear.listeners.TrackElaspingChange
-import com.example.mear.models.Song
 import com.example.mear.R
 import com.example.mear.repositories.*
 import com.example.mear.repositories.RepeatRepository.RepeatTypes
@@ -54,8 +53,6 @@ class MainActivity : BaseServiceActivity() {
         try {
             setContentView(R.layout.activity_main)
             setSupportActionBar(toolbar)
-
-            //permissionPrompt()
 
             initialize()
         }
@@ -358,7 +355,12 @@ class MainActivity : BaseServiceActivity() {
     private fun showPopup(view: View) {
         try {
             var popup = PopupMenu(this, view)
-            popup.inflate(R.menu.popup_menu)
+            if (musicService!!.getCurrentSong().downloaded) {
+                popup.inflate(R.menu.popup_menu_song_downloaded)
+            }
+            else {
+                popup.inflate(R.menu.popup_menu)
+            }
 
             popup.setOnMenuItemClickListener{ item: MenuItem? ->
                 when (item!!.itemId) {
@@ -368,8 +370,11 @@ class MainActivity : BaseServiceActivity() {
                     R.id.action_song_view -> {
                         startActivity(Intent(this, IcarusSongActivity::class.java))
                     }
+                    R.id.action_song_delete -> {
+                        // TODO: handle song deletion
+                        val ss = true
+                    }
                     R.id.action_song_download -> {
-                        // TODO: implement download functionality
                         val appPath = appDirectory()
                         val apiRepo = APIRepository()
                         val tokenRepo = TokenRepository()
@@ -379,6 +384,10 @@ class MainActivity : BaseServiceActivity() {
                         val token = tokenRepo.retrieveToken(appPath)
                         val apiInfo = apiRepo.retrieveRecord(appPath)
                         trackRepo.download(token, song, appPath)
+                        musicService!!.changeSongDownloadStatus()
+                        // TODO: implement something to include the downloaded song into the songQueue
+                        // essentially replacing the song that already exists, that way one can
+                        // actually access the file without having to restart the app
                     }
                     R.id.action_song_play_count-> {
                         val trk = musicService!!.getCurrentSong()

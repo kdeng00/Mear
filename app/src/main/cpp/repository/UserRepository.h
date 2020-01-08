@@ -34,11 +34,8 @@ namespace repository { namespace local {
 
                 auto result = query.executeStep();
 
-                auto valZero = query.getColumn(1);
-                auto valOne = query.getColumn(2);
-
-                user.username = valZero.getString();
-                user.password = valOne.getString();
+                user.username = std::move(query.getColumn(1).getString());
+                user.password = std::move(query.getColumn(2).getString());
 
                 return user;
 

@@ -271,12 +271,13 @@ void downloadSong(Song& song, const Token& token, const Str& path) {
     repository::local::APIRepository apiRepo;
     auto apiInfo = apiRepo.retrieveAPIInfo(path);
     repository::SongRepository songRepo;
-    auto downloadedSong = songRepo.downloadSong(token, song, apiInfo);
     manager::DirectoryManager dirMgr;
     if (dirMgr.doesSongExist(song, path)) {
         std::cout << "song already exists\n";
         return;
     }
+
+    auto downloadedSong = songRepo.downloadSong(token, song, apiInfo);
 
     dirMgr.createSongDirectory(song, path);
     downloadedSong.path = dirMgr.fullSongPath(song, path);
@@ -284,11 +285,7 @@ void downloadSong(Song& song, const Token& token, const Str& path) {
     saveSong.write((char*)&downloadedSong.data[0], downloadedSong.data.size());
     saveSong.close();
 
-    repository::local::SongRepository localSongRepo;
-    if (!localSongRepo.databaseExist(path)) {
-        localSongRepo.initializedDatabase(path);
-    }
-
+    repository::local::SongRepository localSongRepo(path);
     if (!localSongRepo.doesTableExist(path)) {
         localSongRepo.createSongTable(path);
     }
@@ -405,7 +402,7 @@ Java_com_example_mear_repositories_TrackRepository_retrieveSongsIncludingDownloa
     auto i = 0;
 
     repository::local::SongRepository localSongRepo(appPath);
-    auto localSongs = (localSongRepo.isTableEmpty(appPath)) ?
+    auto localSongs = (!localSongRepo.isTableEmpty(appPath)) ?
             localSongRepo.retrieveAllSongs(appPath) : std::vector<model::Song>();
 
     for (auto& sng: allSongs) {

@@ -38,6 +38,7 @@
     <string name="song_view">Songs</string>
     <string name="song_play_count">Play Count</string>
     <string name="song_download">Download</string>
+    <string name="song_delete">Delete</string>
 
     <!-- Popups -->
     <string name="popup_about_header">About</string>

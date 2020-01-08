@@ -52,11 +52,12 @@ namespace repository { namespace local {
                 queryStr.append(m_tableName);
 
                 SQLite::Statement query(db, queryStr);
-                auto r = query.exec();
+
+                auto r = query.executeStep();
 
                 const auto result = query.hasRow();
 
-                return result;
+                return !result;
             } catch (std::exception& ex) {
                 auto msg = ex.what();
             }
