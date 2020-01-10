@@ -373,17 +373,22 @@ class MainActivity : BaseServiceActivity() {
                     R.id.action_song_delete -> {
                         // TODO: handle song deletion
                         val ss = true
+                        val appPath = appDirectory()
+                        val trackRepo = TrackRepository()
+                        // The method I am calling has not been implemented on the C++
+                        // side
+                        trackRepo.delete(musicService!!.getCurrentSong(), appPath)
                     }
                     R.id.action_song_download -> {
                         val appPath = appDirectory()
                         val apiRepo = APIRepository()
                         val tokenRepo = TokenRepository()
                         val trackRepo = TrackRepository()
-                        val song = musicService!!.getCurrentSong()
+                        var song = musicService!!.getCurrentSong()
 
                         val token = tokenRepo.retrieveToken(appPath)
                         val apiInfo = apiRepo.retrieveRecord(appPath)
-                        trackRepo.download(token, song, appPath)
+                        song = trackRepo.download(token, song, appPath)
                         musicService!!.changeSongDownloadStatus()
                         // TODO: implement something to include the downloaded song into the songQueue
                         // essentially replacing the song that already exists, that way one can

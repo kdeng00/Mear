@@ -285,11 +285,8 @@ void downloadSong(Song& song, const Token& token, const Str& path) {
     saveSong.write((char*)&downloadedSong.data[0], downloadedSong.data.size());
     saveSong.close();
 
+    song.path = downloadedSong.path;
     repository::local::SongRepository localSongRepo(path);
-    if (!localSongRepo.doesTableExist(path)) {
-        localSongRepo.createSongTable(path);
-    }
-
     localSongRepo.saveSong(downloadedSong, path);
 }
 
@@ -522,6 +519,28 @@ Java_com_example_mear_repositories_TokenRepository_retrieveTokenRecord(
     env->CallVoidMethod(tokenObj, accessTokenId, accessTokenStr);
 
     return tokenObj;
+}
+
+extern "C"
+JNIEXPORT jobject
+JNICALL
+Java_com_example_mear_repositories_TrackRepository_downloadSong(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject tokenObj,
+        jobject songObj,
+        jstring pathStr
+) {
+    auto tokenClass = env->GetObjectClass(tokenObj);
+    auto accessTokenId = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
+    auto accessTokenVal = (jstring) env->GetObjectField(tokenObj, accessTokenId);
+    model::Token token(env->GetStringUTFChars(accessTokenVal, nullptr));
+
+    auto song = ObjToSong<jobject, JNIEnv>(env, songObj);
+    auto path = env->GetStringUTFChars(pathStr, nullptr);
+    downloadSong(song, token, path);
+
+    return songToObj(env, song);
 }
 
 extern "C"
@@ -762,26 +781,6 @@ Java_com_example_mear_repositories_TokenRepository_saveTokenRecord(
     auto path = env->GetStringUTFChars(pathStr, nullptr);
 
     saveToken(token, path);
-}
-
-extern "C"
-JNIEXPORT void
-JNICALL
-Java_com_example_mear_repositories_TrackRepository_downloadSong(
-        JNIEnv *env,
-        jobject thisObj,
-        jobject tokenObj,
-        jobject songObj,
-        jstring pathStr
-) {
-    auto tokenClass = env->GetObjectClass(tokenObj);
-    auto accessTokenId = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
-    auto accessTokenVal = (jstring) env->GetObjectField(tokenObj, accessTokenId);
-    model::Token token(env->GetStringUTFChars(accessTokenVal, nullptr));
-
-    auto song = ObjToSong<jobject, JNIEnv>(env, songObj);
-    auto path = env->GetStringUTFChars(pathStr, nullptr);
-    downloadSong(song, token, path);
 }
 
 extern "C"

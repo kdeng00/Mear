@@ -97,7 +97,6 @@ class MusicService(var appPath: String = ""): Service() {
                 s.downloaded = true
             }
         }
-        // songQueue[currentSongIndex!!].downloaded = true
     }
 
     fun goToPosition(progress: Int) { trackPlayer!!.seekTo(progress) }
@@ -142,11 +141,8 @@ class MusicService(var appPath: String = ""): Service() {
                 if (retrieveShuffleMode()!! && !parseRepeatMode(repeatMode)) {
                     currentSongIndex = Random.nextInt(0, songQueue.size - 1)
                 } else if (!parseRepeatMode(repeatMode)) {
-                    if (currentSongIndex == 0) {
-                        currentSongIndex = songQueue.size - 1
-                    } else {
-                        currentSongIndex = currentSongIndex!! - 1
-                    }
+                    currentSongIndex = if (currentSongIndex == 0)
+                        songQueue.size - 1 else currentSongIndex!! - 1
                 }
 
                 currentSong = songQueue[currentSongIndex!!]
@@ -184,12 +180,8 @@ class MusicService(var appPath: String = ""): Service() {
             if (retrieveShuffleMode()!! && !parseRepeatMode(repeatMode)) {
                 currentSongIndex = Random.nextInt(0, songQueue.size - 1)
             } else if (!parseRepeatMode(repeatMode)) {
-                if ((currentSongIndex!! + 1) == songQueue.size) {
-                    currentSongIndex = 0
-                }
-                else {
-                    currentSongIndex = currentSongIndex!! + 1
-                }
+                currentSongIndex = if ((currentSongIndex!! + 1) == songQueue.size)
+                    0 else currentSongIndex!! + 1
             }
 
             currentSong = songQueue[currentSongIndex!!]
@@ -236,26 +228,22 @@ class MusicService(var appPath: String = ""): Service() {
 
             val token = tokenRepo.retrieveToken(appPath)
             val apiInfo = apiRepo.retrieveRecord(appPath)
-            // val songs = trackRepo.fetchSongs(token, apiInfo.uri)
             val songs = trackRepo.fetchSongsIncludingDownloaded(token, apiInfo.uri, appPath)
             songQueue = songs.toMutableList()
 
-            if (retrieveShuffleMode()!!) {
-                currentSongIndex = Random.nextInt(0, songs.size - 1)
-            } else {
-                currentSongIndex = 0
-            }
+            currentSongIndex = if (retrieveShuffleMode()!!)
+                Random.nextInt(0, songQueue.size - 1) else 0
 
             currentSong = songQueue[currentSongIndex!!]
             if (currentSong.downloaded) {
                 trackPlayer!!.setDataSource(currentSong.path)
             }
             else {
-
                 trackPlayer!!.setDataSource(this,
                     APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
                     APIRepository.retrieveSongStreamHeader(token))
             }
+
             trackPlayer!!.prepareAsync()
             trackPlayer!!.setOnCompletionListener {
                 playNextTrack()
@@ -269,25 +257,19 @@ class MusicService(var appPath: String = ""): Service() {
 
     private fun retrieveShuffleMode(): Boolean? {
         val shuffleRepo = ShuffleRepository(null)
-        val shuffleMode = shuffleRepo.shuffleMode(appPath)
-        var shuffleOn = false
 
-        when (shuffleMode) {
-            ShuffleTypes.ShuffleOn -> shuffleOn = true
-            ShuffleTypes.ShuffleOff -> shuffleOn = false
+        return when (shuffleRepo.shuffleMode(appPath)) {
+            ShuffleTypes.ShuffleOn -> true
+            ShuffleTypes.ShuffleOff -> false
+            else -> false
         }
-
-        return shuffleOn
     }
 
     private fun parseRepeatMode(repeatMode: RepeatTypes): Boolean {
-        var repeatOn: Boolean? = null
-        when (repeatMode) {
-            RepeatTypes.RepeatOff -> repeatOn = false
-            RepeatTypes.RepeatSong -> repeatOn = true
+        return when (repeatMode) {
+            RepeatTypes.RepeatOff -> false
+            RepeatTypes.RepeatSong -> true
         }
-
-        return repeatOn!!
     }
 
     private fun offlinePlaySong(song: Song) {

@@ -93,14 +93,9 @@ namespace manager {
 
         template<typename Str = std::string, typename B = bool>
         B deleteSong(const Song& song, const Str& path) {
-            auto s = fullSongPath(song, path);
-            auto result = std::remove(s.c_str());
+            const auto s = fullSongPath(song, path);
 
-            if (result == 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return (remove(s.c_str()) == 0) ? true : false;
         }
 
 
@@ -128,16 +123,7 @@ namespace manager {
             albumPath.append(song.albumArtist);
             albumPath.append("/");
             albumPath.append(song.album);
-            /**
-            if (song.disc == 0) {
-                albumPath.append("/");
-                albumPath.append("disc1");
-            } else {
-                albumPath.append("/");
-                albumPath.append("disc");
-                albumPath.append(std::to_string(song.disc));
-            }
-             */
+
             DIR* dir = opendir(albumPath.c_str());
 
             if (dir) {
