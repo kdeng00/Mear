@@ -87,7 +87,7 @@ class MusicService(var appPath: String = ""): Service() {
         try {
             trackPlayer!!.reset()
             trackPlayer!!.setDataSource(this, uri, hddr)
-            trackPlayer!!.prepareAsync()
+            trackPlayer!!.prepare()
             trackPlayer!!.start()
         }
         catch (ex: Exception) {
@@ -102,14 +102,13 @@ class MusicService(var appPath: String = ""): Service() {
         currentSong = song
         currentSongIndex = songQueue.indexOfFirst { it.id == currentSong.id }
         songQueue[currentSongIndex!!] = currentSong
-        /**
+
         val curPosition = currentPositionOfTrack()
         trackPlayer!!.reset()
         trackPlayer!!.setDataSource(currentSong.path)
-        trackPlayer!!.prepareAsync()
+        trackPlayer!!.prepare()
         trackPlayer!!.seekTo(curPosition)
         trackPlayer!!.start()
-        */
     }
 
     fun removeSongDownloadStatus(song: Song) {
@@ -179,7 +178,7 @@ class MusicService(var appPath: String = ""): Service() {
                         uri, hddr)
                 }
 
-                trackPlayer!!.prepareAsync()
+                trackPlayer!!.prepare()
                 trackPlayer!!.start()
             }
         }
@@ -216,7 +215,7 @@ class MusicService(var appPath: String = ""): Service() {
                     APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
                     APIRepository.retrieveSongStreamHeader(token))
             }
-            trackPlayer!!.prepareAsync()
+            trackPlayer!!.prepare()
             trackPlayer!!.start()
         }
         catch (ex: Exception) {
@@ -266,7 +265,7 @@ class MusicService(var appPath: String = ""): Service() {
                     APIRepository.retrieveSongStreamHeader(token))
             }
 
-            trackPlayer!!.prepareAsync()
+            trackPlayer!!.prepare()
             trackPlayer!!.setOnCompletionListener {
                 playNextTrack()
             }
@@ -302,7 +301,7 @@ class MusicService(var appPath: String = ""): Service() {
 
             trackPlayer!!.reset()
             trackPlayer!!.setDataSource(song.path)
-            trackPlayer!!.prepareAsync()
+            trackPlayer!!.prepare()
             trackPlayer!!.start()
         }
         catch (ex: Exception) {

@@ -16,6 +16,7 @@ class LoginActivity : BaseServiceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = resources.getColor(R.color.track_seek)
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar)
 
