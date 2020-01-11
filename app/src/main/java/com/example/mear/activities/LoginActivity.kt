@@ -5,7 +5,7 @@ import kotlinx.android.synthetic.main.content_login.*
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import com.google.android.material.snackbar.Snackbar
 import org.jetbrains.anko.toast
 
 import com.example.mear.models.*
@@ -16,6 +16,7 @@ class LoginActivity : BaseServiceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = resources.getColor(R.color.track_seek)
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar)
 

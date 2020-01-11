@@ -68,6 +68,11 @@ class MusicService(var appPath: String = ""): Service() {
     }
 
 
+    fun downloadSong(token: Token, song: Song, appPath: String) {
+        val trackRepo = TrackRepository()
+        val s = trackRepo.download(token, currentSong, appPath)
+        changeSongDownloadStatus(s)
+    }
     fun icarusPlaySong(token: Token, song: Song, apiInfo: APIInfo) {
         if (song.downloaded) {
             offlinePlaySong(song)
@@ -77,6 +82,7 @@ class MusicService(var appPath: String = ""): Service() {
         val uri = APIRepository.retrieveSongStreamUri(apiInfo, song)
         val hddr = APIRepository.retrieveSongStreamHeader(token)
         currentSong = song
+        currentSongIndex = songQueue.indexOfFirst { it.id == currentSong.id }
 
         try {
             trackPlayer!!.reset()
@@ -89,15 +95,29 @@ class MusicService(var appPath: String = ""): Service() {
         }
     }
 
-    fun changeSongDownloadStatus() {
-        currentSong.downloaded = true
-        songQueue.forEach {
-            s ->
-            if (s.id == currentSong.id) {
-                s.downloaded = true
-            }
+    fun changeSongDownloadStatus(song: Song) {
+        if (!song.downloaded) {
+            song.downloaded = true
         }
-        // songQueue[currentSongIndex!!].downloaded = true
+        currentSong = song
+        currentSongIndex = songQueue.indexOfFirst { it.id == currentSong.id }
+        songQueue[currentSongIndex!!] = currentSong
+
+        val curPosition = currentPositionOfTrack()
+        trackPlayer!!.reset()
+        trackPlayer!!.setDataSource(currentSong.path)
+        trackPlayer!!.prepare()
+        trackPlayer!!.seekTo(curPosition)
+        trackPlayer!!.start()
+    }
+
+    fun removeSongDownloadStatus(song: Song) {
+        if (song.downloaded) {
+            song.downloaded = false
+        }
+        currentSong = song
+        currentSongIndex = songQueue.indexOfFirst { it.id == currentSong.id }
+        songQueue[currentSongIndex!!] = currentSong
     }
 
     fun goToPosition(progress: Int) { trackPlayer!!.seekTo(progress) }
@@ -142,11 +162,8 @@ class MusicService(var appPath: String = ""): Service() {
                 if (retrieveShuffleMode()!! && !parseRepeatMode(repeatMode)) {
                     currentSongIndex = Random.nextInt(0, songQueue.size - 1)
                 } else if (!parseRepeatMode(repeatMode)) {
-                    if (currentSongIndex == 0) {
-                        currentSongIndex = songQueue.size - 1
-                    } else {
-                        currentSongIndex = currentSongIndex!! - 1
-                    }
+                    currentSongIndex = if (currentSongIndex == 0)
+                        songQueue.size - 1 else currentSongIndex!! - 1
                 }
 
                 currentSong = songQueue[currentSongIndex!!]
@@ -184,12 +201,8 @@ class MusicService(var appPath: String = ""): Service() {
             if (retrieveShuffleMode()!! && !parseRepeatMode(repeatMode)) {
                 currentSongIndex = Random.nextInt(0, songQueue.size - 1)
             } else if (!parseRepeatMode(repeatMode)) {
-                if ((currentSongIndex!! + 1) == songQueue.size) {
-                    currentSongIndex = 0
-                }
-                else {
-                    currentSongIndex = currentSongIndex!! + 1
-                }
+                currentSongIndex = if ((currentSongIndex!! + 1) == songQueue.size)
+                    0 else currentSongIndex!! + 1
             }
 
             currentSong = songQueue[currentSongIndex!!]
@@ -236,27 +249,23 @@ class MusicService(var appPath: String = ""): Service() {
 
             val token = tokenRepo.retrieveToken(appPath)
             val apiInfo = apiRepo.retrieveRecord(appPath)
-            // val songs = trackRepo.fetchSongs(token, apiInfo.uri)
             val songs = trackRepo.fetchSongsIncludingDownloaded(token, apiInfo.uri, appPath)
             songQueue = songs.toMutableList()
 
-            if (retrieveShuffleMode()!!) {
-                currentSongIndex = Random.nextInt(0, songs.size - 1)
-            } else {
-                currentSongIndex = 0
-            }
+            currentSongIndex = if (retrieveShuffleMode()!!)
+                Random.nextInt(0, songQueue.size - 1) else 0
 
             currentSong = songQueue[currentSongIndex!!]
             if (currentSong.downloaded) {
                 trackPlayer!!.setDataSource(currentSong.path)
             }
             else {
-
                 trackPlayer!!.setDataSource(this,
                     APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
                     APIRepository.retrieveSongStreamHeader(token))
             }
-            trackPlayer!!.prepareAsync()
+
+            trackPlayer!!.prepare()
             trackPlayer!!.setOnCompletionListener {
                 playNextTrack()
             }
@@ -269,37 +278,27 @@ class MusicService(var appPath: String = ""): Service() {
 
     private fun retrieveShuffleMode(): Boolean? {
         val shuffleRepo = ShuffleRepository(null)
-        val shuffleMode = shuffleRepo.shuffleMode(appPath)
-        var shuffleOn = false
 
-        when (shuffleMode) {
-            ShuffleTypes.ShuffleOn -> shuffleOn = true
-            ShuffleTypes.ShuffleOff -> shuffleOn = false
+        return when (shuffleRepo.shuffleMode(appPath)) {
+            ShuffleTypes.ShuffleOn -> true
+            ShuffleTypes.ShuffleOff -> false
+            else -> false
         }
-
-        return shuffleOn
     }
 
     private fun parseRepeatMode(repeatMode: RepeatTypes): Boolean {
-        var repeatOn: Boolean? = null
-        when (repeatMode) {
-            RepeatTypes.RepeatOff -> repeatOn = false
-            RepeatTypes.RepeatSong -> repeatOn = true
+        return when (repeatMode) {
+            RepeatTypes.RepeatOff -> false
+            RepeatTypes.RepeatSong -> true
         }
-
-        return repeatOn!!
     }
 
     private fun offlinePlaySong(song: Song) {
         try {
             currentSong = song
-            songQueue.forEach{ s ->
-                if (s.id == currentSong.id) {
-                    s.downloaded = currentSong.downloaded
-                    s.filename = currentSong.filename
-                    s.path = currentSong.path
-                }
-            }
+            currentSongIndex = songQueue.indexOfFirst { it.id == song.id }
+            songQueue[currentSongIndex!!] = currentSong
+
             trackPlayer!!.reset()
             trackPlayer!!.setDataSource(song.path)
             trackPlayer!!.prepare()

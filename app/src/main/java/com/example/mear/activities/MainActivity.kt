@@ -11,19 +11,20 @@ import kotlinx.android.synthetic.main.fragment_track_details.*
 import kotlinx.android.synthetic.main.fragment_track_elapsing.*
 import kotlinx.android.synthetic.main.fragment_track_flow.*
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import org.jetbrains.anko.image
 import org.jetbrains.anko.imageBitmap
 
 import com.example.mear.listeners.TrackElaspingChange
@@ -32,18 +33,14 @@ import com.example.mear.repositories.*
 import com.example.mear.repositories.RepeatRepository.RepeatTypes
 import com.example.mear.repositories.ShuffleRepository.ShuffleTypes
 import com.example.mear.util.ConvertByteArray
-import org.jetbrains.anko.image
+import com.example.mear.workers.IcarusSyncManager
 
 
 class MainActivity : BaseServiceActivity() {
 
-    private val ctx: Context? = this
-    private var coverArtHandler: Handler? = Handler()
     private var musicHandler: Handler? = Handler()
-    private var updateLibraryHandler: Handler? = Handler()
     private var playCountUpdated: Boolean? = false
     private var serviceBinded: Boolean? = false
-    private var metadataInitialized: Boolean = false
     private var repeatOn: Boolean? = false
     private var shuffleOn: Boolean? = false
 
@@ -335,22 +332,6 @@ class MainActivity : BaseServiceActivity() {
         return true
     }
 
-    // TODO: Might need this down the road for playing songs off an external
-    // storage
-    private fun permissionPrompt() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            }
-            else {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            }
-        }
-    }
 
     private fun showPopup(view: View) {
         try {
@@ -371,30 +352,64 @@ class MainActivity : BaseServiceActivity() {
                         startActivity(Intent(this, IcarusSongActivity::class.java))
                     }
                     R.id.action_song_delete -> {
-                        // TODO: handle song deletion
-                        val ss = true
+                        val appPath = appDirectory()
+                        val trackRepo = TrackRepository()
+
+                        var currSong = musicService!!.getCurrentSong()
+                        Toast.makeText(this, "Deleting song", Toast.LENGTH_SHORT).show()
+                        val result = trackRepo.delete(currSong, appPath)
+                        if (result) {
+                            musicService!!.removeSongDownloadStatus(currSong)
+                        }
                     }
                     R.id.action_song_download -> {
                         val appPath = appDirectory()
-                        val apiRepo = APIRepository()
-                        val tokenRepo = TokenRepository()
-                        val trackRepo = TrackRepository()
-                        val song = musicService!!.getCurrentSong()
+                        var song = musicService!!.getCurrentSong()
 
-                        val token = tokenRepo.retrieveToken(appPath)
-                        val apiInfo = apiRepo.retrieveRecord(appPath)
-                        trackRepo.download(token, song, appPath)
-                        musicService!!.changeSongDownloadStatus()
-                        // TODO: implement something to include the downloaded song into the songQueue
-                        // essentially replacing the song that already exists, that way one can
-                        // actually access the file without having to restart the app
+                        Toast.makeText(this, "Downloading song", Toast.LENGTH_SHORT).show()
+
+                        val constraints = androidx.work.Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+                        val data = Data.Builder()
+                        data.putString("appPath", appPath)
+
+                        data.putInt("songId", song.id)
+                        data.putString("songTitle", song.title)
+                        data.putString("songArtist", song.artist)
+                        data.putString("songAlbum", song.album)
+                        data.putString("songAlbumArtist", song.albumArtist)
+                        data.putString("songGenre", song.genre)
+                        data.putInt("songYear", song.year)
+                        data.putInt("songDuration", song.duration)
+                        data.putInt("songCoverArtId", song.coverArtId)
+                        data.putBoolean("songDownloaded", false)
+                        data.putInt("songDisc", song.disc)
+                        data.putInt("songTrack", song.track)
+
+                        val task = OneTimeWorkRequest.Builder(IcarusSyncManager::class.java)
+                            .setInputData(data.build())
+                            .setConstraints(constraints)
+                            .build()
+                        WorkManager.getInstance().enqueue(task)
+
+                        WorkManager.getInstance(this).getWorkInfoByIdLiveData(task.id)
+                            .observe(this, Observer { info ->
+                                if (info != null && info.state.isFinished) {
+                                    song.path = info.outputData.getString("songPath")!!
+                                    song.filename = info.outputData.getString("songFilename")!!
+                                    song.downloaded = info.outputData.getBoolean("songDownloaded", true)!!
+                                    musicService!!.changeSongDownloadStatus(song)
+                                }
+                            })
                     }
+                    /**
                     R.id.action_song_play_count-> {
+                        // TODO: not implemented
                         val trk = musicService!!.getCurrentSong()
-                        val pc = PlayCountRepository(this).getPlayCount(trk.id)
-                        val playCount = pc.playCount
                         Toast.makeText(this, "Song played $playCount times", Toast.LENGTH_LONG).show()
                     }
+                    */
                 }
                 true
             }

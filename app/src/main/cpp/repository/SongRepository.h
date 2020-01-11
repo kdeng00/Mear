@@ -151,16 +151,6 @@ namespace repository {
             auto res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
             downloadedSong.data = std::move(std::vector<char>(data.begin(), data.end()));
-            /**
-            downloadedSong.filename = "track";
-            if (song.track < 10) {
-                downloadedSong.filename.append("0");
-                downloadedSong.filename.append(std::to_string(song.track));
-            } else {
-                downloadedSong.filename.append(std::to_string(song.track));
-            }
-            downloadedSong.filename.append(".mp3");
-             */
 
             return downloadedSong;
         }

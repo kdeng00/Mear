@@ -175,6 +175,24 @@ int retrieveShuffleMode(const std::string& path) {
 }
 
 
+template<class Song = model::Song, typename Str = std::string, typename B = bool>
+B deleteSong(Song& song, const Str& path) {
+    manager::DirectoryManager dirMgr;
+    if (!dirMgr.doesSongExist(song, path)) {
+        return false;
+    }
+
+    auto result = dirMgr.deleteSong(song, path);
+    if (!result) {
+        return result;
+    }
+
+    repository::local::SongRepository songRepo(path);
+    songRepo.deleteSongFromTable(song, path);
+
+    return result;
+}
+
 bool doesDatabaseExist(const std::string& dataPath) {
     repository::local::UserRepository userRepo;
     const auto result = userRepo.databaseExist(dataPath);
@@ -285,11 +303,9 @@ void downloadSong(Song& song, const Token& token, const Str& path) {
     saveSong.write((char*)&downloadedSong.data[0], downloadedSong.data.size());
     saveSong.close();
 
+    song.path = downloadedSong.path;
+    song.downloaded = true;
     repository::local::SongRepository localSongRepo(path);
-    if (!localSongRepo.doesTableExist(path)) {
-        localSongRepo.createSongTable(path);
-    }
-
     localSongRepo.saveSong(downloadedSong, path);
 }
 
@@ -527,6 +543,28 @@ Java_com_example_mear_repositories_TokenRepository_retrieveTokenRecord(
 extern "C"
 JNIEXPORT jobject
 JNICALL
+Java_com_example_mear_repositories_TrackRepository_downloadSong(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject tokenObj,
+        jobject songObj,
+        jstring pathStr
+) {
+    auto tokenClass = env->GetObjectClass(tokenObj);
+    auto accessTokenId = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
+    auto accessTokenVal = (jstring) env->GetObjectField(tokenObj, accessTokenId);
+    model::Token token(env->GetStringUTFChars(accessTokenVal, nullptr));
+
+    auto song = ObjToSong<jobject, JNIEnv>(env, songObj);
+    auto path = env->GetStringUTFChars(pathStr, nullptr);
+    downloadSong(song, token, path);
+
+    return songToObj(env, song);
+}
+
+extern "C"
+JNIEXPORT jobject
+JNICALL
 Java_com_example_mear_repositories_TrackRepository_retrieveSong(
         JNIEnv *env,
         jobject thisObj,
@@ -687,6 +725,24 @@ Java_com_example_mear_repositories_TokenRepository_isTokenTableEmpty(
 extern "C"
 JNIEXPORT jboolean
 JNICALL
+Java_com_example_mear_repositories_TrackRepository_deleteSong(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject songObj,
+        jstring pathStr
+) {
+    auto songClass = env->GetObjectClass(songObj);
+    auto path = env->GetStringUTFChars(pathStr, nullptr);
+    auto song = ObjToSong(env, songObj);
+
+    const auto result = deleteSong(song, path);
+
+    return result;
+}
+
+extern "C"
+JNIEXPORT jboolean
+JNICALL
 Java_com_example_mear_repositories_UserRepository_isUserTableEmpty(
         JNIEnv *env,
         jobject thisObj,
@@ -762,26 +818,6 @@ Java_com_example_mear_repositories_TokenRepository_saveTokenRecord(
     auto path = env->GetStringUTFChars(pathStr, nullptr);
 
     saveToken(token, path);
-}
-
-extern "C"
-JNIEXPORT void
-JNICALL
-Java_com_example_mear_repositories_TrackRepository_downloadSong(
-        JNIEnv *env,
-        jobject thisObj,
-        jobject tokenObj,
-        jobject songObj,
-        jstring pathStr
-) {
-    auto tokenClass = env->GetObjectClass(tokenObj);
-    auto accessTokenId = env->GetFieldID(tokenClass, "accessToken", "Ljava/lang/String;");
-    auto accessTokenVal = (jstring) env->GetObjectField(tokenObj, accessTokenId);
-    model::Token token(env->GetStringUTFChars(accessTokenVal, nullptr));
-
-    auto song = ObjToSong<jobject, JNIEnv>(env, songObj);
-    auto path = env->GetStringUTFChars(pathStr, nullptr);
-    downloadSong(song, token, path);
 }
 
 extern "C"
