@@ -1,6 +1,6 @@
 package com.example.mear.holders
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 
 import com.example.mear.models.SettingItems

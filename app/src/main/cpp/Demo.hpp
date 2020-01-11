@@ -175,6 +175,24 @@ int retrieveShuffleMode(const std::string& path) {
 }
 
 
+template<class Song = model::Song, typename Str = std::string, typename B = bool>
+B deleteSong(Song& song, const Str& path) {
+    manager::DirectoryManager dirMgr;
+    if (!dirMgr.doesSongExist(song, path)) {
+        return false;
+    }
+
+    auto result = dirMgr.deleteSong(song, path);
+    if (!result) {
+        return result;
+    }
+
+    repository::local::SongRepository songRepo(path);
+    songRepo.deleteSongFromTable(song, path);
+
+    return result;
+}
+
 bool doesDatabaseExist(const std::string& dataPath) {
     repository::local::UserRepository userRepo;
     const auto result = userRepo.databaseExist(dataPath);
@@ -286,6 +304,7 @@ void downloadSong(Song& song, const Token& token, const Str& path) {
     saveSong.close();
 
     song.path = downloadedSong.path;
+    song.downloaded = true;
     repository::local::SongRepository localSongRepo(path);
     localSongRepo.saveSong(downloadedSong, path);
 }
@@ -701,6 +720,24 @@ Java_com_example_mear_repositories_TokenRepository_isTokenTableEmpty(
     const auto dataPath = env->GetStringUTFChars(pathStr, nullptr);
 
     return doesTokenExist(dataPath);
+}
+
+extern "C"
+JNIEXPORT jboolean
+JNICALL
+Java_com_example_mear_repositories_TrackRepository_deleteSong(
+        JNIEnv *env,
+        jobject thisObj,
+        jobject songObj,
+        jstring pathStr
+) {
+    auto songClass = env->GetObjectClass(songObj);
+    auto path = env->GetStringUTFChars(pathStr, nullptr);
+    auto song = ObjToSong(env, songObj);
+
+    const auto result = deleteSong(song, path);
+
+    return result;
 }
 
 extern "C"

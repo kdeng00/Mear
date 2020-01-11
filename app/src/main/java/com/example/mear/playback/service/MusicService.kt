@@ -68,6 +68,11 @@ class MusicService(var appPath: String = ""): Service() {
     }
 
 
+    fun downloadSong(token: Token, song: Song, appPath: String) {
+        val trackRepo = TrackRepository()
+        val s = trackRepo.download(token, currentSong, appPath)
+        changeSongDownloadStatus(s)
+    }
     fun icarusPlaySong(token: Token, song: Song, apiInfo: APIInfo) {
         if (song.downloaded) {
             offlinePlaySong(song)
@@ -77,11 +82,12 @@ class MusicService(var appPath: String = ""): Service() {
         val uri = APIRepository.retrieveSongStreamUri(apiInfo, song)
         val hddr = APIRepository.retrieveSongStreamHeader(token)
         currentSong = song
+        currentSongIndex = songQueue.indexOfFirst { it.id == currentSong.id }
 
         try {
             trackPlayer!!.reset()
             trackPlayer!!.setDataSource(this, uri, hddr)
-            trackPlayer!!.prepare()
+            trackPlayer!!.prepareAsync()
             trackPlayer!!.start()
         }
         catch (ex: Exception) {
@@ -89,14 +95,30 @@ class MusicService(var appPath: String = ""): Service() {
         }
     }
 
-    fun changeSongDownloadStatus() {
-        currentSong.downloaded = true
-        songQueue.forEach {
-            s ->
-            if (s.id == currentSong.id) {
-                s.downloaded = true
-            }
+    fun changeSongDownloadStatus(song: Song) {
+        if (!song.downloaded) {
+            song.downloaded = true
         }
+        currentSong = song
+        currentSongIndex = songQueue.indexOfFirst { it.id == currentSong.id }
+        songQueue[currentSongIndex!!] = currentSong
+        /**
+        val curPosition = currentPositionOfTrack()
+        trackPlayer!!.reset()
+        trackPlayer!!.setDataSource(currentSong.path)
+        trackPlayer!!.prepareAsync()
+        trackPlayer!!.seekTo(curPosition)
+        trackPlayer!!.start()
+        */
+    }
+
+    fun removeSongDownloadStatus(song: Song) {
+        if (song.downloaded) {
+            song.downloaded = false
+        }
+        currentSong = song
+        currentSongIndex = songQueue.indexOfFirst { it.id == currentSong.id }
+        songQueue[currentSongIndex!!] = currentSong
     }
 
     fun goToPosition(progress: Int) { trackPlayer!!.seekTo(progress) }
@@ -157,7 +179,7 @@ class MusicService(var appPath: String = ""): Service() {
                         uri, hddr)
                 }
 
-                trackPlayer!!.prepare()
+                trackPlayer!!.prepareAsync()
                 trackPlayer!!.start()
             }
         }
@@ -194,7 +216,7 @@ class MusicService(var appPath: String = ""): Service() {
                     APIRepository.retrieveSongStreamUri(apiInfo, currentSong),
                     APIRepository.retrieveSongStreamHeader(token))
             }
-            trackPlayer!!.prepare()
+            trackPlayer!!.prepareAsync()
             trackPlayer!!.start()
         }
         catch (ex: Exception) {
@@ -275,16 +297,12 @@ class MusicService(var appPath: String = ""): Service() {
     private fun offlinePlaySong(song: Song) {
         try {
             currentSong = song
-            songQueue.forEach{ s ->
-                if (s.id == currentSong.id) {
-                    s.downloaded = currentSong.downloaded
-                    s.filename = currentSong.filename
-                    s.path = currentSong.path
-                }
-            }
+            currentSongIndex = songQueue.indexOfFirst { it.id == song.id }
+            songQueue[currentSongIndex!!] = currentSong
+
             trackPlayer!!.reset()
             trackPlayer!!.setDataSource(song.path)
-            trackPlayer!!.prepare()
+            trackPlayer!!.prepareAsync()
             trackPlayer!!.start()
         }
         catch (ex: Exception) {

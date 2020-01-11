@@ -4,7 +4,6 @@ import android.content.Context
 
 import org.jetbrains.anko.db.*
 
-import com.example.mear.database
 import com.example.mear.models.Song
 import com.example.mear.models.Token
 import com.example.mear.models.Track
@@ -24,7 +23,7 @@ class TrackRepository(var context: Context? = null) {
     private external fun retrieveSong(token: Token, song: Song, uri: String): Song
     private external fun downloadSong(token: Token, song: Song, path: String): Song
 
-    private external fun deleteSong(song: Song, path: String)
+    private external fun deleteSong(song: Song, path: String): Boolean
 
 
     fun fetchSongs(token: Token, uri: String): Array<Song> {
@@ -48,7 +47,7 @@ class TrackRepository(var context: Context? = null) {
         return downloadSong(token, song, path)
     }
 
-    fun delete(song: Song, path: String) {
-        deleteSong(song, path)
+    fun delete(song: Song, path: String): Boolean {
+        return deleteSong(song, path)
     }
 }

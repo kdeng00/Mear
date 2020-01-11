@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/songSearch"
         style="@style/SongSearchViewStyle"
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/space2"
         tools:layout_editor_absoluteX="8dp" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/trackList"
         marginTop="?android:attr/actionBarSize"
         android:layout_width="wrap_content"
@@ -42,4 +42,4 @@
 
     <!-- style="@style/SongSearchViewStyle" -->
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

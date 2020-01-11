@@ -3,7 +3,7 @@ package com.example.mear.adapters
 import java.lang.Exception
 import kotlinx.android.synthetic.main.fragment_song_view.view.*
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter

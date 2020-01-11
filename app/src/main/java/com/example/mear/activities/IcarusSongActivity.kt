@@ -1,8 +1,8 @@
 package com.example.mear.activities
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.SearchView
 
 import kotlinx.android.synthetic.main.content_song_view.*
 
@@ -48,7 +48,8 @@ class IcarusSongActivity : BaseServiceActivity() {
 
     private fun initializeAdapter() {
         try {
-            linearLayoutManager = LinearLayoutManager(this)
+            linearLayoutManager =
+                LinearLayoutManager(this)
             trackList.layoutManager = linearLayoutManager
 
             val pa = appDirectory()
@@ -57,7 +58,8 @@ class IcarusSongActivity : BaseServiceActivity() {
             val apiRepo = APIRepository()
             val token = tokenRepo.retrieveToken(pa)
             val apiInfo = apiRepo.retrieveRecord(pa)
-            val fetchedSongs = trackRepo.fetchSongsIncludingDownloaded(token, apiInfo.uri, pa).toCollection(ArrayList())
+            val fetchedSongs = trackRepo.fetchSongsIncludingDownloaded(token, apiInfo.uri, pa)
+                .toCollection(ArrayList())
             songs = fetchedSongs
 
             songs!!.sortedWith(compareBy{it.title})

@@ -2,9 +2,7 @@ package com.example.mear.activities
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Environment
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -13,11 +11,8 @@ import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.content_settings.*
 
-import com.example.mear.adapters.SettingsAdapter
 import com.example.mear.R
-import com.example.mear.management.MusicFiles
 import com.example.mear.ui.popups.AboutPopup
-import com.example.mear.repositories.TrackRepository
 import kotlinx.android.synthetic.main.popup_layout.*
 
 
@@ -46,16 +41,6 @@ class SettingsActivity : AppCompatActivity() {
     private fun initialize() {
         window.statusBarColor = resources.getColor(R.color.track_seek)
     }
-
-    private fun loadSongPaths(): MutableList<String> {
-        val demoPath = Environment.getExternalStorageDirectory()
-        val mfPaths =  MusicFiles(demoPath)
-        mfPaths.loadAllMusicPaths()
-        val allSongs = mfPaths.allSongs
-
-        return allSongs!!
-    }
-
 
 
     class AboutListener(var layout: LinearLayout?, val ctx: Context): View.OnClickListener {

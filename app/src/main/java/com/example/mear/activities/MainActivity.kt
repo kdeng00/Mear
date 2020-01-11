@@ -18,12 +18,19 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
+/**
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+*/
+import org.jetbrains.anko.image
 import org.jetbrains.anko.imageBitmap
 
 import com.example.mear.listeners.TrackElaspingChange
@@ -32,7 +39,7 @@ import com.example.mear.repositories.*
 import com.example.mear.repositories.RepeatRepository.RepeatTypes
 import com.example.mear.repositories.ShuffleRepository.ShuffleTypes
 import com.example.mear.util.ConvertByteArray
-import org.jetbrains.anko.image
+// import com.example.mear.workers.IcarusSyncManager
 
 
 class MainActivity : BaseServiceActivity() {
@@ -51,6 +58,18 @@ class MainActivity : BaseServiceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
+            /**
+            val workManager = WorkManager.getInstance()
+
+            val constraints = androidx.work.Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+            val task = OneTimeWorkRequest.Builder(IcarusSyncManager::class.java)
+                .setConstraints(constraints).build()
+            workManager.enqueue(task)
+            */
+
+
             setContentView(R.layout.activity_main)
             setSupportActionBar(toolbar)
 
@@ -377,7 +396,12 @@ class MainActivity : BaseServiceActivity() {
                         val trackRepo = TrackRepository()
                         // The method I am calling has not been implemented on the C++
                         // side
-                        trackRepo.delete(musicService!!.getCurrentSong(), appPath)
+                        var currSong = musicService!!.getCurrentSong()
+                        Toast.makeText(this, "Deleting song", Toast.LENGTH_SHORT).show()
+                        val result = trackRepo.delete(currSong, appPath)
+                        if (result) {
+                            musicService!!.removeSongDownloadStatus(currSong)
+                        }
                     }
                     R.id.action_song_download -> {
                         val appPath = appDirectory()
@@ -387,19 +411,43 @@ class MainActivity : BaseServiceActivity() {
                         var song = musicService!!.getCurrentSong()
 
                         val token = tokenRepo.retrieveToken(appPath)
-                        val apiInfo = apiRepo.retrieveRecord(appPath)
-                        song = trackRepo.download(token, song, appPath)
-                        musicService!!.changeSongDownloadStatus()
+                        // val apiInfo = apiRepo.retrieveRecord(appPath)
+                        // song = trackRepo.download(token, song, appPath)
+                        // musicService!!.changeSongDownloadStatus(song)
                         // TODO: implement something to include the downloaded song into the songQueue
                         // essentially replacing the song that already exists, that way one can
                         // actually access the file without having to restart the app
+                        Toast.makeText(this, "Downloading song", Toast.LENGTH_SHORT).show()
+
+                        // val dMgr = IcarusSyncManager
+                        musicService!!.downloadSong(token, song, appPath)
+
+
+                        //val workManager = WorkManager.getInstance()
+                        /**
+                        val constraints = androidx.work.Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+                        val task = OneTimeWorkRequest.Builder(IcarusSyncManager::class.java)
+                            .setConstraints(constraints)
+                        val data = Data.Builder()
+                        data.putString("accessToken", token.accessToken)
+                        data.putString("appPath", appPath)
+                        data.putInt("songId", song.id)
+                        task.setInputData(data.build())
+                        */
+                        //workManager.enqueue(task)
+                        //WorkManager.getInstance().enqueue(task.build())
                     }
+                    /**
                     R.id.action_song_play_count-> {
+                        // TODO: not implemented
                         val trk = musicService!!.getCurrentSong()
-                        val pc = PlayCountRepository(this).getPlayCount(trk.id)
-                        val playCount = pc.playCount
+                        // val pc = PlayCountRepository(this).getPlayCount(trk.id)
+                        // val playCount = pc.playCount
                         Toast.makeText(this, "Song played $playCount times", Toast.LENGTH_LONG).show()
                     }
+                    */
                 }
                 true
             }
