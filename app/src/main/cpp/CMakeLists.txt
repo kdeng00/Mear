@@ -35,6 +35,7 @@ set (HEADERS
         types/RepeatTypes.h
         types/ShuffleTypes.h
         utility/GeneralUtility.h
+        utility/JNIObjectConversion.h
 )
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")

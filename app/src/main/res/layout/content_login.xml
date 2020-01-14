@@ -8,17 +8,6 @@
     tools:context=".activities.LoginActivity"
     tools:showIn="@layout/activity_login">
 
-    <Button
-        android:id="@+id/demoStream"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Stream"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.954" />
-
     <EditText
         android:id="@+id/username"
         android:layout_width="245dp"

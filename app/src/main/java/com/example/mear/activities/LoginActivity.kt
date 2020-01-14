@@ -5,7 +5,6 @@ import kotlinx.android.synthetic.main.content_login.*
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import org.jetbrains.anko.toast
 
 import com.example.mear.models.*
@@ -25,11 +24,6 @@ class LoginActivity : BaseServiceActivity() {
         login.setOnClickListener {
             loginButton()
         }
-
-        fab.setOnClickListener {view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
     }
 
 
@@ -40,7 +34,7 @@ class LoginActivity : BaseServiceActivity() {
         }
 
         val saveCred = saveUserCred.isChecked
-        var apiInfo = APIInfo(apiUri.text.toString(), 1)
+        val apiInfo = APIInfo(apiUri.text.toString(), 1)
         val usr = User(username.text.toString(), password.text.toString())
 
         val usrRepo = UserRepository()
