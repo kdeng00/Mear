@@ -16,7 +16,7 @@ public:
     User(const std::string& user, const std::string& pass) :
         username(user), password(pass) { }
     User(const std::string&& user, const std::string&& pass) :
-        username(std::move(user)), password(std::move(pass)) {}
+        username(user), password(pass) {}
 
     std::string username;
     std::string password;

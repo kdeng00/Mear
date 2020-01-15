@@ -13,6 +13,8 @@ namespace model {
         CoverArt() = default;
         CoverArt(const int id, const std::string& title) :
                 id(id), title(title) { }
+        CoverArt(const int id, const std::string&& title) :
+                id(id), title(title) { }
 
         int id;
         std::string title;

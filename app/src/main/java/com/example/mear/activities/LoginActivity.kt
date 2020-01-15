@@ -5,6 +5,7 @@ import kotlinx.android.synthetic.main.content_login.*
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import org.jetbrains.anko.toast
 
 import com.example.mear.models.*
@@ -40,6 +41,10 @@ class LoginActivity : BaseServiceActivity() {
         val usrRepo = UserRepository()
         val tokenRepo = TokenRepository()
         val myToken = usrRepo.fetchToken(usr, apiInfo.uri)
+        if (myToken.accessToken == "failure") {
+            Toast.makeText(this, "login failed, try again", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         try {
             val pa = appDirectory()

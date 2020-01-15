@@ -45,11 +45,19 @@ namespace manager {
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, respBodyRetriever);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &resp);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeOut<long>());
 
             res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
 
             if (res == CURLE_OK) {
+                long respCode;
+                curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &respCode);
+
+                if (respCode != 200) {
+                    return Token(std::move("failure"));
+                }
+
                 auto s = nlohmann::json::parse(resp);
                 const auto tokenStr = std::move(s["token"].get<std::string>());
 
@@ -75,6 +83,12 @@ namespace manager {
             usr["password"] = user.password;
 
             return usr.dump();
+        }
+
+
+        template<typename L>
+        constexpr L timeOut() noexcept {
+            return 15L;
         }
 
 

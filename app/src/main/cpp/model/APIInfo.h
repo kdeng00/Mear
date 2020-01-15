@@ -16,6 +16,8 @@ namespace model {
             uri(uri) { }
         APIInfo(const std::string& uri, const int version) :
             uri(uri), version(version) { }
+        APIInfo(const std::string&& uri, const int version) :
+            uri(uri), version(version) { }
         APIInfo(const std::string& uri, const std::string& endpoint, const int version) :
             uri(uri), endpoint(endpoint), version(version) { }
 
