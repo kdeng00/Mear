@@ -1,0 +1,388 @@
+{
+  "stringTable": {},
+  "buildFiles": [
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\CMakeLists.txt",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\3rdparty\\json\\CMakeLists.txt",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\3rdparty\\SQLiteCpp\\CMakeLists.txt",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\3rdparty\\SQLiteCpp\\sqlite3\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "sqlite3-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "sqlite3"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "sqlite3",
+      "output": "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86\\3rdparty\\SQLiteCpp\\sqlite3\\libsqlite3.a"
+    },
+    "Continuous-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "Continuous"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "Continuous"
+    },
+    "ExperimentalSubmit-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalSubmit"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalSubmit"
+    },
+    "NightlyMemoryCheck-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyMemoryCheck"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyMemoryCheck"
+    },
+    "NightlyStart-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyStart"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyStart"
+    },
+    "NightlyUpdate-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyUpdate"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyUpdate"
+    },
+    "NightlyConfigure-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyConfigure"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyConfigure"
+    },
+    "ContinuousStart-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousStart"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousStart"
+    },
+    "SQLiteCpp-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "SQLiteCpp"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "SQLiteCpp",
+      "output": "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86\\3rdparty\\SQLiteCpp\\libSQLiteCpp.a"
+    },
+    "NightlySubmit-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlySubmit"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlySubmit"
+    },
+    "ContinuousBuild-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousBuild"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousBuild"
+    },
+    "NightlyTest-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyTest"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyTest"
+    },
+    "NightlyMemCheck-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyMemCheck"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyMemCheck"
+    },
+    "NightlyCoverage-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyCoverage"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyCoverage"
+    },
+    "ExperimentalMemCheck-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalMemCheck"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalMemCheck"
+    },
+    "ExperimentalUpdate-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalUpdate"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalUpdate"
+    },
+    "ExperimentalTest-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalTest"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalTest"
+    },
+    "SQLiteCpp_cpplint-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "SQLiteCpp_cpplint"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "SQLiteCpp_cpplint"
+    },
+    "ContinuousMemCheck-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousMemCheck"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousMemCheck"
+    },
+    "ExperimentalStart-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalStart"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalStart"
+    },
+    "NightlyBuild-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "NightlyBuild"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "NightlyBuild"
+    },
+    "Nightly-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "Nightly"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "Nightly"
+    },
+    "ExperimentalCoverage-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalCoverage"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalCoverage"
+    },
+    "native-lib-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "native-lib"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "native-lib",
+      "output": "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\build\\intermediates\\cxx\\RelWithDebInfo\\3o113a43\\obj\\x86\\libnative-lib.so",
+      "runtimeFiles": []
+    },
+    "ContinuousSubmit-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousSubmit"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousSubmit"
+    },
+    "ExperimentalBuild-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalBuild"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalBuild"
+    },
+    "ContinuousCoverage-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousCoverage"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousCoverage"
+    },
+    "ContinuousUpdate-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousUpdate"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousUpdate"
+    },
+    "ContinuousTest-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousTest"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousTest"
+    },
+    "Experimental-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "Experimental"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "Experimental"
+    },
+    "ExperimentalConfigure-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ExperimentalConfigure"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ExperimentalConfigure"
+    },
+    "ContinuousConfigure-RelWithDebInfo-x86": {
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\RelWithDebInfo\\3o113a43\\x86",
+        "ContinuousConfigure"
+      ],
+      "buildType": "release",
+      "abi": "x86",
+      "artifactName": "ContinuousConfigure"
+    }
+  },
+  "toolchains": {},
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

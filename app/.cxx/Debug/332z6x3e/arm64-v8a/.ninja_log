@@ -1,0 +1,12 @@
+# ninja log v5
+16	879	678487192	3rdparty/SQLiteCpp/CMakeFiles/SQLiteCpp.dir/src/Exception.cpp.o	3419fed4c0d0c060
+21	920	678487192	3rdparty/SQLiteCpp/CMakeFiles/SQLiteCpp.dir/src/Backup.cpp.o	c3368a9ed51fa4ff
+32	950	678487192	3rdparty/SQLiteCpp/CMakeFiles/SQLiteCpp.dir/src/Transaction.cpp.o	9a107bed7cf4fb13
+26	1107	678487193	3rdparty/SQLiteCpp/CMakeFiles/SQLiteCpp.dir/src/Statement.cpp.o	9e0e0f1147018089
+7	1171	678487193	3rdparty/SQLiteCpp/CMakeFiles/SQLiteCpp.dir/src/Column.cpp.o	4be165331a4e5122
+12	1442	678487193	3rdparty/SQLiteCpp/CMakeFiles/SQLiteCpp.dir/src/Database.cpp.o	627fefd881f97b04
+1442	1893	678487193	3rdparty/SQLiteCpp/libSQLiteCpp.a	954ce8896b50fcf5
+1	5800	678487197	CMakeFiles/native-lib.dir/Demo.cpp.o	210539cc5334f597
+37	6176	678487198	3rdparty/SQLiteCpp/sqlite3/CMakeFiles/sqlite3.dir/sqlite3.c.o	4698eaea6a9ac1f0
+6176	6417	678487198	3rdparty/SQLiteCpp/sqlite3/libsqlite3.a	df427845b3b72ee8
+6417	7716	678487199	C:/Users/kunde/programming/kotlin/mear/app/build/intermediates/cxx/Debug/332z6x3e/obj/arm64-v8a/libnative-lib.so	b6be4b0d49c00278

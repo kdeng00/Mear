@@ -1,0 +1,379 @@
+{
+  "buildFiles": [
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\CMakeLists.txt",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\3rdparty\\json\\CMakeLists.txt",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\3rdparty\\SQLiteCpp\\CMakeLists.txt",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\src\\main\\cpp\\3rdparty\\SQLiteCpp\\sqlite3\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "NightlyBuild-Debug-x86_64": {
+      "artifactName": "NightlyBuild",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyBuild"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlySubmit-Debug-x86_64": {
+      "artifactName": "NightlySubmit",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlySubmit"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ContinuousCoverage-Debug-x86_64": {
+      "artifactName": "ContinuousCoverage",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousCoverage"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ExperimentalConfigure-Debug-x86_64": {
+      "artifactName": "ExperimentalConfigure",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalConfigure"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ContinuousTest-Debug-x86_64": {
+      "artifactName": "ContinuousTest",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousTest"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ExperimentalCoverage-Debug-x86_64": {
+      "artifactName": "ExperimentalCoverage",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalCoverage"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlyConfigure-Debug-x86_64": {
+      "artifactName": "NightlyConfigure",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyConfigure"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "Experimental-Debug-x86_64": {
+      "artifactName": "Experimental",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "Experimental"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "native-lib-Debug-x86_64": {
+      "artifactName": "native-lib",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "native-lib"
+      ],
+      "abi": "x86_64",
+      "output": "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\build\\intermediates\\cxx\\Debug\\332z6x3e\\obj\\x86_64\\libnative-lib.so",
+      "runtimeFiles": []
+    },
+    "ContinuousSubmit-Debug-x86_64": {
+      "artifactName": "ContinuousSubmit",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousSubmit"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "Continuous-Debug-x86_64": {
+      "artifactName": "Continuous",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "Continuous"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ContinuousConfigure-Debug-x86_64": {
+      "artifactName": "ContinuousConfigure",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousConfigure"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ExperimentalStart-Debug-x86_64": {
+      "artifactName": "ExperimentalStart",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalStart"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ContinuousBuild-Debug-x86_64": {
+      "artifactName": "ContinuousBuild",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousBuild"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ContinuousMemCheck-Debug-x86_64": {
+      "artifactName": "ContinuousMemCheck",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousMemCheck"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "SQLiteCpp-Debug-x86_64": {
+      "artifactName": "SQLiteCpp",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "SQLiteCpp"
+      ],
+      "abi": "x86_64",
+      "output": "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64\\3rdparty\\SQLiteCpp\\libSQLiteCpp.a",
+      "runtimeFiles": []
+    },
+    "ExperimentalUpdate-Debug-x86_64": {
+      "artifactName": "ExperimentalUpdate",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalUpdate"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ExperimentalTest-Debug-x86_64": {
+      "artifactName": "ExperimentalTest",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalTest"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlyStart-Debug-x86_64": {
+      "artifactName": "NightlyStart",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyStart"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlyCoverage-Debug-x86_64": {
+      "artifactName": "NightlyCoverage",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyCoverage"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ExperimentalBuild-Debug-x86_64": {
+      "artifactName": "ExperimentalBuild",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalBuild"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlyMemCheck-Debug-x86_64": {
+      "artifactName": "NightlyMemCheck",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyMemCheck"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "sqlite3-Debug-x86_64": {
+      "artifactName": "sqlite3",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "sqlite3"
+      ],
+      "abi": "x86_64",
+      "output": "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64\\3rdparty\\SQLiteCpp\\sqlite3\\libsqlite3.a",
+      "runtimeFiles": []
+    },
+    "ContinuousUpdate-Debug-x86_64": {
+      "artifactName": "ContinuousUpdate",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousUpdate"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlyTest-Debug-x86_64": {
+      "artifactName": "NightlyTest",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyTest"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ExperimentalMemCheck-Debug-x86_64": {
+      "artifactName": "ExperimentalMemCheck",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalMemCheck"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "Nightly-Debug-x86_64": {
+      "artifactName": "Nightly",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "Nightly"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlyMemoryCheck-Debug-x86_64": {
+      "artifactName": "NightlyMemoryCheck",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyMemoryCheck"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "NightlyUpdate-Debug-x86_64": {
+      "artifactName": "NightlyUpdate",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "NightlyUpdate"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ContinuousStart-Debug-x86_64": {
+      "artifactName": "ContinuousStart",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ContinuousStart"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "ExperimentalSubmit-Debug-x86_64": {
+      "artifactName": "ExperimentalSubmit",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "ExperimentalSubmit"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "SQLiteCpp_cpplint-Debug-x86_64": {
+      "artifactName": "SQLiteCpp_cpplint",
+      "buildCommandComponents": [
+        "C:\\Users\\kunde\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\kunde\\programming\\kotlin\\mear\\app\\.cxx\\Debug\\332z6x3e\\x86_64",
+        "SQLiteCpp_cpplint"
+      ],
+      "abi": "x86_64",
+      "runtimeFiles": []
+    }
+  }
+}

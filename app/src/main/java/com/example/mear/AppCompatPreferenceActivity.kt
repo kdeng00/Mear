@@ -17,6 +17,7 @@ import android.view.ViewGroup
  */
 abstract class AppCompatPreferenceActivity : PreferenceActivity() {
 
+    @Deprecated("Deprecated in Java")
     override fun onCreate(savedInstanceState: Bundle?) {
         delegate.installViewFactory()
         delegate.onCreate(savedInstanceState)
@@ -70,11 +71,13 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate.onConfigurationChanged(newConfig)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onStop() {
         super.onStop()
         delegate.onStop()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onDestroy() {
         super.onDestroy()
         delegate.onDestroy()

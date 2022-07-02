@@ -1,0 +1,4 @@
+C:\Users\kunde\programming\kotlin\mear\app\src\main\cpp\CMakeLists.txt
+C:\Users\kunde\programming\kotlin\mear\app\src\main\cpp\3rdparty\json\CMakeLists.txt
+C:\Users\kunde\programming\kotlin\mear\app\src\main\cpp\3rdparty\SQLiteCpp\CMakeLists.txt
+C:\Users\kunde\programming\kotlin\mear\app\src\main\cpp\3rdparty\SQLiteCpp\sqlite3\CMakeLists.txt
