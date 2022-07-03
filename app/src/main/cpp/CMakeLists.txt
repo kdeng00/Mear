@@ -7,7 +7,28 @@ cmake_minimum_required(VERSION 3.18.1)
 
 # Declares and names the project.
 
+if(NOT DEFINED VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}")
+endif()
+
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(TOOLCHAIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake)
+
+    set(CMAKE_TOOLCHAIN_FILE
+            "${TOOLCHAIN_PATH}"
+            CACHE STRING "Vcpkg toolchain file")
+
+    message("Using default toolchain file")
+endif()
+
 project("mear")
+
+
+message("Android ABI ${ANDROID_ABI}")
+message("Android Platform ${ANDROID_PLATFORM}")
+message("Toolchain file ${CMAKE_TOOLCHAIN_FILE}")
+message("Android toolchain file ${VCPKG_CHAINLOAD_TOOLCHAIN_FILE}")
+message("VCPKG target triplet ${VCPKG_TARGET_TRIPLET}")
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -29,6 +50,9 @@ add_library( # Sets the name of the library.
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
+find_package(nlohmann_json CONFIG REQUIRED)
+# target_link_libraries(main PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
+
 find_library( # Sets the name of the path variable.
         log-lib
 
@@ -42,6 +66,8 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
         mear
+
+        PRIVATE nlohmann_json nlohmann_json::nlohmann_json
 
         # Links the target library to the log library
         # included in the NDK.

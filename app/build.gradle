@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 31
 
     defaultConfig {
         applicationId "com.enfer.mear"
@@ -17,6 +17,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags '-std=c++17'
+                arguments "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=C:/Users/kunde/AppData/Local/Android/Sdk/ndk/23.2.8568313/build/cmake/android.toolchain.cmake", "-DCMAKE_TOOLCHAIN_FILE=C:/Users/kunde/programming/cpp/PackageManagers/vcpkg/scripts/buildsystems/vcpkg.cmake"
             }
         }
     }
@@ -43,6 +44,8 @@ android {
     buildFeatures {
         viewBinding true
     }
+    ndkVersion '23.2.8568313'
+    buildToolsVersion '31.0.0'
 }
 
 dependencies {
