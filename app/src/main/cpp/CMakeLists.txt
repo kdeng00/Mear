@@ -51,7 +51,6 @@ add_library( # Sets the name of the library.
 # completing its build.
 
 find_package(nlohmann_json CONFIG REQUIRED)
-# target_link_libraries(main PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
 find_library( # Sets the name of the path variable.
         log-lib
@@ -67,7 +66,7 @@ find_library( # Sets the name of the path variable.
 target_link_libraries( # Specifies the target library.
         mear
 
-        PRIVATE nlohmann_json nlohmann_json::nlohmann_json
+        PRIVATE nlohmann_json::nlohmann_json
 
         # Links the target library to the log library
         # included in the NDK.
