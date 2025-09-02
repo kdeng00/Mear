@@ -14,28 +14,12 @@ Has not been updated yet
   
 ## Built with
 * [Kotlin](https://github.com/JetBrains/kotlin)
-* C++ 14
-* Gradle
-* CMake
-* curl
-* openssl
-* [json](https://github.com/nlohmann/json)
-* [SQLiteCpp](https://github.com/SRombauts/SQLiteCpp)
-* [anko](https://github.com/Kotlin/anko)
-* [Picasso](https://github.com/square/picasso)
 
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduct, and the process for submitting pull requests to to the project.
 
 ## Versioning
 
-Currently in development and no version has been released
+Currently in development and no functional version has been released
 
 ## Contributors
-* **Kun Deng** [amazing-username](https://github.com/amazing-username) - *Project Manager* 
+* **Kun Deng** [kdeng00](https://github.com/kdeng00) - *Project Manager* 
 * [zularizal](https://github.com/zularizal) - *Graphic Designer* 
-
-## License
-
-This project is licensed under the MIT License - see the [License](LICENSE) file for details
