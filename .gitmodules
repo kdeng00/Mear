@@ -1,6 +1,0 @@
-[submodule "app/src/main/cpp/3rdparty/json"]
-	path = app/src/main/cpp/3rdparty/json
-	url = https://github.com/nlohmann/json
-[submodule "app/src/main/cpp/3rdparty/SQLiteCpp"]
-	path = app/src/main/cpp/3rdparty/SQLiteCpp
-	url = https://github.com/SRombauts/SQLiteCpp
